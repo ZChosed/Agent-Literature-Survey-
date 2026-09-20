@@ -1,0 +1,375 @@
+{
+  "schema_name": "manufacturing_agent_extraction",
+  "schema_version": "1.0.0",
+  "created": "2026-09-20",
+  "project": "Enabling Exploratory Learning for Manufacturing System Performance with AI-Agents and Digital Twins (NIST MSR, Tilbury/Barton)",
+  "phase": "Phase II - AI-Agents",
+  "purpose": "Structured comparison of agent-based manufacturing frameworks against the Kovalenko/Tilbury/Barton reference framework [7,8,10]. NOT a narrative survey: proposal S2.2 explicitly declines to produce 'yet another survey of agent-based approaches to manufacturing [6,23,24,27]'.",
+
+  "extraction_contract": {
+    "evidence_required": true,
+    "evidence_rule": "Every field in blocks A-I MUST be returned as an object {value, evidence_quote, page, confidence}. If no supporting text exists in the paper, value MUST be 'not_reported' and evidence_quote MUST be null. Never infer a value from the paper's general topic, venue, or title.",
+    "quote_limits": "evidence_quote must be a verbatim span of at most 25 words copied from the source PDF. Longer spans are rejected by the validator.",
+    "confidence_scale": ["high", "medium", "low"],
+    "no_counting_rule": "The extracting model must NOT compute totals, percentages, or cross-paper comparisons. All aggregation is performed deterministically in pandas. Basis: proposal S3.3 reports that foundation models 'exhibit inconsistencies in numerical accuracy' and require 'validation through deterministic tools or human oversight' [26].",
+    "one_paper_per_context": true
+  },
+
+  "blocks": {
+
+    "IDENT": {
+      "label": "Identification",
+      "proposal_basis": "Bookkeeping; enables the scripted citation-resolution check (no fabricated references in a NIST deliverable).",
+      "fields": {
+        "paper_id": {"type": "string", "note": "OpenAlex work ID from corpus CSV"},
+        "doi": {"type": "string_or_null"},
+        "title": {"type": "string"},
+        "year": {"type": "integer"},
+        "venue": {"type": "string"},
+        "first_author": {"type": "string"},
+        "seed_role_links": {"type": "array", "note": "which seed roles this paper was reached from; copied from corpus CSV, not extracted"}
+      }
+    },
+
+    "A_DEFINITION": {
+      "label": "Definition and terminology",
+      "proposal_basis": "S2.2: 'analyze the different definitions of manufacturing agents, the characteristics they contain (both required and optional)'. S2.4: 'make recommendations on clarifying, expanding, and aligning terms, definitions and ontologies' [16,29,30].",
+      "fields": {
+        "agent_definition_verbatim": {
+          "type": "evidence_object",
+          "value_type": "string",
+          "prompt": "Quote the paper's own definition of what an agent is. If it adopts a definition from another work, record that and name the source."
+        },
+        "definition_source": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["own_novel", "adopted_wooldridge_jennings", "adopted_holonic_HMS", "adopted_FIPA", "adopted_industrial_agents_leitao", "adopted_other_cited", "no_explicit_definition"]
+        },
+        "agent_term_used": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["agent", "industrial_agent", "holon", "intelligent_product", "product_agent", "resource_agent", "multi_agent_system", "agentic_AI", "LLM_agent", "other"],
+          "note": "Terminology divergence is itself a finding; feeds the S2.4 ontology recommendation."
+        },
+        "agent_entity_types": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["part_or_product", "batch_or_order", "machine_or_resource", "robot_or_manipulator", "transport_or_AGV", "human_operator", "supervisory_or_system", "process", "other"],
+          "proposal_basis": "Project description: 'each resource in the system with its own AI-agent ... every part (or batch of parts) to be produced also has its own AI-agent [7,9,10]'. Part-agent vs resource-agent coverage is the axis of interest."
+        }
+      }
+    },
+
+    "B_ARCHITECTURE": {
+      "label": "Internal architecture (KB / decision maker / communication manager)",
+      "proposal_basis": "S3.2: 'Agents typically include a knowledge base (with beliefs, desires and intentions), a decision maker and a communication manager that can interact with other agents; see Figure 5.' The proposal supplies this triad, so it is the schema backbone rather than an invented taxonomy.",
+      "fields": {
+        "has_knowledge_base": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "unclear"]},
+        "kb_representation": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["formal_ontology", "BDI_belief_set", "relational_or_document_db", "knowledge_graph", "automaton_or_formal_model", "vector_store_embeddings", "LLM_context_window", "ad_hoc_data_structure", "not_reported"]
+        },
+        "decision_mechanism": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["rule_based_reasoning", "planning_or_search", "optimization_MILP_or_CP", "heuristic_dispatching", "reinforcement_learning", "supervised_ML", "LLM_or_foundation_model", "auction_or_market", "hybrid", "not_reported"],
+          "proposal_basis": "S3.2: 'the decision making of specific agents is typically rule-based reasoning ... it is difficult to scale these reasoners to larger systems'. The rule-based share of this column is the scalability argument."
+        },
+        "decision_scalability_discussed": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_with_evidence", "yes_asserted_only", "no"],
+          "prompt": "Does the paper address how its decision mechanism scales with number of agents/constraints?"
+        },
+        "has_communication_manager": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "unclear"]},
+        "implementation_platform": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["JADE", "JACK_or_Jason", "ROS_or_ROS2", "custom_python", "custom_java_or_cpp", "IEC_61499_runtime", "PLC_or_IEC_61131", "commercial_simulation_tool", "none_conceptual_only", "not_reported"]
+        }
+      }
+    },
+
+    "C_MEMORY": {
+      "label": "Memory requirements",
+      "proposal_basis": "S2.2, verbatim research question: 'identifying the specific memory requirements--capturing both historical asset data and real-time environmental contexts'. This block is one of the two named Phase II focus areas and is weighted accordingly.",
+      "fields": {
+        "memory_historical": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["none", "static_configuration_only", "logged_asset_history", "learned_model_parameters", "case_library_of_past_episodes", "full_event_log", "not_reported"],
+          "prompt": "What historical data about its own physical asset does the agent retain?"
+        },
+        "memory_historical_description": {"type": "evidence_object", "value_type": "string"},
+        "memory_realtime": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["none", "polled_sensor_reads", "event_driven_stream", "query_to_digital_twin", "query_to_other_agents", "shared_blackboard", "not_reported"],
+          "prompt": "How does the agent obtain real-time environmental context?"
+        },
+        "memory_scope": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["self_only", "self_plus_immediate_neighbors", "partial_system_model", "global_system_model", "not_reported"]
+        },
+        "memory_persists_across_episodes": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "unclear"],
+          "prompt": "Does anything the agent learns or records survive past the end of a single production run/episode?"
+        },
+        "memory_update_mechanism": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["none_static", "manual_reconfiguration", "update_from_communication", "update_from_sensor_data", "update_from_simulation", "update_from_model_retraining", "not_reported"]
+        },
+        "memory_requirements_stated": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_explicit", "implicit_only", "no"],
+          "prompt": "Does the paper explicitly argue what an agent MUST remember? Direct input to the S2.2 'essential components' question."
+        }
+      }
+    },
+
+    "D_COMMUNICATION": {
+      "label": "Communication dynamics",
+      "proposal_basis": "S2.2, verbatim: 'determining how to optimize communication dynamics between interacting agents'. Second of the two named Phase II focus areas.",
+      "fields": {
+        "comm_protocol": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["FIPA_ACL", "contract_net_protocol", "custom_message_passing", "OPC_UA", "MQTT", "ROS_topics_or_services", "REST_or_HTTP", "natural_language_LLM", "AAS_submodel_exchange", "not_reported"]
+        },
+        "negotiation_mechanism": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["none", "contract_net", "auction_or_market", "bilateral_bargaining", "consensus", "centralized_assignment", "other", "not_reported"],
+          "proposal_basis": "S2.2 requires the agent to 'negotiate on behalf of its physical counterpart to achieve a desired goal'; [9] is the dynamic resource task negotiation prior work."
+        },
+        "comm_topology": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["broadcast", "peer_to_peer", "mediator_or_broker", "hierarchical", "hybrid", "not_reported"]
+        },
+        "comm_cost_analyzed": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_quantified", "yes_qualitative", "no"],
+          "prompt": "Does the paper measure or bound message volume, bandwidth, or latency?",
+          "note": "Low positive rate expected. A near-empty column is the evidence that 'optimize communication dynamics' (S2.2) is an open problem rather than a solved one."
+        },
+        "comm_cost_metric": {"type": "evidence_object", "value_type": "string"},
+        "handles_comm_failure": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "not_reported"],
+          "prompt": "Dropped messages, latency, partial network partition."
+        }
+      }
+    },
+
+    "E_LEARNING": {
+      "label": "Learning and exploration",
+      "proposal_basis": "S3.2: 'This project will explore (through a landscape literature survey) when and how the agent-based frameworks that have been proposed for manufacturing systems are able to dynamically learn through exploration'. S2.2: prior agents 'could learn about their environment through communicating with other agents, [but] were not able to explore beyond their pre-defined environment'. This block carries the project's central gap argument.",
+      "fields": {
+        "learning_present": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "unclear"]},
+        "learning_type": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["none", "parameter_tuning", "reinforcement_learning", "supervised_learning", "case_based_reasoning", "kb_expansion_via_communication", "simulation_based_exploration", "LLM_query_or_in_context", "evolutionary_or_metaheuristic", "not_reported"]
+        },
+        "explores_beyond_predefined_env": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "unclear"],
+          "prompt": "Can the agent acquire capabilities, processes, or environment structure that were NOT enumerated at design time? Answer 'yes' only with explicit textual support. Learning parameters over a fixed action/resource set is 'no'.",
+          "note": "PRIMARY DISCRIMINATOR. S2.2 and S3.2 both frame the research gap in exactly these terms. Expect a strong majority of 'no'; that distribution is the finding justifying the Phase II case study.",
+          "weight": "critical"
+        },
+        "learning_quality_measured": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_quantified", "yes_qualitative", "no"],
+          "proposal_basis": "S3.2: 'The quality of the learning will also be assessed and measured.'"
+        },
+        "learning_quality_metric": {"type": "evidence_object", "value_type": "string"},
+        "uses_simulation_for_exploration": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "unclear"]},
+        "simulation_model_source": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["extracted_from_digital_twin", "standalone_discrete_event_sim", "physics_simulator", "analytical_model", "none", "not_reported"],
+          "proposal_basis": "S2.2: 'since resource DTs contain models that could be used for simulations, an AI-agent may extract copies of these models and orchestrate them together in a combined simulation'. Whether anyone already does this is a direct literature question."
+        },
+        "uses_foundation_model": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no"]},
+        "foundation_model_role": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["none", "natural_language_interface", "task_planning", "code_generation", "knowledge_retrieval", "agent_construction", "simulation_guidance", "other"],
+          "proposal_basis": "S2.2: 'Queries to a manufacturing foundation model [11,35] may help guide the simulation and inform the exploration'. S3.3 and [26] set expectations for what these models can and cannot do."
+        },
+        "foundation_model_limitations_reported": {
+          "type": "evidence_object",
+          "value_type": "string",
+          "prompt": "Any reported failure mode of the LLM/FM used. Feeds the Report 2 failure taxonomy.",
+          "note": "Only applicable when uses_foundation_model = yes."
+        }
+      }
+    },
+
+    "F_DT_COUPLING": {
+      "label": "Relationship to digital twins",
+      "proposal_basis": "S2.2: 'In our view, the AI-agent will communicate with the DTs, but will not be incorporated into the DTs (see Figure 2).' Conflation of agent and DT in the literature is a boundary finding, and Phase III question (1) asks whether a DT can be used to auto-generate an agent.",
+      "fields": {
+        "dt_present_in_work": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "term_used_loosely"]},
+        "agent_dt_coupling": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["no_dt", "dt_embedded_inside_agent", "agent_queries_external_dt", "agent_and_dt_conflated", "dt_embeds_agent", "unclear"],
+          "note": "'agent_and_dt_conflated' is expected to be common and is directly reportable against the proposal's stated separation."
+        },
+        "dt_provides_uncertainty": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "not_applicable"],
+          "proposal_basis": "S3.1 definition [20]: 'The output of the DT (either an estimate or prediction about its physical twin) must be accompanied by a level of confidence, or uncertainty.' Papers calling something a DT without UQ diverge from the reference definition."
+        },
+        "dt_generation_from_agent_or_vice_versa": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["dt_generates_agent", "agent_generates_dt", "neither", "not_reported"],
+          "proposal_basis": "S2.3 Phase III question (1), verbatim: 'If a Digital Twin for an asset exists, can that be used (together with AI Tools) to automatically generate an AI-agent for the asset? And vice-versa?'"
+        }
+      }
+    },
+
+    "G_VALIDATION_METRICS": {
+      "label": "Validation maturity and manufacturing metrics",
+      "proposal_basis": "S1 establishes the four-tier maturity ladder: 'Some are conceptual frameworks, with colorful graphics and block diagrams. Other frameworks have been implemented in simulation, with varying levels of fidelity. A few case studies with physical hardware have been executed in laboratory environments, and some have been demonstrated on factory floors.' S3.2: 'one focus of the survey will be on the manufacturing metrics (e.g., quality, throughput, reliability) that the frameworks are able to demonstrate.'",
+      "fields": {
+        "validation_level": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["conceptual_only", "simulation", "emulation_or_HIL", "lab_hardware", "factory_floor"],
+          "note": "Ladder taken verbatim from proposal S1."
+        },
+        "metrics_reported": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["throughput", "makespan_or_cycle_time", "quality_scrap_or_yield", "reliability_or_availability", "downtime", "cost", "energy", "resource_utilization", "flexibility_or_reconfiguration_time", "tardiness_or_due_date", "none_reported"]
+        },
+        "baseline_compared_against": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["centralized_optimal", "centralized_heuristic", "alternative_MAS", "no_agent_baseline", "none", "not_reported"]
+        },
+        "disruption_types_handled": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["machine_failure_or_breakdown", "tool_wear_or_degradation", "new_part_type_introduced", "demand_or_order_change", "resource_added_or_removed", "transport_delay", "quality_defect", "none"],
+          "proposal_basis": "S2.2: prior work 'demonstrated how the ensemble of agents can work together to react to disruptions that may occur [7]'."
+        },
+        "system_scale": {
+          "type": "evidence_object",
+          "value_type": "object",
+          "sub_fields": {"n_agents": "integer_or_null", "n_resources": "integer_or_null", "n_part_types": "integer_or_null"},
+          "note": "Numbers copied verbatim from the paper only. The extracting model must not estimate; use null when unstated."
+        },
+        "application_domain": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["discrete_assembly", "machining", "semiconductor", "additive_manufacturing", "process_or_continuous", "logistics_or_warehouse", "generic_or_abstract", "other"]
+        }
+      }
+    },
+
+    "H_STANDARDS": {
+      "label": "Standards and ontology alignment",
+      "proposal_basis": "S2.4: 'we will consider how the data types that we employ are defined in the latest manufacturing operations standards efforts [16,29,30]. As appropriate, we will make recommendations on clarifying, expanding, and aligning terms, definitions and ontologies.' S2.1 names ISA-95 [18] and Asset Administration Shell [33].",
+      "fields": {
+        "standards_referenced": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["ISA_95", "asset_administration_shell", "RAMI_4_0", "OPC_UA_companion_spec", "MTConnect", "IEC_61499", "IEC_61131", "ISO_23247", "NASEM_digital_twin", "MOMO", "none"]
+        },
+        "ontology_used": {"type": "evidence_object", "value_type": "string", "prompt": "Named ontology, or 'none'."},
+        "interoperability_claimed": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes_demonstrated", "yes_asserted", "no"]}
+      }
+    },
+
+    "I_DELTA_VS_REFERENCE": {
+      "label": "Delta against the Kovalenko/Tilbury/Barton framework",
+      "proposal_basis": "S2.2, verbatim: 'extract the features that are common with our definition, as well as those that differ'. S2: 'summarize what are the necessary (and common) features of each framework that can enable the vision we propose'. This block IS the deliverable; everything above feeds it.",
+      "reference_framework": "Kovalenko, Tilbury, Barton (2019), 'The model-based product agent: A control oriented architecture for intelligent products in multi-agent manufacturing systems', Control Engineering Practice 86:105-117 [proposal ref 10], with [7] and [8].",
+      "fields": {
+        "features_common_with_reference": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": [
+            "model_based_formal_representation",
+            "part_or_product_centric_agent",
+            "resource_capability_discovery",
+            "plan_generation_from_discovered_capabilities",
+            "action_request_and_negotiation",
+            "decentralized_decision_making",
+            "reactive_replanning_on_disruption",
+            "explicit_separation_of_agent_and_physical_asset",
+            "control_oriented_architecture"
+          ]
+        },
+        "features_divergent": {
+          "type": "evidence_object",
+          "value_type": "string",
+          "prompt": "What this framework has or does that the reference framework does not, or vice versa. Be specific and cite the text."
+        },
+        "essential_component_claims": {
+          "type": "evidence_object",
+          "value_type": "string",
+          "prompt": "Does the paper argue that any component is NECESSARY (not merely useful) for a manufacturing agent? Quote the claim.",
+          "proposal_basis": "S2.2: 'determine the essential components an AI-agent requires to serve as an effective representative of its physical counterpart'."
+        },
+        "cites_reference_framework": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["cites_and_builds_on", "cites_as_related_work", "does_not_cite"]
+        },
+        "static_vs_dynamic_structure": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["static_structure", "dynamic_structure", "unclear"],
+          "proposal_basis": "S3.2: 'Even in our prior work [10], the agents can communicate to learn about their environment, although their structure was static.' Papers with dynamic structure are the highest-value reads."
+        }
+      }
+    },
+
+    "J_EXTRACTION_META": {
+      "label": "Extraction provenance",
+      "proposal_basis": "S1.1: 'with humans (students and advisors) guiding the search and reporting the findings'. S2.2 second report: 'summarize how the AI tools were successful (or not)'. S3.3: FM outputs are 'sensitive to input formulation', so prompt identity is experimental apparatus and must be recorded.",
+      "not_evidence_objects": true,
+      "fields": {
+        "schema_version": {"type": "string"},
+        "extraction_model": {"type": "string", "note": "exact model string, e.g. claude-opus-5"},
+        "prompt_hash": {"type": "string", "note": "sha256 of the exact extraction prompt used"},
+        "extraction_date": {"type": "string"},
+        "source_text_method": {"type": "enum", "allowed": ["grobid_tei", "marker_markdown", "pdfplumber_text", "publisher_html", "manual"]},
+        "human_verified": {"type": "boolean"},
+        "verifier": {"type": "string_or_null"},
+        "fields_corrected": {"type": "array", "note": "field paths the human changed; this array is the raw material for the per-field error profile in Report 2"},
+        "verifier_notes": {"type": "string_or_null"}
+      }
+    }
+  },
+
+  "aggregation_targets": {
+    "note": "Cross-tabs computed deterministically in pandas, never by an LLM. Each maps to a Report 1 section.",
+    "R1_S1_definitional_landscape": "agent_term_used x definition_source x year",
+    "R1_S2_necessary_vs_optional": "frequency of has_knowledge_base / decision_mechanism / has_communication_manager, split by validation_level",
+    "R1_S3_memory_and_communication": "memory_historical x memory_realtime; comm_protocol x negotiation_mechanism; comm_cost_analyzed rate",
+    "R1_S4_learning_and_exploration": "explores_beyond_predefined_env x learning_type x validation_level; learning_quality_measured rate",
+    "R1_S5_metrics_and_maturity": "metrics_reported x validation_level; baseline_compared_against rate",
+    "R1_S6_delta_vs_reference": "features_common_with_reference frequency; static_vs_dynamic_structure x explores_beyond_predefined_env",
+    "R1_S7_gaps": "intersection of explores_beyond_predefined_env=yes AND validation_level in {lab_hardware, factory_floor} - expected to be near-empty and to justify the Phase II case study",
+    "R2_method": "human_verified rate, fields_corrected frequency per field, screening kappa, failure taxonomy"
+  }
+}

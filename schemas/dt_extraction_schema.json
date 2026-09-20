@@ -1,0 +1,201 @@
+{
+  "schema_name": "digital_twin_extraction",
+  "schema_version": "1.0.0",
+  "created": "2026-09-20",
+  "phase": "Phase I support set (shallow) - extracted from the Phase II perspective",
+  "purpose": "A deliberately narrow DT extraction, sized to support two Phase II arguments: (a) the agent/DT boundary asserted in S2.2 ('the AI-agent will communicate with the DTs, but will not be incorporated into the DTs'), and (b) Phase III question (1) on generating one component from the other. This is NOT a replacement for the Phase I student's review. Target ~15 papers.",
+
+  "shared_spine_note": "Blocks IDENT, H_STANDARDS and J_EXTRACTION_META are field-identical to agent_extraction_schema.json v1.0.0. G_VALIDATION_METRICS shares three cross-tabulable fields exactly -- validation_level, metrics_reported and application_domain (identical enums, except that metrics_reported adds 'prediction_accuracy' here, since a DT's output metric is an accuracy claim in a way an agent's is not) -- and then diverges intentionally: the agent schema adds baseline_compared_against, disruption_types_handled and system_scale; this schema adds asset_type. Keep the three shared fields byte-identical. Basis: S2.3 Phase III requires DT and agent features to be compared on common axes, so the shared fields are the join keys; divergent enums on THOSE would make the comparison unrecoverable without re-extraction. Enforced by validate_schemas.py.",
+
+  "extraction_contract": {
+    "evidence_required": true,
+    "evidence_rule": "Fields in blocks DT_A through DT_D return {value, evidence_quote, page, confidence}. value = 'not_reported' with null quote when unsupported.",
+    "quote_limits": "verbatim span, max 25 words",
+    "no_counting_rule": "Aggregation in pandas only. Basis: S2.4, 'Although Large Language Models (LLMs) can be helpful in interpreting between different proposed notations, they do not always return precise answers [26].'"
+  },
+
+  "blocks": {
+
+    "IDENT": {
+      "label": "Identification",
+      "fields": {
+        "paper_id": {"type": "string"},
+        "doi": {"type": "string_or_null"},
+        "title": {"type": "string"},
+        "year": {"type": "integer"},
+        "venue": {"type": "string"},
+        "first_author": {"type": "string"},
+        "seed_role_links": {"type": "array"}
+      }
+    },
+
+    "DT_A_DEFINITION_CONFORMANCE": {
+      "label": "Conformance to the reference DT definition",
+      "proposal_basis": "S3.1 states the adopted definition verbatim from [20]: a DT 'is some level of replica of a real thing (the physical twin), exists in the cyber world, is synchronized with its physical twin, has a purpose of impacting an aspect of the environment in which its real counterpart exists, incorporates models and subject-matter expertise, and relies on both models and data (historical and real-time) to achieve its purpose. The output of the DT ... must be accompanied by a level of confidence, or uncertainty.' Each clause below is one testable attribute, so conformance is scored rather than argued. S2.1: 'extract the features that are common with our definition as well as those that differ.'",
+      "fields": {
+        "dt_definition_verbatim": {"type": "evidence_object", "value_type": "string"},
+        "conf_replica_of_physical_twin": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "unclear"]},
+        "conf_synchronized": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["continuous_realtime", "periodic_batch", "manual_or_on_demand", "not_synchronized", "not_reported"],
+          "note": "A 'DT' that is not synchronized is a model, not a DT, under the reference definition. This distinction is a reportable divergence."
+        },
+        "conf_purpose_stated": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes_specific", "yes_generic", "no"]},
+        "purpose_description": {"type": "evidence_object", "value_type": "string"},
+        "conf_incorporates_models": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["first_principles_physics", "data_driven_ML", "hybrid_grey_box", "discrete_event", "geometric_CAD", "statistical", "none", "not_reported"]
+        },
+        "conf_subject_matter_expertise": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes_explicit", "implicit", "no"]},
+        "conf_data_historical": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "not_reported"]},
+        "conf_data_realtime": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no", "not_reported"]},
+        "conformance_score": {
+          "type": "computed",
+          "note": "Count of the 7 reference clauses satisfied. Computed in pandas, NOT by the extracting model."
+        }
+      }
+    },
+
+    "DT_B_OUTPUT_AND_UQ": {
+      "label": "Output and uncertainty quantification",
+      "proposal_basis": "S3.1 and Figure 4: the DT produces 'Metrics' with 'Confidence'. S3.1 again: 'This project will explore ... what other frameworks are being proposed, what the major (and important) differences are, with a focus on the metrics that the DTs are able to produce, along with the uncertainty quantification.' UQ is the sharpest discriminator in the DT literature and most papers will fail it.",
+      "fields": {
+        "output_type": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["state_estimate", "future_prediction", "anomaly_or_fault_classification", "optimization_recommendation", "visualization_only", "not_reported"]
+        },
+        "output_metric_described": {"type": "evidence_object", "value_type": "string"},
+        "uncertainty_quantified": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_quantified", "mentioned_not_quantified", "no"],
+          "weight": "critical"
+        },
+        "uq_method": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["confidence_interval", "bayesian_posterior", "ensemble_variance", "monte_carlo", "conformal_prediction", "gaussian_process_variance", "qualitative_only", "none", "not_reported"]
+        },
+        "simulatable_forward_in_time": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "unclear"],
+          "proposal_basis": "S2.1: 'The model of the physical twin that is encapsulated within the DT may be able to be simulated forward in time, returning a prediction of the future state.' Also the precondition for S2.2's idea that an agent extracts DT models to build a combined exploratory simulation."
+        },
+        "model_extractable_by_third_party": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_explicit_interface", "implied", "no", "not_reported"],
+          "proposal_basis": "S2.2: 'an AI-agent may extract copies of these models and orchestrate them together in a combined simulation to explore different process combinations.' Whether existing DTs expose their models at all is a Phase III feasibility question."
+        }
+      }
+    },
+
+    "DT_C_CONSTRUCTION_AND_UPDATE": {
+      "label": "Construction effort and model updating",
+      "proposal_basis": "S3.1: 'most DTs as described in recent research papers and as currently deployed in industry do not leverage a common framework for information and knowledge re-use, and require a significant amount of human involvement, or subject matter expertise (SME), to accomplish their goals.' S4: 'most DTs are still constructed in silos, and lack the ability to update their models based on evolving conditions.' Both are claims this block tests against the literature.",
+      "fields": {
+        "construction_effort_reported": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes_quantified", "yes_qualitative", "no"]},
+        "sme_involvement_level": {"type": "evidence_object", "value_type": "enum", "allowed": ["heavy_manual", "moderate", "largely_automated", "not_reported"]},
+        "model_updates_over_time": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["no_static_model", "manual_recalibration", "automatic_online_update", "periodic_retraining", "not_reported"]
+        },
+        "reuse_or_transfer_across_assets": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes_demonstrated", "claimed_only", "no"],
+          "proposal_basis": "Cross-process model transfer is the subject of [12]; knowledge re-use is the gap named in S3.1."
+        },
+        "ai_tools_used_in_construction": {
+          "type": "evidence_object",
+          "value_type": "multi_enum",
+          "allowed": ["none", "LLM_code_generation", "LLM_requirements_or_spec", "automl", "system_identification", "other"],
+          "proposal_basis": "S2.1 and the Fall 2026 timeline row: 'Use AI Tools to develop a DT, including a model.' Prior art on AI-built DTs is directly relevant to the Phase I case study."
+        }
+      }
+    },
+
+    "DT_D_AGENT_RELATIONSHIP": {
+      "label": "Relationship to agents",
+      "proposal_basis": "S2.2 boundary claim and S2.3 Phase III questions. This is the block that makes the DT subset worth extracting from the Phase II seat.",
+      "fields": {
+        "agents_present_in_work": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes", "no"]},
+        "dt_agent_coupling": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["no_agent", "dt_embedded_inside_agent", "agent_queries_external_dt", "dt_and_agent_conflated", "dt_embeds_decision_making", "unclear"],
+          "note": "Enum values mirror agent_dt_coupling in agent_extraction_schema.json so the two corpora cross-tabulate."
+        },
+        "dt_makes_decisions": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["yes", "no", "unclear"],
+          "proposal_basis": "S2.2 draws the line explicitly: 'In contrast to a Digital Twin, which takes data from its physical twin and outputs an estimate or prediction of its physical twin's state, an AI-agent has the ability to make decisions and take actions.' A DT that decides is a divergence worth counting."
+        },
+        "spatial_representation": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["full_3d_geometry", "topological_or_layout", "none", "not_reported"],
+          "proposal_basis": "S2.3 Phase III question (2): 'How should the three-dimensional space in which their corresponding assets exist be captured within their models?'"
+        },
+        "part_vs_resource_representation": {
+          "type": "evidence_object",
+          "value_type": "enum",
+          "allowed": ["resource_only", "part_only", "both_distinct", "both_undifferentiated", "not_reported"],
+          "proposal_basis": "S2.3 Phase III question (3): 'How are the characteristics of a part (to be produced) represented differently than those of a resource?'"
+        }
+      }
+    },
+
+    "G_VALIDATION_METRICS": {
+      "label": "Validation maturity and metrics (shared spine - keep identical to agent schema)",
+      "proposal_basis": "S1 four-tier ladder, verbatim from the proposal.",
+      "fields": {
+        "validation_level": {"type": "evidence_object", "value_type": "enum", "allowed": ["conceptual_only", "simulation", "emulation_or_HIL", "lab_hardware", "factory_floor"]},
+        "metrics_reported": {"type": "evidence_object", "value_type": "multi_enum", "allowed": ["throughput", "makespan_or_cycle_time", "quality_scrap_or_yield", "reliability_or_availability", "downtime", "cost", "energy", "resource_utilization", "flexibility_or_reconfiguration_time", "prediction_accuracy", "none_reported"]},
+        "asset_type": {"type": "evidence_object", "value_type": "multi_enum", "allowed": ["cnc_machine", "additive_printer", "industrial_robot", "mobile_robot_or_AGV", "rotating_machinery", "production_line", "whole_factory", "generic_or_abstract", "other"], "note": "SMART testbed assets per S2.5: Denso CNC, Ender/Ultimaker printers, Kuka iiWa, Toyota HSR, Kawasaki DuAro and RS007, rotating machine. Papers matching these assets are high-priority reads for the case study."},
+        "application_domain": {"type": "evidence_object", "value_type": "enum", "allowed": ["discrete_assembly", "machining", "semiconductor", "additive_manufacturing", "process_or_continuous", "logistics_or_warehouse", "generic_or_abstract", "other"]}
+      }
+    },
+
+    "H_STANDARDS": {
+      "label": "Standards and ontology alignment (shared spine)",
+      "proposal_basis": "S2.1: 'aligned with existing frameworks and standards (NASEM [21], ISA 95 [18], Asset Administration Shell [33])'. S2.4 [16,29,30].",
+      "fields": {
+        "standards_referenced": {"type": "evidence_object", "value_type": "multi_enum", "allowed": ["ISA_95", "asset_administration_shell", "RAMI_4_0", "OPC_UA_companion_spec", "MTConnect", "IEC_61499", "IEC_61131", "ISO_23247", "NASEM_digital_twin", "MOMO", "none"]},
+        "ontology_used": {"type": "evidence_object", "value_type": "string"},
+        "interoperability_claimed": {"type": "evidence_object", "value_type": "enum", "allowed": ["yes_demonstrated", "yes_asserted", "no"]}
+      }
+    },
+
+    "J_EXTRACTION_META": {
+      "label": "Extraction provenance (shared spine)",
+      "proposal_basis": "S1.1: 'with humans (students and advisors) guiding the search and reporting the findings'. S2.1 second report: 'summarize how AI tools were successful (or not) in helping to build a DT aligned with the framework in [20]'. S3.3: FM outputs are 'sensitive to input formulation', so the exact prompt is experimental apparatus and must be recorded.",
+      "not_evidence_objects": true,
+      "fields": {
+        "schema_version": {"type": "string"},
+        "extraction_model": {"type": "string"},
+        "prompt_hash": {"type": "string"},
+        "extraction_date": {"type": "string"},
+        "source_text_method": {"type": "enum", "allowed": ["grobid_tei", "marker_markdown", "pdfplumber_text", "publisher_html", "manual"]},
+        "human_verified": {"type": "boolean"},
+        "verifier": {"type": "string_or_null"},
+        "fields_corrected": {"type": "array"},
+        "verifier_notes": {"type": "string_or_null"}
+      }
+    }
+  },
+
+  "aggregation_targets": {
+    "conformance_distribution": "histogram of conformance_score (0-7) against the [20] definition",
+    "uq_gap": "uncertainty_quantified rate x validation_level - tests the S3.1 claim that UQ is underreported",
+    "construction_burden": "sme_involvement_level x model_updates_over_time - tests the S3.1/S4 claims about human involvement and static models",
+    "boundary_finding": "dt_agent_coupling frequency; dt_makes_decisions rate - evidence for or against the S2.2 separation",
+    "phase_iii_feasibility": "model_extractable_by_third_party x simulatable_forward_in_time - precondition for the S2.2 combined-simulation idea"
+  }
+}
