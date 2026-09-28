@@ -1,0 +1,64 @@
+paper_id,doi,title,abstract,fulltext_head,year,venue,abstract_source
+W3107642408,10.1109/mnet.011.2000398,Roads Infrastructure Digital Twin: A Step Toward Smarter Cities Realization,"Digital Twin is a new concept that consists of creating an up-to-date virtual asset in cyberspace which mimics the original physical asset in most of its aspects, ultimately to monitor, analyze, test, and optimize the physical asset. In this article, we investigate and discuss the use of the digital twin concept of the roads as a step toward realizing the dream of smart cities. To this end, we propose the deployment of a Digital Twin Box to the roads that is composed of a 360° camera and a set of IoT devices connected to a Single Onboard Computer. The Digital Twin Box creates a digital twin of the physical road asset by constantly sending real-time data to the edge/cloud, including the 360° live stream, GPS location, and measurements of the temperature and humidity. This data will be used for realtime monitoring and other purposes by displaying the live stream via head-mounted devices or using a 360° web-based player. Additionally, we perform an object detection process to extract all possible objects from the captured stream. For some specific objects (person and vehicle), an identification module and a tracking module are employed to identify the corresponding objects and keep track of all video frames where these objects appeared. The outcome of the latter step would be of utmost importance to many other services and domains such as national security. To show the viability of the proposed solution, we have implemented and conducted real-world experiments where we focus more on the detection and recognition processes. The achieved results show the effectiveness of the proposed solution in creating a digital twin of the roads, a step forward to enable self-driving vehicles as a crucial component of smart mobility, using the Digital Twin Box.",,2020,IEEE Network,openalex
+W4212863220,10.1109/tits.2022.3150565,Cooperative Spacing Sampled Control of Vehicle Platoon Considering Undirected Topology and Analog Fading Networks,"The work on this paper studies the combined effect of vehicle dynamics, sampling period and the quality of inter-vehicle sensing and communication on the performance of platoon control. First, we induce the sampled control protocol from continuous–time linear consensus protocol by employing zero–order hold circuit and periodic sampling technology, then by virtue of the obtained sampled control protocol, the continuous–time platoon system is equivalently transformed into a discrete–time system. Second, for the inter–vehicle communication with ideal channel and under undirected information flow topology (UIFT), the stability thresholds of control gains are explicitly established by solving a discrete–time simultaneous stabilization problem, bilinear transformation and the Routh-Hurwitz stability criterion. Meanwhile, to ensure the fastest asymptotic stability of the platoon dynamics, we propose an optimal asymptotic convergence factor and a correspondingly optimal sampled control protocol. Third, For the inter–vehicle communication with identical fading networks and under UIFT, through solving a modified Riccati inequality, we provide a sampled control protocol depending not only on information flow topology (IFT) and sampling period, but also on the statistics of the inter–vehicle communication channel. Besides, employing Lyapunov inequality in probability theory, we show a necessary condition for the sampled control protocol ensuring the platoon dynamics mean square stable. Finally, simulations are performed to demonstrate the theory’s discoveries.",,2022,IEEE Transactions on Intelligent Transportation Systems,openalex
+W7172517428,10.21203/rs.3.rs-10591441/v1,"AI Native Manufacturing Operating System for Autonomous Smart Factories Using Digital Twins, Multi Agent Artificial Intelligence, Physics Informed Machine Learning, and Reinforcement Learning.",,"AI Native Manufacturing Operating System for
+Autonomous Smart Factories Using Digital Twins,
+Multi Agent Artificial Intelligence, Physics Informed
+Machine Learning, and Reinforcement Learning.
+MD AZIZUL HAKIM ABIR
+Nantong University https://orcid.org/0009-0000-8287-7903
+Research Article
+Keywords: Manufacturing operating system, digital twin, multi agent systems, physics informed machine
+learning, reinforcement learning, knowledge graph, explainable artificial intelligence, five axis machining,
+Ti-6Al-4V, overall equipment effectiveness.
+Posted Date: August 5th, 2026
+DOI: https://doi.org/10.21203/rs.3.rs-10591441/v1
+License:   This work is licensed under a Creative Commons Attribution 4.0 International License.
+Read Full License
+Additional Declarations: The authors declare no competing interests.
+AI Native Manufacturing Operating System for Autonomous Smart
+Factories Using Digital Twins, Multi Agent Artificial Intelligence,
+Physics Informed Machine Learning, and Reinforcement Learning
+Abstract
+Smart factories accumulate large volumes of process data, yet the software governing them remains a set
+of loosely federated applications: an execution system for order release, a supervisory layer for
+equipment, isolated condition monitoring services, and offline simulation environments. Decisions on
+scheduling, maintenance, quality, and energy are therefore taken by different tools, on different time
+bases, from inconsistent representations of the same asset. This paper proposes an AI native
+Manufacturing Operating System (M-OS) that acts as the intelligent operating layer of an autonomous
+factory. The system comprises six layers and four proposed mechanisms. A Digital Twin Kernel
+maintains a single authoritative asset state, enforces synchronization contracts with bounded staleness,
+residual, and uncertainty, and allocates twin refresh by utility maximization rather than fixed polling. An
+AI Decision Engine couples scheduling, predictive maintenance, and quality control through a shared risk
+field, so that a decision in one domain is priced in the objectives of the others. A Physics Informed
+Learning Module embeds cutting mechanics, thermal balance, and wear laws as differentiable residuals
+and exposes a physics consistency score used as admission control on learned models. A Multi Agent
+Coordination Framework represents every machine, robot, vehicle, inspection station, storage location,
+and energy zone as an agent that negotiates in a market with a physics feasibility filter, while a
+Reinforcement Learning Optimization Engine adapts the parameters of that market rather than replacing
+it. A manufacturing knowledge graph links product features, process plans, machines, tools, defect
+modes, and corrective actions as a runtime control dependency, and an explainability service produces
+attribution, counterfactual, and rule level justification for every autonomous action. The coordination
+problem is formalized in forty five equations, five algorithms are given in pseudocode, and an industrial
+case study on five axis machining of Ti-6Al-4V aerospace components is specified for implementation
+with Python, MATLAB, Siemens NX, and ANSYS. Five baselines are defined for comparison:
+dispatching rules, rolling horizon mathematical programming, digital twin monitoring, a data driven deep
+reinforcement learning dispatcher, and a classical contract net architecture. No validation is reported; the
+contribution is architectural, mathematical, and methodological, and the experimental section defines the
+protocol under which the stated hypotheses will be tested.
+Keywords
+Manufacturing operating system; digital twin; multi agent systems; physics informed machine learning;
+reinforcement learning; knowledge graph; explainable artificial intelligence; five axis machining; Ti-6Al4V; overall equipment effectiveness.
+1 Introduction
+Manufacturing control software has evolved by accretion. Programmable controllers replaced relay logic,
+supervisory systems visualized equipment states, execution systems reconciled shop floor activity with
+enterprise planning, and analytics platforms were later attached to the resulting data streams. Each
+addition carried its own data model, notion of time, and decision scope. The same milling spindle may
+consequently be described by a controller variable table, an asset register, a maintenance record, a
+simulation model, and a quality database, with no guarantee that these descriptions agree at any instant.
+Reviews of cyber physical production systems identify this fragmentation, rather than any deficiency in
+sensing or computing, as the principal obstacle to autonomy [1], [2].
+The manner in which artificial intelligence entered the factory aggravates the situation. Machine learning
+has been applied successfully to tool condition monitoring, defect classification, energy forecasting, and
+scheduling, with documented accuracy gains over analytical baselines [3], [4], [5]. These applications are
+deployed as point",2026,Research Square,fulltext_head_oa

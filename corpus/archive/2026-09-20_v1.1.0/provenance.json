@@ -1,0 +1,38 @@
+{
+  "script": "corpus_build.py",
+  "script_version": "1.1.0",
+  "run_started_utc": "2026-09-20T21:37:29.412240+00:00",
+  "run_seconds": 44.1,
+  "api": "OpenAlex",
+  "api_requests": 109,
+  "parameters": {
+    "mailto": "<redacted>",
+    "seeds": "seeds.csv",
+    "out_dir": "corpus",
+    "min_year": 2015,
+    "max_forward_per_seed": 50,
+    "max_backward_per_seed": 250,
+    "min_similarity": 0.72,
+    "skip_backward": false,
+    "skip_forward": false,
+    "coverage_check": false,
+    "quiet": false
+  },
+  "counts": {
+    "seeds_loaded": 35,
+    "seeds_resolved": 31,
+    "seeds_low_confidence": 0,
+    "unique_works_retrieved": 2919,
+    "candidates_after_filtering": 1761,
+    "candidates_by_n_seed_links": {
+      "1": 1549,
+      "2": 138,
+      "3": 43,
+      "4": 13,
+      "5": 18
+    },
+    "candidates_linked_to_framework_core": 116
+  },
+  "coverage_check": [],
+  "note": "Retrieval, deduplication and counting performed deterministically. No language model contributed to this reference list. See proposal S3.3 and [26] on FM numerical reliability."
+}

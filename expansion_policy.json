@@ -1,0 +1,29 @@
+{
+  "policy_version": "2.0.0",
+  "pre_registered_utc": "2026-09-28T00:00:00Z",
+  "rationale": "v2.0.0 REMOVES both hard gates and the min_discrimination_ratio diagnostic. This file now governs RANKING ONLY. The only retrieval policy is the expand_backward / expand_forward columns of seeds.csv; nothing computed at run time decides what is retrieved. The gates are gone because they never bit (the forward gate fired on zero seeds at the v1.5.0 measurement, the only high-volume seeds being the dt_survey six that seeds.csv already turns off by hand) and because the ratio they leaned on measured 1.05-1.3 against its own 1.3 floor -- T barely separates framework_core from dt_survey, so a gate that did not fire was abstaining rather than clearing. Thresholds here remain pre-registered: commit this file BEFORE the run it governs, so the sequence is verifiable from git history. Changing one after seeing results is a new policy_version and a new commit, not an edit.",
+  "target_domain": {
+    "seed_refs": [
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "topic_score_min": 0.3,
+    "basis": "Proposal S2.2 defines this review as a comparison against the framework in [7,8,10]; [9] is the same architecture line by the same group. T is the union of OpenAlex topics those four seeds carry at score >= topic_score_min. Using the framework's own topical fingerprint as the target avoids naming topics by hand. NOTE: seed_refs stays pre-registered at [7,8,9,10] and deliberately did NOT follow the v1.5.0 retag of [2] and [9] into framework_core. As measured, T is five broad Industrial & Manufacturing Engineering topics, none agent-specific, so p(s)/q(s) work as a dilution signal for ORDERING and cannot adjudicate agent-vs-DT. They no longer gate anything, so that limitation now costs ranking quality rather than recall."
+  },
+  "precision": {
+    "min_sample": 30,
+    "basis": "p(s) over fewer than min_sample references is noise -- [11] Kusiak has 4 indexed references. Below the minimum, the weight falls back to the mean of same-role seeds that clear it, then to the global mean, and the basis field records the substitution. If nothing at all is measurable the weighting goes uniform at 1.0 rather than zero: 'could not measure' must not silently become 'counts for nothing'. Seeds with an empty OpenAlex reference list are coded no_references -- a data gap, not a precision finding."
+  },
+  "scoring": {
+    "weight_by_precision": true,
+    "basis": "score(c) = sum of precision(s) over every seed s linking to candidate c, in the direction each edge was followed, replacing the raw n_seed_links integer as the ranking term. A seed reaching a candidate both ways contributes once, at the higher weight. Downweighting is auditable where exclusion is not: a low-ranked paper is still in candidates.csv with its score and its seed links attached. Since v1.6.0 this is the ONLY thing p(s)/q(s) do."
+  },
+  "forward_precision": {
+    "sample_size": 200,
+    "sample_seed": 42,
+    "min_sample": 30,
+    "basis": "q(s), the forward mirror of p(s): the fraction of works CITING seed s that carry a topic in T. Backward references ride free on the seed record, but citing works do not, so q(s) is estimated from a deterministic random sample -- OpenAlex `sample=N&seed=S`, which returns the same works on every run with the same seed. This is a RANDOM sample, unlike a pagination-order cap, so it is a legitimate estimator rather than a hidden inclusion criterion. est_unique_citations is retained as a diagnostic; it was the volume term of the forward gate, removed in v1.6.0."
+  }
+}
