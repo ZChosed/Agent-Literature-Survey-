@@ -245,20 +245,32 @@ csv.field_size_limit(10_000_000)
 # Prompt construction
 # --------------------------------------------------------------------------
 
+# The system prompt deliberately contains NO decision guidance of its own.
+#
+# It once carried its own tie-break ("a false exclude cannot be recovered; when
+# torn between exclude and uncertain, answer uncertain"). That was written
+# before criteria.md existed. The criteria now carry a complete, ordered
+# decision procedure including their own tie-breaks -- and theirs point the
+# other way in one place, telling the model NOT to reach for `uncertain` merely
+# because a paper looks marginal. Two sets of tie-break rules in one prompt
+# would make the uncertain rate a property of the prompt rather than of the
+# criteria, and the uncertain rate is a reported metric that feeds the model
+# comparison. So the criteria govern the decision; this template governs only
+# the task frame and the output mechanics.
 SYSTEM_TEMPLATE = """\
-You are screening papers for a structured literature review on AI agents for \
-manufacturing. You decide, from the title and abstract alone, whether a paper \
-should be included in the review.
+You are screening papers for a structured literature review on agent-based \
+frameworks for manufacturing systems. You decide whether a paper should be \
+included in the review.
 
-Apply the criteria below exactly as written. Do not apply outside knowledge \
-about the paper, the authors, the venue or the field. If the abstract does not \
-contain the information a criterion asks about, that is what `uncertain` is \
-for: an `uncertain` decision routes the paper to a human reviewer, so it is the \
-correct answer when the evidence is absent, not a way of avoiding a call.
+You are given a title plus ONE of: an abstract, or the first part of the paper's \
+full text, or nothing beyond the title. The user message says which. Judge only \
+from the text you are given. Do not use outside knowledge of the paper, its \
+authors, its venue or its field.
 
-A false exclude cannot be recovered later in the pipeline. A false include is \
-caught at the next stage. When genuinely torn between exclude and uncertain, \
-answer uncertain.
+Apply the criteria below exactly as written, including their decision procedure \
+and their rules about when to answer `uncertain`. The criteria are the only \
+authority on what each decision means; nothing in these instructions overrides \
+them.
 
 You must answer by calling the `{tool_name}` tool. Call it exactly once, for \
 every paper, without exception -- there is no paper for which a plain text \
@@ -266,7 +278,7 @@ reply is correct, and a text reply is discarded as an invalid response. Return:
   - decision: one of include, exclude, uncertain
   - criterion_id: the ID, from the criteria below, of the single criterion that \
 most drove the decision
-  - reason: at most {max_words} words, citing what in the abstract drove it
+  - reason: at most {max_words} words referring to the text you were given
 
 Do not include internal or system XML tags in your response.
 
@@ -369,8 +381,10 @@ def build_tool(strict: bool = True) -> dict:
                 "reason": {
                     "type": "string",
                     "description": (
-                        f"At most {MAX_REASON_WORDS} words citing what in the "
-                        f"abstract drove the decision."),
+                        f"At most {MAX_REASON_WORDS} words referring to the "
+                        f"text you were given. For an `uncertain` decision, "
+                        f"name the specific condition that could not be "
+                        f"evaluated."),
                 },
             },
             "required": ["decision", "criterion_id", "reason"],
@@ -481,6 +495,13 @@ ID_PATTERNS = [
     re.compile(r"^\s*[-*+]\s*\**\s*([A-Z]{1,3}[-_]?\d{1,3})\b", re.M),
     re.compile(r"^\s*\|\s*\**\s*([A-Z]{1,3}[-_]?\d{1,3})\**\s*\|", re.M),
     re.compile(r"^\s*\*\*([A-Z]{1,3}[-_]?\d{1,3})\*\*", re.M),
+    # Bare definition-list form: an ID at the start of a line, followed by a
+    # dash. This is the shape criteria.md actually uses ("I1 — Learning or
+    # exploratory agents."), and the four patterns above all missed it, which
+    # silently disabled membership checking on the real file. Requiring both
+    # line start AND a dash separator keeps it off prose: a sentence that
+    # merely mentions I1 does not begin with it and is not followed by a dash.
+    re.compile(r"^\s*([A-Z]{1,3}[-_]?\d{1,3})\s*[\u2014\u2013-]\s+", re.M),
 ]
 
 

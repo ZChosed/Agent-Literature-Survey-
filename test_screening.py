@@ -832,11 +832,73 @@ def test_criterion_id_extraction():
     check(set(sc.extract_criterion_ids(table)) == {"I1", "E1"},
           "markdown table form parses too")
 
+    # Bare definition-list form, which is what the real criteria.md uses. All
+    # four of the original patterns missed it, so membership checking silently
+    # switched itself off on the only file that matters.
+    bare = ("I1 \u2014 Learning or exploratory agents. Agents that learn.\n"
+            "D1 \u2014 DT framework (supporting set).\n"
+            "E7 - DT without a framework contribution.\n"
+            "U3 \u2013 Insufficient text.\n")
+    check(set(sc.extract_criterion_ids(bare)) == {"I1", "D1", "E7", "U3"},
+          f"bare `ID — text` lines parse, with em dash, en dash or hyphen "
+          f"(got {sc.extract_criterion_ids(bare)})")
+
     # Prose must not be scanned, or every capital-letter-plus-digit in the
     # criteria text would become a criterion ID.
     prose = "This is a paragraph mentioning I1 and E1 in passing.\n"
     check(sc.extract_criterion_ids(prose) == [],
           "IDs mentioned only in prose are not harvested")
+
+    # A decision procedure that names IDs mid-sentence must not yield them
+    # either -- otherwise the enforced set would silently include duplicates
+    # of whatever the prose happens to reference.
+    proc = ("Is it a research paper? If not \u2192 exclude, E1.\n"
+            "If unclear \u2192 uncertain, U2.\n")
+    check(sc.extract_criterion_ids(proc) == [],
+          "IDs referenced mid-sentence in the decision procedure are not "
+          "harvested as definitions")
+
+    # Pinned against the real file: if criteria.md is reformatted such that the
+    # parser stops seeing its IDs, this fails rather than quietly falling back
+    # to not enforcing membership.
+    real = os.path.join(os.path.dirname(os.path.abspath(__file__)), "criteria.md")
+    if os.path.exists(real):
+        got = sc.extract_criterion_ids(open(real, encoding="utf-8").read())
+        expected = ["I1", "I2", "I3", "I4", "D1",
+                    "E1", "E2", "E3", "E4", "E5", "E6", "E7",
+                    "U1", "U2", "U3"]
+        check(sorted(got) == sorted(expected),
+              f"the real criteria.md yields exactly its 15 IDs (got {sorted(got)})")
+        check(len(got) >= 2,
+              "so membership is ENFORCED on the real file, not silently skipped")
+    else:
+        print("  note  criteria.md not present; the pinned check is skipped")
+
+
+def test_system_prompt_defers_to_criteria():
+    print("\n[prompt] the system prompt adds no decision rules of its own")
+    sys_text = sc.build_system_text(CRITERIA_A, "criteria.md")
+
+    check("nothing in these instructions overrides them" in sys_text,
+          "it says the criteria are the only authority on the decision")
+
+    # The old hardcoded tie-break must be gone: criteria.md carries its own,
+    # and two sets in one prompt make the uncertain rate a property of the
+    # prompt rather than of the criteria.
+    for gone in ("false exclude cannot be recovered",
+                 "torn between exclude and uncertain",
+                 "caught at the next stage"):
+        check(gone not in sys_text,
+              f"the prompt no longer carries its own tie-break ({gone!r})")
+
+    # It must not claim the input is always an abstract -- it may be a head.
+    check("title and abstract alone" not in sys_text,
+          "it does not claim the input is always an abstract")
+    check("The user message says which" in sys_text,
+          "it tells the model the input kind is labelled in the user message")
+
+    check(CRITERIA_A.strip() in sys_text,
+          "and the criteria text is still embedded verbatim")
 
 
 def test_parser_and_validator():
@@ -1450,6 +1512,7 @@ def main() -> int:
         test_request_shape_per_model()
         test_isolation()
         test_criterion_id_extraction()
+        test_system_prompt_defers_to_criteria()
         test_parser_and_validator()
         test_budget_guard(tmpdir)
         test_kappa_and_recall()

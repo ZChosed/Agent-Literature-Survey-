@@ -529,7 +529,7 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 | `draw_calibration_sample.py` | The stratified 50-paper draw and the blind labelling sheet. |
 | `screen.py` | The screening harness: forced tool call, Batches API, full per-call provenance, pre-submission budget guard. |
 | `benchmark.py` | κ, recall, precision, confusion, cost. Pure pandas. Applies the selection rule, or declines to. |
-| `test_screening.py` | Offline test, 177 assertions. No network, no API key: the Anthropic SDK is stubbed, including `models.list`. |
+| `test_screening.py` | Offline test, 188 assertions. No network, no API key: the Anthropic SDK is stubbed, including `models.list`. |
 
 | Generated | What it is |
 |---|---|
@@ -835,6 +835,57 @@ to 4,096 rather than a tight 300, because a tight cap would truncate every
 Opus 5.5 call into a `max_tokens` validation failure and measure the cap rather
 than the model. Output bills on tokens produced, so the headroom is close to
 free.
+
+### criteria.md, and what the harness had to change to read it
+
+`screening/criteria.md` in the run order is `criteria.md` at the repo root as
+written — pass `--criteria criteria.md`. Human written; the harness reads,
+hashes and embeds it verbatim and does not author it.
+
+Two things it broke, both now fixed and both pinned by tests:
+
+**The ID parser saw none of its IDs.** The criteria define them as bare
+line-start tokens — `I1 — Learning or exploratory agents.` — and the parser
+only recognised markdown headings, bullets, table cells and bold text. With
+zero IDs found, `--criterion-id-check auto` correctly declines to enforce
+membership, so a hallucinated `criterion_id` would have passed validation in
+silence. A fifth pattern now matches `ID` + dash at line start, which yields
+exactly the 15 real IDs (I1–I4, D1, E1–E7, U1–U3) and still harvests nothing
+from prose or from the decision procedure's mid-sentence references. A test
+pins the parse against the real file, so a reformat that hides the IDs fails
+loudly instead of quietly disabling the check.
+
+**The system prompt carried a competing tie-break.** It used to say a false
+exclude is unrecoverable and to prefer `uncertain` when torn against `exclude`.
+That was written before criteria.md existed. The criteria now carry a complete
+ordered decision procedure with their own tie-breaks, and theirs point the
+other way in one place — *"Do not use uncertain because the paper seems only
+moderately relevant."* Two sets of tie-break rules in one prompt would make the
+uncertain rate a property of the prompt rather than of the criteria, and the
+uncertain rate is a reported metric feeding the model comparison. The template
+now states that the criteria are the only authority on the decision and
+contains no decision rules of its own. It also no longer claims the input is
+always an abstract.
+
+**Cache minimums, now that the file has a real size.** The system prompt is
+8,254 characters, roughly 2,060 tokens. That clears the 512-token minimum on
+Opus 5.5 and Sonnet 5.5 — both will cache — and **falls short of Haiku 4.5's
+4,096**, so the cached system block will not cache on the cheapest model. Not a
+bug and not fixable by padding; just a fact to read the cost column with. The
+logged `cache_creation_input_tokens` / `cache_read_input_tokens` settle it on
+the first real run.
+
+**Estimated batch cost**, from actual prompt sizes at current prices, all three
+models:
+
+| Run | n | mean input tok/call | est. cost |
+|---|---:|---:|---:|
+| abstract sample | 50 | ~2,430 | **$0.78** |
+| full-text sample | 20 | ~3,325 | **$0.37** |
+
+Both well under the $2 target and the $10 `--max-usd` default. Opus 5.5 is
+about 70% of each total, because its thinking cannot be disabled and those
+tokens bill as output.
 
 ### The selection rule declines rather than compromises
 
