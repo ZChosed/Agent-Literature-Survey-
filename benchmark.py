@@ -35,6 +35,17 @@ computing anything. A kappa over whichever rows happened to be filled in is a
 kappa over a sample selected by how easy the papers were to label, and easy
 papers agree. That is not a weaker number, it is a misleading one.
 
+Two exclusion stages, never pooled (v2.0.0)
+-------------------------------------------
+"Excluded at eligibility" is a scope decision Python made from the DOI and OA
+status before any model ran (eligibility.py). "Excluded at screening" is a
+model's `exclude` on an eligible paper. They are counted separately everywhere.
+A labelled paper that the run's manifest lists under `excluded_at_eligibility`
+is dropped from the scoring denominator and reported on its own line: the
+model never saw it, so scoring it would charge the model for a decision it did
+not make -- and a human `exclude` on it agreeing with nothing would inflate
+nothing but confusion.
+
 Selection rule
 --------------
 Cheapest model with binary kappa >= 0.7 AND include recall >= 0.95.
@@ -65,7 +76,7 @@ import pandas as pd
 
 from collections import Counter
 
-SCRIPT_VERSION = "1.0.0"
+SCRIPT_VERSION = "2.0.0"
 
 DECISIONS = ["include", "exclude", "uncertain"]
 BINARY = ["include", "exclude"]
@@ -227,9 +238,32 @@ def main() -> int:
     manifest = load_manifest(args.run)
     shapes = manifest.get("per_model_request_shape", {}) or {}
 
+    # --- stage 1: excluded at eligibility --------------------------------
+    elig_block = manifest.get("excluded_at_eligibility") or {}
+    inel_ids = dict(elig_block.get("paper_ids") or {})
+    if "paper_id" in calls and inel_ids:
+        leaked = sorted(set(calls["paper_id"]) & set(inel_ids))
+        if leaked:
+            sys.exit(f"calls.jsonl holds {len(leaked)} paper(s) the manifest "
+                     f"lists as excluded at eligibility: {leaked[:10]} -- the "
+                     f"run is inconsistent; not scoring it")
+    labels_inel = labels[labels["paper_id"].isin(inel_ids)]
+    labels = labels[~labels["paper_id"].isin(inel_ids)].reset_index(drop=True)
+    excluded_at_eligibility = {
+        "n_in_run": int(elig_block.get("n", len(inel_ids))),
+        "by_reason_in_run": dict(elig_block.get("by_reason") or {}),
+        "n_labelled_dropped_from_scoring": len(labels_inel),
+        "labelled_dropped_by_reason": dict(Counter(
+            inel_ids[p] for p in labels_inel["paper_id"])),
+        "basis": ("from the run manifest (screen.py, eligible=False in "
+                  "candidates.csv). Not screened, not scored."),
+    }
+
     run_id = str(calls["run_id"].iloc[0]) if "run_id" in calls else os.path.basename(args.run)
     print(f"[bench] run {run_id}")
-    print(f"[bench] {len(labels)} human labels, all filled")
+    print(f"[bench] {len(labels)} human labels scored"
+          + (f"; {len(labels_inel)} labelled paper(s) excluded at eligibility "
+             f"are NOT scored" if len(labels_inel) else ""))
     print(f"[bench] {len(calls)} logged calls across "
           f"{calls['model'].nunique()} model(s)")
 
@@ -293,6 +327,12 @@ def main() -> int:
             "n_invalid_responses": int(
                 (~g["validation_status"].isin(["valid", "forced"])).sum()),
             "n_forced_uncertain": int((g["validation_status"] == "forced").sum()),
+            # Stage 2 only: a model `exclude` on an eligible paper. Stage 1
+            # (eligibility) is a run-level count, never mixed in here.
+            "n_excluded_at_screening": int(
+                (g[g["validation_status"] == "valid"]["model_decision"]
+                 == "exclude").sum()),
+            "n_excluded_at_eligibility": excluded_at_eligibility["n_in_run"],
             "text_kinds": "|".join(
                 f"{k}:{v}" for k, v in sorted(Counter(g["text_kind"]).items())),
             "coverage": round(coverage, 4),
@@ -455,6 +495,14 @@ def main() -> int:
         "n_labels": len(labels),
         "score_repeat": args.score_repeat,
         "selection": selection,
+        "exclusion_stages": {
+            "excluded_at_eligibility": excluded_at_eligibility,
+            "excluded_at_screening_by_model": {
+                r["model"]: r["n_excluded_at_screening"] for r in rows},
+            "note": ("Two different stages. Eligibility is a pre-model scope "
+                     "rule; screening is a model decision on eligible papers "
+                     "only. Never summed into one 'excluded' figure."),
+        },
         "models_thinking_unavoidable": sorted(
             bench[bench["thinking_unavoidable"]]["model"].tolist()),
         "cost_comparability_note": (
@@ -485,6 +533,15 @@ def main() -> int:
         print(by_kind[["model_alias", "text_kind", "n_scored", "kappa_binary",
                        "include_recall_binary", "uncertain_rate_model"]]
               .to_string(index=False))
+
+    print(f"\n[stages] excluded at eligibility: "
+          f"{excluded_at_eligibility['n_in_run']} in this run "
+          + (f"({', '.join(f'{k}={v}' for k, v in sorted(excluded_at_eligibility['by_reason_in_run'].items()))})"
+             if excluded_at_eligibility["by_reason_in_run"] else "")
+          + " -- not screened, not scored")
+    for _, r in bench.iterrows():
+        print(f"[stages] excluded at screening by {r['model_alias']}: "
+              f"{r['n_excluded_at_screening']}")
 
     forced = bench[bench["n_forced_uncertain"] > 0]
     if len(forced):

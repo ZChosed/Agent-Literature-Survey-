@@ -9,6 +9,24 @@ the raw response, the parsed output, whether that output validated, the measured
 token usage and the cost computed from it. benchmark.py then does the counting.
 No aggregate in this pipeline is ever produced by a model.
 
+Eligible rows only (v2.0.0)
+---------------------------
+Since the 2026-10-05 scope change, a paper is screened only if eligibility.py
+marked it `eligible=True` in candidates.csv. Eligibility is looked up there by
+paper_id (`--candidates`), never trusted from the input file, and a paper_id
+that candidates.csv does not know aborts the run before anything is priced.
+
+An ineligible paper gets NO model call and NO forced decision -- it is not
+written to calls.jsonl at all. It is out of scope, not uncertain: forcing it to
+`uncertain` would route it to a human desk for a decision that has already
+been made, and would make it look like a screening outcome. It is recorded in
+the run manifest under `excluded_at_eligibility`, with its reason, so
+benchmark.py can report "excluded at eligibility" and "excluded at screening"
+as two different stages.
+
+The title-only forcing below still applies, but only to ELIGIBLE rows with no
+abstract and no full-text head.
+
 What the model sees, and what it must not
 -----------------------------------------
 Title and abstract. Nothing else. Not the stratum, not the rank or seed
@@ -96,6 +114,7 @@ Usage
 -----
     python screen.py --criteria screening/criteria.md \\
                      --input screening/calibration_sample.csv \\
+                     --candidates corpus/candidates.csv \\
                      --models haiku,sonnet,opus
 
     python screen.py --criteria screening/criteria.md \\
@@ -120,12 +139,14 @@ import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
+from eligibility import parse_eligible
+
 try:
     import anthropic
 except ImportError:
     sys.exit("anthropic is required:  pip install anthropic")
 
-SCRIPT_VERSION = "1.0.0"
+SCRIPT_VERSION = "2.0.0"
 
 # --------------------------------------------------------------------------
 # Models
@@ -317,7 +338,7 @@ TEXT_KINDS = {
 }
 
 ABSTRACT_SOURCES = ("openalex", "semantic_scholar")
-FULLTEXT_SOURCES = ("fulltext_head_oa", "fulltext_head_elsevier")
+FULLTEXT_SOURCES = ("fulltext_head_oa",)
 
 
 def resolve_screening_text(row: dict) -> tuple[str, str]:
@@ -748,7 +769,39 @@ def _isolation_check(row: dict, rendered: str) -> None:
 # Run
 # --------------------------------------------------------------------------
 
-def load_papers(path: str, limit: int) -> list[dict]:
+def load_eligibility(path: str) -> dict[str, tuple[bool, str]]:
+    """paper_id -> (eligible, exclusion_reason), from candidates.csv only."""
+    if not os.path.exists(path):
+        sys.exit(f"candidates file not found: {path}\n"
+                 f"Eligibility is read from it; screen.py does not decide it.")
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if "eligible" not in (reader.fieldnames or []):
+            sys.exit(f"{path} has no eligible column -- run eligibility.py first")
+        return {r["openalex_id"]: (parse_eligible(r["eligible"]),
+                                   r.get("exclusion_reason", ""))
+                for r in reader}
+
+
+def split_eligible(rows: list[dict], elig: dict[str, tuple[bool, str]]
+                   ) -> tuple[list[dict], list[dict]]:
+    """
+    (eligible rows, ineligible rows). Every row must be known to candidates.csv:
+    an unknown paper_id is an unknown scope decision, and the run stops rather
+    than guess which side it falls on.
+    """
+    unknown = [r["paper_id"] for r in rows if r["paper_id"] not in elig]
+    if unknown:
+        sys.exit(f"{len(unknown)} paper_id(s) are not in the candidates file, "
+                 f"so their eligibility is unknown: {unknown[:10]}")
+    keep = [r for r in rows if elig[r["paper_id"]][0]]
+    drop = [r for r in rows if not elig[r["paper_id"]][0]]
+    return keep, drop
+
+
+def load_papers(path: str, limit: int, elig: dict[str, tuple[bool, str]]
+                ) -> tuple[list[dict], list[dict]]:
+    """Return (eligible papers to screen, ineligible papers recorded only)."""
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     if not rows:
@@ -756,15 +809,22 @@ def load_papers(path: str, limit: int) -> list[dict]:
     for need in ("paper_id", "title", "abstract"):
         if need not in rows[0]:
             sys.exit(f"{path} has no {need!r} column")
+    rows, ineligible = split_eligible(rows, elig)
+    if ineligible:
+        by_reason = Counter(elig[r["paper_id"]][1] for r in ineligible)
+        print(f"[input] {len(ineligible)} row(s) are INELIGIBLE ("
+              + ", ".join(f"{k}={v}" for k, v in sorted(by_reason.items()))
+              + "): out of scope, not screened, no model call, no forced "
+                "decision")
     kinds = Counter(resolve_screening_text(r)[1] for r in rows)
-    print(f"[input] {len(rows)} rows: " + ", ".join(
+    print(f"[input] {len(rows)} eligible rows: " + ", ".join(
         f"{k}={v}" for k, v in sorted(kinds.items())))
     if kinds.get("title_only"):
-        print(f"[input] {kinds['title_only']} row(s) have neither an abstract "
-              f"nor a full-text head. They are screened on TITLE ONLY and "
-              f"forced to `uncertain` -- the model is not asked to guess.")
+        print(f"[input] {kinds['title_only']} eligible row(s) have neither an "
+              f"abstract nor a full-text head. They are screened on TITLE ONLY "
+              f"and forced to `uncertain` -- the model is not asked to guess.")
     papers = rows[:limit] if limit else rows
-    return papers
+    return papers, ineligible
 
 
 def main() -> int:
@@ -772,6 +832,9 @@ def main() -> int:
         description="Screen papers on title+abstract with one or more Claude models.")
     ap.add_argument("--criteria", required=True)
     ap.add_argument("--input", required=True)
+    ap.add_argument("--candidates", default="corpus/candidates.csv",
+                    help="source of the eligible/exclusion_reason columns; "
+                         "joined on paper_id = openalex_id")
     ap.add_argument("--models", default="haiku,sonnet,opus")
     ap.add_argument("--model-id", action="append", default=[],
                     metavar="ALIAS=ID", help="override a model ID")
@@ -853,7 +916,10 @@ def main() -> int:
                           "evidence about the parser, not about the model"))
     valid_ids = set(ids) if enforce_ids else None
 
-    papers = load_papers(args.input, args.limit)
+    elig = load_eligibility(args.candidates)
+    papers, ineligible = load_papers(args.input, args.limit, elig)
+    if not papers:
+        sys.exit("no eligible papers to screen")
     run_id = args.run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_dir = os.path.join(args.runs_dir, run_id)
     os.makedirs(run_dir, exist_ok=True)
@@ -867,7 +933,8 @@ def main() -> int:
     print(f"[run] run_id      : {run_id}")
     print(f"[run] models      : " + ", ".join(
         f"{a}={MODEL_IDS[a]}" for a in aliases))
-    print(f"[run] papers      : {len(papers)}  x{args.repeat} repeat(s)")
+    print(f"[run] papers      : {len(papers)} eligible  x{args.repeat} "
+          f"repeat(s); {len(ineligible)} excluded at eligibility")
     print(f"[run] criteria    : {args.criteria}  sha256={criteria_sha[:16]}...")
     print(f"[run] system sha  : {system_sha[:16]}...")
     print(f"[run] criterion IDs: {ids if ids else '(none found)'}")
@@ -921,6 +988,16 @@ def main() -> int:
             m: {**MODEL_REQUEST.get(m, {}), "sent": model_kwargs(m)}
             for m in model_ids},
         "papers": len(papers),
+        "candidates_path": args.candidates,
+        "excluded_at_eligibility": {
+            "n": len(ineligible),
+            "by_reason": dict(Counter(elig[r["paper_id"]][1] for r in ineligible)),
+            "paper_ids": {r["paper_id"]: elig[r["paper_id"]][1]
+                          for r in ineligible},
+            "basis": ("eligible=False in candidates.csv (eligibility.py). No "
+                      "model call, no forced decision, no calls.jsonl row: "
+                      "out of scope, not uncertain."),
+        },
         "repeat": args.repeat,
         "api_mode": "sync" if args.sync else "batch",
         "thinking": (
@@ -1023,8 +1100,8 @@ def main() -> int:
 
     def force_uncertain(alias, mid, paper, rep):
         """
-        A row with neither an abstract nor a full-text head is forced to
-        `uncertain` without a model call.
+        An ELIGIBLE row with neither an abstract nor a full-text head is forced
+        to `uncertain` without a model call. Ineligible rows never get here.
 
         `uncertain` routes to a human, and that is already the correct and only
         available outcome: there is no evidence for the criteria to be applied

@@ -491,3 +491,5 @@
 {"openalex_id": "W7163644392", "doi": "10.2139/ssrn.6885432", "outcome": "forbidden", "source_url": "", "http_status": 403, "chars_extracted": 0, "head": "", "ts": "2026-09-28T21:29:50.528374+00:00"}
 {"openalex_id": "W7164050488", "doi": "10.2139/ssrn.6907642", "outcome": "forbidden", "source_url": "", "http_status": 403, "chars_extracted": 0, "head": "", "ts": "2026-09-28T21:29:54.507036+00:00"}
 {"openalex_id": "W7203751125", "doi": "10.2139/ssrn.7317622", "outcome": "forbidden", "source_url": "", "http_status": 403, "chars_extracted": 0, "head": "", "ts": "2026-09-28T21:30:00.540085+00:00"}
+{"openalex_id": "W4205409691", "doi": "10.1007/s00170-021-08409-0", "outcome": "http_error", "source_url": "", "http_status": 500, "chars_extracted": 0, "head": "", "ts": "2026-10-05T23:41:14.969457+00:00"}
+{"openalex_id": "W2801598009", "doi": "10.1007/s00170-018-2001-2", "outcome": "network_error:ConnectionError", "source_url": "", "http_status": null, "chars_extracted": 0, "head": "", "ts": "2026-10-05T23:41:17.973459+00:00"}

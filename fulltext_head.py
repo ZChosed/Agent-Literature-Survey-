@@ -4,11 +4,18 @@ fulltext_head.py -- recover a screenable text head for rows with no abstract.
 
 Why
 ---
-After the Semantic Scholar backfill, 431 of 1,941 candidates (22.2%) still have
+After the Semantic Scholar backfill, 431 of 1,941 candidates (22.2%) still had
 no abstract. Those rows cannot be screened on the stated inputs at all: the
-abstract IS the evidence base. Left alone they are forced to `uncertain` and
-land on a human desk, so the size of that pile is the size of the manual
-screening burden.
+abstract IS the evidence base. Left alone an ELIGIBLE one is forced to
+`uncertain` and lands on a human desk, so the size of that pile is the size of
+the manual screening burden.
+
+Scope: eligible rows only (v2.0.0)
+----------------------------------
+Since the 2026-10-05 scope change, only rows eligibility.py marked
+`eligible=True` are worked on. An ineligible row is out of scope, so recovering
+text for it would buy nothing; its existing columns are left exactly as they
+were.
 
 This script recovers the FIRST 5,000 CHARACTERS of the full text where it can
 be obtained legitimately, giving those rows something to screen on. It is not
@@ -18,17 +25,15 @@ Sources, in order, stopping at the first success
 ------------------------------------------------
 1. Open-access PDF: `best_oa_location.pdf_url` as OpenAlex already recorded it
    in candidates.csv, then Unpaywall by DOI.
-2. Elsevier Article Retrieval API (full text) for 10.1016 DOIs, with an
-   institutional key in ELSEVIER_API_KEY. Entitlement requires the U-M network
-   or VPN. With no key the source is skipped and the skip is logged, so the
-   record distinguishes "not entitled" from "not tried".
-3. Nothing else. No publisher HTML scraping, no shadow libraries. A row no
-   legitimate source covers keeps abstract_source=none and is screened on title
-   alone, forced to `uncertain`.
+2. Nothing else. No publisher HTML scraping, no shadow libraries, and -- since
+   v2.0.0 -- no Elsevier Article Retrieval API: 10.1016 DOIs are out of scope
+   under the access rule, so that path and its ELSEVIER_API_KEY handling are
+   gone. An eligible row no OA source covers keeps abstract_source=none and is
+   screened on title alone, forced to `uncertain`.
 
 Extraction is deterministic
 ---------------------------
-PyMuPDF for PDFs, XML text nodes for Elsevier. Truncation is to the first 5,000
+PyMuPDF for PDFs. Truncation is to the first 5,000
 CHARACTERS -- a character count, not a token estimate, and no model is involved
 at any point. Roughly 1,200 tokens.
 
@@ -48,7 +53,7 @@ column is NOT touched: an abstract and a truncated full-text head are different
 kinds of evidence, and conflating them would hide that difference from the
 screening prompt and from the calibration analysis.
 
-`abstract_source` becomes `fulltext_head_oa` or `fulltext_head_elsevier`.
+`abstract_source` becomes `fulltext_head_oa`.
 
 Downloaded files are cached under corpus/fulltext/ (gitignored -- the PDFs are
 not ours to redistribute). Every attempt is appended to a JSONL log with the
@@ -57,7 +62,6 @@ DOI, source, HTTP status and characters extracted, as with the S2 backfill.
 Usage
 -----
     python fulltext_head.py --mailto zchosed@umich.edu
-    ELSEVIER_API_KEY=... python fulltext_head.py --mailto zchosed@umich.edu
     python fulltext_head.py --refresh-errors     # retry transient failures only
 """
 
@@ -70,7 +74,6 @@ import os
 import re
 import sys
 import time
-import xml.etree.ElementTree as ET
 from collections import Counter
 from datetime import datetime, timezone
 
@@ -79,16 +82,16 @@ try:
 except ImportError:
     sys.exit("requests is required:  pip install requests")
 
+from eligibility import parse_eligible
+
 try:
     import pymupdf as fitz
 except ImportError:
     fitz = None
 
-SCRIPT_VERSION = "1.0.0"
+SCRIPT_VERSION = "2.0.0"
 
 UNPAYWALL = "https://api.unpaywall.org/v2"
-ELSEVIER = "https://api.elsevier.com/content/article/doi"
-ELSEVIER_PREFIX = "10.1016"
 
 HEAD_CHARS = 5000
 MIN_USEFUL_CHARS = 200     # below this the extraction failed in substance
@@ -96,21 +99,18 @@ MIN_USEFUL_CHARS = 200     # below this the extraction failed in substance
 # Outcome codes. `ok_*` are successes; the rest all leave abstract_source=none
 # but are kept apart so a rerun can target only what a rerun can fix.
 OK_OA = "ok_oa"
-OK_ELSEVIER = "ok_elsevier"
-NO_SOURCE = "no_source"             # no OA pdf, no Unpaywall hit, not Elsevier
+NO_SOURCE = "no_source"             # no OA pdf, no Unpaywall hit
 NO_DOI = "no_doi"
 NOT_PDF = "not_pdf"                 # URL returned HTML/landing page, not a PDF
 EXTRACT_EMPTY = "extract_empty"     # PDF parsed but yielded almost no text
-NO_ELSEVIER_KEY = "no_elsevier_key"
-NOT_ENTITLED = "not_entitled"       # Elsevier 401/403 -- off-network or no rights
 FORBIDDEN = "forbidden"             # 403 from an OA host: paywall or bot block
 HTTP_ERROR = "http_error"           # other 4xx/5xx, plausibly transient
 NETWORK_ERROR = "network_error"
 
 TRANSIENT = {HTTP_ERROR, NETWORK_ERROR}
-SUCCESSES = {OK_OA, OK_ELSEVIER}
+SUCCESSES = {OK_OA}
 
-SOURCE_OF_OUTCOME = {OK_OA: "fulltext_head_oa", OK_ELSEVIER: "fulltext_head_elsevier"}
+SOURCE_OF_OUTCOME = {OK_OA: "fulltext_head_oa"}
 
 csv.field_size_limit(10_000_000)
 
@@ -192,21 +192,6 @@ def download_pdf(fetcher: Fetcher, url: str, path: str) -> tuple[str, int | None
     return "", r.status_code
 
 
-def fetch_elsevier(fetcher: Fetcher, doi: str, api_key: str,
-                   path: str) -> tuple[str, int | None]:
-    try:
-        r = fetcher.get(f"{ELSEVIER}/{doi}",
-                        headers={"X-ELS-APIKey": api_key, "Accept": "text/xml"})
-    except requests.RequestException as exc:
-        return f"{NETWORK_ERROR}:{type(exc).__name__}", None
-    if r.status_code in (401, 403):
-        return NOT_ENTITLED, r.status_code
-    if r.status_code != 200:
-        return HTTP_ERROR, r.status_code
-    with open(path, "wb") as f:
-        f.write(r.content)
-    return "", r.status_code
-
 
 # ---------------------------------------------------------------------------
 # Extraction
@@ -281,26 +266,6 @@ def extract_pdf_head(path: str, head_chars: int,
     return text[:head_chars].strip()
 
 
-def extract_elsevier_head(path: str, head_chars: int) -> str:
-    """Plain text from the Elsevier XML: every text node, in document order."""
-    with open(path, "rb") as f:
-        raw = f.read()
-    try:
-        root = ET.fromstring(raw)
-    except ET.ParseError:
-        return ""
-    parts: list[str] = []
-    for el in root.iter():
-        tag = el.tag.rsplit("}", 1)[-1].lower()
-        if tag in ("affiliation", "author-group", "correspondence"):
-            continue
-        for chunk in (el.text, el.tail):
-            if chunk and chunk.strip():
-                parts.append(chunk.strip())
-    text = " ".join(parts)
-    text = re.sub(r"\s{2,}", " ", text)
-    return text[:head_chars].strip()
-
 
 # ---------------------------------------------------------------------------
 
@@ -347,7 +312,6 @@ def main() -> int:
     ap.add_argument("--mailto", required=True, help="for the Unpaywall polite pool")
     ap.add_argument("--rate", type=float, default=1.0)
     ap.add_argument("--head-chars", type=int, default=HEAD_CHARS)
-    ap.add_argument("--elsevier-key", default=os.environ.get("ELSEVIER_API_KEY"))
     ap.add_argument("--refresh-errors", action="store_true",
                     help="retry rows whose last outcome was transient; leave "
                          "confirmed misses alone")
@@ -368,26 +332,26 @@ def main() -> int:
     if "abstract_source" not in fieldnames:
         sys.exit(f"{args.candidates} has no abstract_source column -- run "
                  f"abstract_backfill.py first")
+    if "eligible" not in fieldnames:
+        sys.exit(f"{args.candidates} has no eligible column -- run "
+                 f"eligibility.py first")
 
     for r in rows:
         r.setdefault("fulltext_head", "")
 
-    targets = [r for r in rows
+    eligible = [r for r in rows if parse_eligible(r.get("eligible", ""))]
+    # Eligible rows lacking an abstract. Rows already carrying a head are
+    # re-derived from the cache below rather than re-fetched, so a rerun is
+    # free and idempotent. Ineligible rows are not targets and are not touched.
+    targets = [r for r in eligible
                if r.get("abstract_source") in ("none", "")
                or r.get("abstract_source", "").startswith("fulltext_head")]
-    # Rows already carrying a head are re-derived from the cache below rather
-    # than re-fetched, so a rerun is free and idempotent.
-    still_none = [r for r in rows if r.get("abstract_source") in ("none", "")]
+    still_none = [r for r in eligible if r.get("abstract_source") in ("none", "")]
 
     before_none = len(still_none)
     if verbose:
-        print(f"[fulltext] {len(rows)} candidates, {before_none} with no "
-              f"abstract to work on")
-        if not args.elsevier_key:
-            print(f"[fulltext] ELSEVIER_API_KEY not set -- the Elsevier source "
-                  f"is SKIPPED for all "
-                  f"{sum(1 for r in still_none if (r.get('doi') or '').startswith(ELSEVIER_PREFIX))}"
-                  f" x 10.1016 DOIs. Entitlement needs the U-M network or VPN.")
+        print(f"[fulltext] {len(rows)} candidates, {len(eligible)} eligible, "
+              f"{before_none} eligible with no abstract to work on")
 
     cache = load_cache(args.log)
     fetcher = Fetcher(args.mailto, args.rate)
@@ -449,27 +413,6 @@ def main() -> int:
                         break
                     outcome = EXTRACT_EMPTY
 
-                # --- 2. Elsevier ----------------------------------------
-                if outcome not in SUCCESSES and doi.startswith(ELSEVIER_PREFIX):
-                    if not args.elsevier_key:
-                        outcome = NO_ELSEVIER_KEY
-                    else:
-                        xml_path = os.path.join(args.cache_dir,
-                                                safe_name(row) + ".xml")
-                        if os.path.exists(xml_path):
-                            err, status = "", 200
-                        else:
-                            err, status = fetch_elsevier(
-                                fetcher, doi, args.elsevier_key, xml_path)
-                        if err:
-                            outcome = err
-                        else:
-                            head = extract_elsevier_head(xml_path, args.head_chars)
-                            if len(head) >= MIN_USEFUL_CHARS:
-                                outcome, url_used = OK_ELSEVIER, f"elsevier:{doi}"
-                            else:
-                                outcome = EXTRACT_EMPTY
-
                 if not outcome:
                     outcome = NO_DOI if not doi else NO_SOURCE
 
@@ -490,7 +433,7 @@ def main() -> int:
                 row["abstract_source"] = SOURCE_OF_OUTCOME[outcome]
 
             if verbose and i % 25 == 0:
-                got = outcomes[OK_OA] + outcomes[OK_ELSEVIER]
+                got = outcomes[OK_OA]
                 print(f"  [ft] {i}/{len(targets)}  live={live} cached={from_cache} "
                       f"recovered={got}", flush=True)
     finally:
@@ -498,7 +441,7 @@ def main() -> int:
 
     # --- source is derived from the append-only log, as in the S2 backfill ---
     by_outcome = {wid: rec["outcome"] for wid, rec in cache.items()}
-    for r in rows:
+    for r in targets:
         oc = by_outcome.get(r.get("openalex_id"))
         if oc in SUCCESSES and (r.get("fulltext_head") or "").strip():
             r["abstract_source"] = SOURCE_OF_OUTCOME[oc]
@@ -516,11 +459,10 @@ def main() -> int:
         w.writerows(rows)
     os.replace(tmp, args.candidates)
 
-    by_source = Counter(r["abstract_source"] for r in rows)
+    by_source = Counter(r["abstract_source"] for r in eligible)
     recoverable = sum(n for o, n in outcomes.items()
                       if o.split(":")[0] in TRANSIENT)
     n_oa = by_source.get("fulltext_head_oa", 0)
-    n_els = by_source.get("fulltext_head_elsevier", 0)
 
     block = {
         "script": "fulltext_head.py",
@@ -531,8 +473,7 @@ def main() -> int:
         "head_chars": args.head_chars,
         "truncation": "first N CHARACTERS of the extracted text; a character "
                       "count, not a token estimate. No model is involved.",
-        "extractors": {"pdf": "PyMuPDF (fitz) get_text('text')",
-                       "elsevier_xml": "xml.etree text nodes in document order"},
+        "extractors": {"pdf": "PyMuPDF (fitz) get_text('text')"},
         "cleaning": ("lines repeating on >=3 pages dropped as running "
                      "headers/footers; bare page numbers dropped; affiliation "
                      "lines dropped only in the first 40 lines and only when a "
@@ -542,27 +483,29 @@ def main() -> int:
         "sources_tried_in_order": [
             "OpenAlex best_oa_location.pdf_url (from candidates.csv)",
             "Unpaywall by DOI",
-            f"Elsevier Article Retrieval API for {ELSEVIER_PREFIX} DOIs",
         ],
+        "elsevier_path": "removed in v2.0.0 with the 2026-10-05 access rule; "
+                         "10.1016 DOIs are ineligible and never targeted",
         "publisher_html_scraped": False,
         "shadow_libraries_used": False,
-        "elsevier_key_present": bool(args.elsevier_key),
-        "elsevier_dois_in_scope": sum(
-            1 for r in rows if (r.get("doi") or "").startswith(ELSEVIER_PREFIX)
-            and r["abstract_source"] != "openalex"),
+        "scope": "eligible rows (eligibility.py) lacking an abstract; "
+                 "ineligible rows are not targeted and not modified",
         "api_requests": fetcher.requests_made,
         "responses_replayed_from_cache": from_cache,
         "candidates_total": len(rows),
+        "eligible_total": len(eligible),
+        "targets": len(targets),
         "before": {"no_text": before_none,
-                   "pct": round(100 * before_none / len(rows), 1),
-                   "basis": "rows with abstract_source=none after the S2 backfill"},
+                   "pct_of_eligible": round(100 * before_none / max(len(eligible), 1), 1),
+                   "basis": "eligible rows with abstract_source=none at the "
+                            "start of this run"},
         "after": {"no_text": by_source.get("none", 0),
-                  "pct": round(100 * by_source.get("none", 0) / len(rows), 1),
-                  "basis": "rows still with no abstract and no full-text head"},
-        "recovered_by_source": {"fulltext_head_oa": n_oa,
-                                "fulltext_head_elsevier": n_els,
-                                "total": n_oa + n_els},
-        "abstract_source_counts": dict(by_source),
+                  "pct_of_eligible": round(
+                      100 * by_source.get("none", 0) / max(len(eligible), 1), 1),
+                  "basis": "eligible rows still with no abstract and no "
+                           "full-text head"},
+        "recovered_by_source": {"fulltext_head_oa": n_oa, "total": n_oa},
+        "abstract_source_counts_eligible": dict(by_source),
         "outcome_counts": dict(outcomes),
         "unrecovered_transient_failures": recoverable,
         "unrecoverable_forbidden": outcomes.get(FORBIDDEN, 0),
@@ -572,26 +515,23 @@ def main() -> int:
             "column so the screening prompt can label it as such. Because it is "
             "a different input distribution, these rows are calibrated on their "
             "own 20-paper sample rather than mixed into the 50-paper abstract "
-            "sample. Rows still at abstract_source=none are screened on title "
-            "alone and forced to `uncertain`."),
+            "sample. Eligible rows still at abstract_source=none are screened "
+            "on title alone and forced to `uncertain`; ineligible rows are not "
+            "screened at all."),
     }
     update_provenance(args.provenance, block)
 
     if verbose:
         print()
         print(f"[done] {fetcher.requests_made} live requests, {from_cache} replayed")
-        print(f"[done] recovered {n_oa + n_els} heads "
-              f"(oa={n_oa}, elsevier={n_els})")
-        print(f"[done] abstract_source: " + ", ".join(
+        print(f"[done] eligible rows carrying an OA head: {n_oa}")
+        print(f"[done] abstract_source (eligible rows): " + ", ".join(
             f"{k}={v}" for k, v in sorted(by_source.items())))
         print(f"[done] outcomes: " + ", ".join(
             f"{k}={v}" for k, v in sorted(outcomes.items())))
-        print(f"[done] no text: {before_none} ({block['before']['pct']}%) -> "
-              f"{by_source.get('none', 0)} ({block['after']['pct']}%)")
-        if not args.elsevier_key:
-            print(f"  *** Elsevier source skipped (no ELSEVIER_API_KEY). "
-                  f"Rerun on the U-M network with the key to try "
-                  f"{outcomes.get(NO_ELSEVIER_KEY, 0)} more.")
+        print(f"[done] eligible with no text: {before_none} "
+              f"({block['before']['pct_of_eligible']}%) -> "
+              f"{by_source.get('none', 0)} ({block['after']['pct_of_eligible']}%)")
         if outcomes.get(FORBIDDEN):
             print(f"  *** {outcomes[FORBIDDEN]} host(s) returned 403 -- paywalled "
                   f"or bot-blocked. Not recoverable by rerunning.")

@@ -10,8 +10,14 @@ meet -- including the malformed ones, which are the point.
 Covers, in the order the pipeline runs:
 
   * draw_calibration_sample.py -- the fixed RNG seed reproduces the draw, both
-    strata hold exactly 25, no abstract_source=none row can be drawn, and the
-    shuffle does not group the strata
+    strata hold exactly 25, only eligible rows with abstract text can be drawn
+    (no ineligible row, no abstract_source=none row, no full-text-head row),
+    and the shuffle does not group the strata
+  * screen.py's eligibility gate -- an ineligible row never reaches any API
+    surface (token counting, batch, sync), gets no forced decision and no
+    calls.jsonl row, and is recorded in the manifest instead
+  * benchmark.py's two exclusion stages -- eligibility and screening are
+    counted apart and an ineligible labelled paper is not scored
   * labels_TODO.csv -- carries no stratum, no rank, no seed linkage: the
     blinding is asserted against a list of banned columns AND against the
     stratum values themselves
@@ -87,25 +93,32 @@ CRITERIA_B = CRITERIA_A.replace("multi-agent architecture",
                                 "multi-agent control architecture")
 
 
-def make_candidates(path: str, n: int = 300, missing_every: int = 5) -> None:
+def make_candidates(path: str, n: int = 300, missing_every: int = 5,
+                    ineligible_every: int = 7) -> None:
     """
-    A ranked candidates.csv. Every `missing_every`-th row has no abstract, so
-    the eligible set is not the full set and the strata cannot be read off the
-    raw row numbers.
+    A ranked candidates.csv. Every `missing_every`-th row has no abstract --
+    alternately `none` and a full-text-head row, which is not `none` but has
+    no abstract either -- and every `ineligible_every`-th row is a 10.1016 DOI
+    marked ineligible. So the pool is not the full set and the strata cannot
+    be read off the raw row numbers.
     """
     cols = ["openalex_id", "doi", "title", "year", "venue", "authors", "type",
             "cited_by_count", "citations_per_year", "n_seed_links",
             "seed_weight", "seed_refs", "seed_roles",
             "linked_to_framework_core", "direction", "oa_pdf_url",
-            "abstract", "abstract_source"]
+            "abstract", "abstract_source", "fulltext_head",
+            "eligible", "exclusion_reason", "eligibility_rule"]
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
         for i in range(1, n + 1):
             has = (i % missing_every) != 0
+            inel = (i % ineligible_every) == 0
+            src = ("openalex" if has else
+                   "fulltext_head_oa" if i % (2 * missing_every) == 0 else "none")
             w.writerow({
                 "openalex_id": f"W{100000 + i}",
-                "doi": f"10.0000/test.{i}",
+                "doi": f"10.1016/test.{i}" if inel else f"10.0000/test.{i}",
                 "title": f"Paper number {i} on agents and manufacturing",
                 "year": 2015 + (i % 11),
                 "venue": f"Journal {i % 7}",
@@ -122,7 +135,12 @@ def make_candidates(path: str, n: int = 300, missing_every: int = 5) -> None:
                 "oa_pdf_url": "",
                 "abstract": (f"This abstract for paper {i} describes an agent "
                              f"architecture and its evaluation.") if has else "",
-                "abstract_source": "openalex" if has else "none",
+                "abstract_source": src,
+                "fulltext_head": (f"Introduction to paper {i}. " * 5
+                                  if src == "fulltext_head_oa" else ""),
+                "eligible": "False" if inel else "True",
+                "exclusion_reason": "elsevier" if inel else "none",
+                "eligibility_rule": "doi_prefix_10.1016" if inel else "openalex_is_oa",
             })
 
 
@@ -220,7 +238,18 @@ type screen.py catches, and the two params modules it imports for batching.
 Batch creation deliberately raises -- no test here should ever reach it, and a
 stub that silently "succeeded" would hide a test that did.
 """
+import json as _json
+import os as _os
+
 TOKEN_COUNT = __TOKEN_COUNT__
+
+
+def _record(surface, kw):
+    """Append every request this stub receives to $STUB_RECORD, if set."""
+    path = _os.environ.get("STUB_RECORD")
+    if path:
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(_json.dumps({"surface": surface, "kw": kw}, default=str) + "\\n")
 
 
 class APIError(Exception):
@@ -234,6 +263,7 @@ class _Count:
 
 class _Batches:
     def create(self, **kw):
+        _record("batches.create", kw)
         raise APIError("stub anthropic: batch submission attempted")
 
     def retrieve(self, *a, **kw):
@@ -251,6 +281,7 @@ class _Messages:
         # The real token-counting endpoint applies the same forced-tool-choice
         # check as Messages, so a harness that still sent tool_choice type
         # "tool" would fail here on the 5.5 models -- before spending anything.
+        _record("count_tokens", kw)
         tc = kw.get("tool_choice") or {}
         if tc.get("type") in ("tool", "any"):
             raise APIError(
@@ -259,6 +290,7 @@ class _Messages:
         return _Count(TOKEN_COUNT)
 
     def create(self, **kw):
+        _record("messages.create", kw)
         raise APIError("stub anthropic: sync create attempted")
 
 
@@ -350,9 +382,17 @@ def test_sample_draw(tmpdir: str):
     check(strata.get("bottom_two_thirds") == 25,
           f"25 from the bottom two-thirds (got {strata.get('bottom_two_thirds')})")
 
-    # The whole point of filtering before cutting: nothing unscreenable is drawn.
-    check(all(r["abstract_source"] != "none" for r in sample),
-          "no abstract_source=none row was drawn")
+    # The whole point of filtering before cutting: nothing out of scope and
+    # nothing unscreenable is drawn.
+    cand = {r["openalex_id"]: r for r in csv.DictReader(
+        open(os.path.join(tmpdir, "candidates.csv"), encoding="utf-8"))}
+    check(all(cand[r["paper_id"]]["eligible"] == "True" for r in sample),
+          "no ineligible row was drawn")
+    check(not any(r["doi"].startswith("10.1016") for r in sample),
+          "in particular no 10.1016 row")
+    check(all(r["abstract_source"] in ("openalex", "semantic_scholar")
+              for r in sample),
+          "no abstract_source=none row and no full-text-head row was drawn")
     check(all(r["abstract"].strip() for r in sample),
           "every drawn row actually carries abstract text")
 
@@ -364,6 +404,23 @@ def test_sample_draw(tmpdir: str):
     check(block["drawn_paper_ids"] == block2["drawn_paper_ids"],
           "and reproduces the per-stratum membership")
 
+    # The redraw is reproducible byte for byte: two independent runs into
+    # separate directories write identical sample AND blind sheet files.
+    _, _, _, out_a = run_draw(tmpdir, rng_seed=20260928)
+    out_b = os.path.join(tmpdir, "redraw_b")
+    rc = subprocess.run(
+        [sys.executable, "draw_calibration_sample.py",
+         "--candidates", os.path.join(tmpdir, "candidates.csv"),
+         "--out-dir", out_b, "--provenance", os.path.join(tmpdir, "prov_b.json"),
+         "--rng-seed", "20260928", "--n-per-stratum", "25", "--quiet"],
+        capture_output=True, text=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    for name in ("calibration_sample.csv", "labels_TODO.csv"):
+        a = open(os.path.join(out_a, name), "rb").read()
+        b = open(os.path.join(out_b, name), "rb").read()
+        check(rc.returncode == 0 and a == b,
+              f"redraw is byte-identical across runs: {name}")
+
     # A different seed must actually move the draw, or "fixed seed" means nothing.
     sample3, _, _, _ = run_draw(tmpdir, rng_seed=1)
     check(set(r["paper_id"] for r in sample3) != set(ids1),
@@ -374,9 +431,20 @@ def test_sample_draw(tmpdir: str):
     check(block["strata"]["top_third"]["drawn"] == 25
           and block["strata"]["bottom_two_thirds"]["drawn"] == 25,
           "provenance records the per-stratum draw counts")
-    check(block["excluded_no_abstract"] == 60,
-          f"provenance records the 60 no-abstract exclusions "
+    # Fixture: 300 rows; every 7th ineligible (42); every 5th lacks an
+    # abstract (60), of which every 35th is also ineligible (8), so 52
+    # eligible rows lack one.
+    check(block["excluded_ineligible"] == 42,
+          f"provenance records the 42 ineligible exclusions "
+          f"(got {block['excluded_ineligible']})")
+    check(block["excluded_no_abstract"] == 52,
+          f"and the 52 eligible-but-no-abstract exclusions, counted apart "
           f"(got {block['excluded_no_abstract']})")
+    check(block["eligible_with_abstract"] == 300 - 42 - 52,
+          f"pool = 300 - 42 - 52 = 206 (got {block['eligible_with_abstract']})")
+    g = block["pool_exclusion_by_full_list_third"]
+    check(g["top_third"]["ineligible"] + g["bottom_two_thirds"]["ineligible"] == 42,
+          "the per-third exclusion split adds back up to the total")
 
     # Shuffled: the strata must be interleaved, not blocked. With 25/25 the
     # probability of the first 25 being one stratum by chance is ~1/1e14.
@@ -397,7 +465,8 @@ def make_fulltext_candidates(path: str, n: int = 150) -> None:
             "cited_by_count", "citations_per_year", "n_seed_links",
             "seed_weight", "seed_refs", "seed_roles",
             "linked_to_framework_core", "direction", "oa_pdf_url",
-            "abstract", "abstract_source", "fulltext_head"]
+            "abstract", "abstract_source", "fulltext_head",
+            "eligible", "exclusion_reason", "eligibility_rule"]
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
@@ -407,7 +476,7 @@ def make_fulltext_candidates(path: str, n: int = 150) -> None:
             elif i % 3 == 1:
                 src, abstract, head = "openalex", f"Abstract {i}.", ""
             else:
-                src = "fulltext_head_oa" if i % 2 else "fulltext_head_elsevier"
+                src = "fulltext_head_oa"
                 abstract, head = "", f"Introduction for paper {i}. " * 5
             w.writerow({
                 "openalex_id": f"W{200000 + i}", "doi": f"10.0000/ft.{i}",
@@ -419,6 +488,8 @@ def make_fulltext_candidates(path: str, n: int = 150) -> None:
                 "linked_to_framework_core": 0, "direction": "backward",
                 "oa_pdf_url": "", "abstract": abstract,
                 "abstract_source": src, "fulltext_head": head,
+                "eligible": "True", "exclusion_reason": "none",
+                "eligibility_rule": "openalex_is_oa",
             })
 
 
@@ -448,8 +519,7 @@ def test_fulltext_sample(tmpdir: str):
 
     sample, labels, block = run()
     check(len(sample) == 20, f"20 papers drawn (got {len(sample)})")
-    check(all(r["abstract_source"] in ("fulltext_head_oa", "fulltext_head_elsevier")
-              for r in sample),
+    check(all(r["abstract_source"] == "fulltext_head_oa" for r in sample),
           "every drawn row is a full-text-head row")
     check(all(r["fulltext_head"].strip() for r in sample),
           "and every one actually carries head text")
@@ -700,9 +770,6 @@ def test_text_kind_labelling():
     text, kind = sc.resolve_screening_text(ft_row)
     check(kind == "fulltext_head" and text.startswith("Introduction"),
           f"a fulltext_head_oa row screens on its head (got {kind})")
-    check(sc.resolve_screening_text(
-        dict(ft_row, abstract_source="fulltext_head_elsevier"))[1] == "fulltext_head",
-        "and so does an elsevier one")
 
     none_row = {"paper_id": "W3", "title": "T", "abstract": "",
                 "fulltext_head": "", "abstract_source": "none"}
@@ -742,8 +809,24 @@ def test_text_kind_labelling():
           "announcing a head that is not there")
 
 
+def _write_screen_candidates(path: str, eligible_ids, ineligible=None) -> None:
+    """Minimal candidates.csv for screen.py's eligibility join."""
+    ineligible = ineligible or {}
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["openalex_id", "eligible",
+                                          "exclusion_reason"])
+        w.writeheader()
+        for pid in eligible_ids:
+            w.writerow({"openalex_id": pid, "eligible": "True",
+                        "exclusion_reason": "none"})
+        for pid, reason in ineligible.items():
+            w.writerow({"openalex_id": pid, "eligible": "False",
+                        "exclusion_reason": reason})
+
+
 def test_title_only_forced_uncertain(tmpdir: str):
-    print("\n[force] title-only papers are forced to uncertain with no model call")
+    print("\n[force] ELIGIBLE title-only papers are forced to uncertain with no "
+          "model call")
     stub = _stub_anthropic(tmpdir, token_count=1500)
     crit = os.path.join(tmpdir, "criteria_force.md")
     with open(crit, "w", encoding="utf-8") as f:
@@ -754,16 +837,20 @@ def test_title_only_forced_uncertain(tmpdir: str):
         w = csv.DictWriter(f, fieldnames=["paper_id", "title", "abstract",
                                           "fulltext_head", "abstract_source"])
         w.writeheader()
-        for i in range(3):
+        for i in range(4):
             w.writerow({"paper_id": f"W{i}", "title": f"Paper {i}",
                         "abstract": "", "fulltext_head": "",
                         "abstract_source": "none"})
+    # W3 is title-only too, but ineligible: out of scope, so NOT forced.
+    cand = os.path.join(tmpdir, "force_candidates.csv")
+    _write_screen_candidates(cand, ["W0", "W1", "W2"], {"W3": "no_oa"})
 
     runs = os.path.join(tmpdir, "runs_force")
     env = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub",
                PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
     proc = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+         "--candidates", cand,
          "--models", "haiku", "--runs-dir", runs, "--run-id", "forcetest",
          "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env,
@@ -772,7 +859,10 @@ def test_title_only_forced_uncertain(tmpdir: str):
     calls = os.path.join(runs, "forcetest", "calls.jsonl")
     check(os.path.exists(calls), f"a call log was written\n{proc.stdout[-400:]}")
     recs = [json.loads(l) for l in open(calls, encoding="utf-8") if l.strip()]
-    check(len(recs) == 3, f"one row per title-only paper (got {len(recs)})")
+    check(len(recs) == 3, f"one row per ELIGIBLE title-only paper (got {len(recs)})")
+    check("W3" not in {r["paper_id"] for r in recs},
+          "the ineligible title-only paper gets no forced decision -- out of "
+          "scope, not uncertain")
     check(all(r["parsed"]["decision"] == "uncertain" for r in recs),
           "every one is uncertain")
     check(all(r["api_mode"] == "forced_no_model_call" for r in recs),
@@ -812,6 +902,96 @@ def test_isolation():
         check(False, "a leaked human label must raise")
     except AssertionError as exc:
         check("human_decision" in str(exc), "a leaked human label raises")
+
+
+def test_ineligible_never_reach_api(tmpdir: str):
+    print("\n[eligibility] ineligible rows never reach the API")
+    stub = _stub_anthropic(tmpdir, token_count=1500)
+    crit = os.path.join(tmpdir, "criteria_elig.md")
+    with open(crit, "w", encoding="utf-8") as f:
+        f.write(CRITERIA_A)
+
+    # Five eligible, five ineligible (both reasons), every one with a real
+    # abstract -- so if the gate failed, they WOULD be sent. Each carries a
+    # unique marker string to search the recorded requests for.
+    inp = os.path.join(tmpdir, "elig_input.csv")
+    inel = {"W5": "elsevier", "W6": "elsevier", "W7": "no_oa", "W8": "no_oa",
+            "W9": "elsevier"}
+    with open(inp, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["paper_id", "title", "abstract",
+                                          "abstract_source"])
+        w.writeheader()
+        for i in range(10):
+            tag = "OUTOFSCOPE" if f"W{i}" in inel else "INSCOPE"
+            w.writerow({"paper_id": f"W{i}",
+                        "title": f"{tag}-MARKER-{i} agent architecture",
+                        "abstract": f"{tag}-ABSTRACT-{i} multi-agent system.",
+                        "abstract_source": "openalex"})
+    cand = os.path.join(tmpdir, "elig_candidates.csv")
+    _write_screen_candidates(cand, [f"W{i}" for i in range(5)], inel)
+
+    runs = os.path.join(tmpdir, "runs_elig")
+    for mode in ("batch", "sync"):
+        record = os.path.join(tmpdir, f"stub_record_{mode}.jsonl")
+        env = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub",
+                   STUB_RECORD=record,
+                   PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
+        run_id = f"elig_{mode}"
+        proc = subprocess.run(
+            [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+             "--candidates", cand, "--models", "haiku", "--runs-dir", runs,
+             "--run-id", run_id, "--max-usd", "5.00", "--yes"]
+            + (["--sync"] if mode == "sync" else []),
+            capture_output=True, text=True, env=env,
+            cwd=os.path.dirname(os.path.abspath(__file__)))
+
+        sent = open(record, encoding="utf-8").read() if os.path.exists(record) else ""
+        surfaces = {json.loads(l)["surface"] for l in sent.splitlines() if l}
+        expect = {"count_tokens", "batches.create" if mode == "batch"
+                  else "messages.create"}
+        check(expect <= surfaces,
+              f"[{mode}] the stub saw the request surfaces it should "
+              f"({sorted(surfaces)}) -- so an absence below means something\n"
+              f"{proc.stdout[-300:]}{proc.stderr[-300:]}")
+        check(all(f"INSCOPE-MARKER-{i}" in sent for i in range(5)),
+              f"[{mode}] every eligible paper was sent")
+        check("OUTOFSCOPE" not in sent,
+              f"[{mode}] no ineligible title or abstract reached ANY API "
+              f"surface (token counting included)")
+
+        calls = os.path.join(runs, run_id, "calls.jsonl")
+        logged = ({json.loads(l)["paper_id"]
+                   for l in open(calls, encoding="utf-8") if l.strip()}
+                  if os.path.exists(calls) else set())
+        check(not (logged & set(inel)),
+              f"[{mode}] no ineligible paper has a calls.jsonl row -- no model "
+              f"call and no forced decision")
+        man = json.load(open(os.path.join(runs, run_id, "manifest.json"),
+                             encoding="utf-8"))
+        ex = man["excluded_at_eligibility"]
+        check(ex["n"] == 5 and ex["paper_ids"] == inel,
+              f"[{mode}] the manifest records all 5, each with its reason")
+        check(ex["by_reason"] == {"elsevier": 3, "no_oa": 2},
+              f"[{mode}] counted by reason (got {ex['by_reason']})")
+        check(man["papers"] == 5, f"[{mode}] only the 5 eligible are papers to "
+                                  f"screen (got {man['papers']})")
+
+    # An input paper_id the candidates file does not know is an unknown scope
+    # decision: abort before anything is priced.
+    _write_screen_candidates(cand, [f"W{i}" for i in range(4)], inel)
+    record = os.path.join(tmpdir, "stub_record_unknown.jsonl")
+    env = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub", STUB_RECORD=record,
+               PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
+    proc = subprocess.run(
+        [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+         "--candidates", cand, "--models", "haiku", "--runs-dir", runs,
+         "--run-id", "elig_unknown", "--max-usd", "5.00", "--yes"],
+        capture_output=True, text=True, env=env,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    check(proc.returncode != 0 and "eligibility is unknown" in proc.stderr,
+          f"a paper_id missing from candidates.csv aborts the run "
+          f"(rc={proc.returncode})")
+    check(not os.path.exists(record), "and nothing at all was sent")
 
 
 # ---------------------------------------------------------------------------
@@ -1065,6 +1245,8 @@ def test_budget_guard(tmpdir: str):
         for p in papers:
             w.writerow(p)
     runs = os.path.join(tmpdir, "runs_guard")
+    cand = os.path.join(tmpdir, "guard_candidates.csv")
+    _write_screen_candidates(cand, [p["paper_id"] for p in papers])
 
     env = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub",
                PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
@@ -1072,6 +1254,7 @@ def test_budget_guard(tmpdir: str):
     def run_guard(cap, run_id):
         return subprocess.run(
             [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+             "--candidates", cand,
              "--models", "opus", "--runs-dir", runs, "--run-id", run_id,
              "--max-usd", cap, "--yes"],
             capture_output=True, text=True, env=env,
@@ -1118,6 +1301,7 @@ def test_budget_guard(tmpdir: str):
                 + os.environ.get("PYTHONPATH", ""))
     bad = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+         "--candidates", cand,
          "--models", "opus", "--runs-dir", runs, "--run-id", "guard_badmodel",
          "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env2,
@@ -1456,6 +1640,82 @@ def test_thinking_asymmetry_is_surfaced(tmpdir: str):
           f"the summary names it (got {summary['models_thinking_unavoidable']})")
 
 
+def test_benchmark_exclusion_stages(tmpdir: str):
+    print("\n[stages] eligibility and screening exclusions are counted apart")
+    run_dir = os.path.join(tmpdir, "runs", "stagetest")
+    os.makedirs(run_dir, exist_ok=True)
+    # W0-W5 eligible and screened; W6, W7 excluded at eligibility.
+    decisions = ["include", "include", "exclude", "exclude", "exclude", "include"]
+    with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
+        for i, d in enumerate(decisions):
+            f.write(json.dumps({
+                "run_id": "stagetest", "model_alias": "haiku",
+                "model": "claude-haiku-4-5-20251001", "paper_id": f"W{i}",
+                "repeat": 1,
+                "parsed": {"decision": d, "criterion_id": "I1", "reason": "r"},
+                "validation_status": "valid", "input_tokens": 1000,
+                "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+                "output_tokens": 40, "cost_usd": 0.0001,
+            }) + "\n")
+    with open(os.path.join(run_dir, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump({"excluded_at_eligibility": {
+            "n": 2, "by_reason": {"elsevier": 1, "no_oa": 1},
+            "paper_ids": {"W6": "elsevier", "W7": "no_oa"}}}, f)
+
+    # The sheet labels all 8, including the two out-of-scope papers.
+    labels_path = os.path.join(tmpdir, "labels_stages.csv")
+    _write_labels(labels_path, [
+        {"paper_id": f"W{i}", "title": f"T{i}", "abstract": "a",
+         "human_decision": h, "human_criterion_id": "I1", "human_notes": ""}
+        for i, h in enumerate(decisions + ["include", "include"])])
+
+    proc = subprocess.run(
+        [sys.executable, "benchmark.py", "--run", run_dir, "--labels", labels_path],
+        capture_output=True, text=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    check(proc.returncode == 0, f"scores cleanly (rc={proc.returncode})\n"
+                                f"{proc.stdout[-400:]}{proc.stderr[-400:]}")
+    b = pd.read_csv(os.path.join(run_dir, "benchmark.csv")).iloc[0]
+    check(b["n_labels"] == 6 and b["n_scored"] == 6 and b["coverage"] == 1.0,
+          f"the 2 ineligible labels leave the denominator: 6 scored of 6, "
+          f"coverage 1.0 (got {b['n_scored']}/{b['n_labels']}, {b['coverage']})")
+    check(b["n_excluded_at_screening"] == 3,
+          f"excluded at screening = the model's 3 excludes "
+          f"(got {b['n_excluded_at_screening']})")
+    check(b["n_excluded_at_eligibility"] == 2,
+          f"excluded at eligibility = 2, in its own column "
+          f"(got {b['n_excluded_at_eligibility']})")
+    summ = json.load(open(os.path.join(run_dir, "benchmark_summary.json"),
+                          encoding="utf-8"))["exclusion_stages"]
+    st1 = summ["excluded_at_eligibility"]
+    check(st1["n_in_run"] == 2 and st1["by_reason_in_run"] == {"elsevier": 1, "no_oa": 1},
+          "the summary carries stage 1 by reason")
+    check(st1["n_labelled_dropped_from_scoring"] == 2,
+          "and says 2 labelled papers were dropped from scoring for it")
+    check(summ["excluded_at_screening_by_model"] == {"claude-haiku-4-5-20251001": 3},
+          "stage 2 is reported per model, separately")
+    check("excluded at eligibility: 2" in proc.stdout
+          and "excluded at screening by haiku: 3" in proc.stdout,
+          "and the report prints the two stages on separate lines")
+
+    # A call log holding a paper the manifest says was ineligible is a broken
+    # run, not something to score around.
+    with open(os.path.join(run_dir, "calls.jsonl"), "a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "run_id": "stagetest", "model_alias": "haiku",
+            "model": "claude-haiku-4-5-20251001", "paper_id": "W6", "repeat": 1,
+            "parsed": {"decision": "exclude", "criterion_id": "E1", "reason": "r"},
+            "validation_status": "valid", "input_tokens": 1,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+            "output_tokens": 1, "cost_usd": 0.0}) + "\n")
+    proc = subprocess.run(
+        [sys.executable, "benchmark.py", "--run", run_dir, "--labels", labels_path],
+        capture_output=True, text=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    check(proc.returncode != 0 and "excluded at eligibility" in proc.stderr,
+          "a call row for an ineligible paper makes the run unscoreable")
+
+
 def test_invalid_responses_shrink_coverage(tmpdir: str):
     print("\n[coverage] invalid responses shrink n_scored but not cost")
     run_dir = os.path.join(tmpdir, "runs", "covtest")
@@ -1508,6 +1768,7 @@ def main() -> int:
         test_prompt_hashes()
         test_text_kind_labelling()
         test_title_only_forced_uncertain(tmpdir)
+        test_ineligible_never_reach_api(tmpdir)
         test_model_table()
         test_request_shape_per_model()
         test_isolation()
@@ -1520,6 +1781,7 @@ def main() -> int:
         test_selection_rule(tmpdir)
         test_thinking_asymmetry_is_surfaced(tmpdir)
         test_invalid_responses_shrink_coverage(tmpdir)
+        test_benchmark_exclusion_stages(tmpdir)
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 

@@ -1,0 +1,104 @@
+{
+  "archived_on": "2026-10-05",
+  "why": "superseded by the v2 redraw after the 2026-10-05 access-rule scope change; the v1 pool was abstract-only, before eligibility existed",
+  "calibration_sample": {
+    "script": "draw_calibration_sample.py",
+    "script_version": "1.0.0",
+    "drawn_utc": "2026-09-28T21:11:53.912203+00:00",
+    "rng_seed": 20260928,
+    "rng": "python random.Random(rng_seed); strata sorted by paper_id, then random.sample() per stratum, then shuffle() of the 50",
+    "source_file": "corpus/candidates.csv",
+    "candidates_total": 1941,
+    "eligible_with_abstract": 1510,
+    "excluded_no_abstract": 431,
+    "n_per_stratum": 25,
+    "sample_size": 50,
+    "strata": {
+      "top_third": {
+        "eligible_rank_range": [
+          1,
+          503
+        ],
+        "eligible_size": 503,
+        "drawn": 25
+      },
+      "bottom_two_thirds": {
+        "eligible_rank_range": [
+          504,
+          1510
+        ],
+        "eligible_size": 1007,
+        "drawn": 25
+      }
+    },
+    "abstract_gap_by_full_list_third": {
+      "full_list_cut_at_rank": 647,
+      "missing_in_top_third": 147,
+      "missing_in_bottom_two_thirds": 284,
+      "pct_missing_top_third": 22.7,
+      "pct_missing_bottom_two_thirds": 21.9,
+      "basis": "Thirds are cut on the ELIGIBLE list, so these two rates say how much that choice mattered. Equal rates mean cutting before or after the filter was the same decision; divergent rates mean the abstract gap is rank-correlated and the eligible-list cut sits at a different paper than the full-list cut would."
+    },
+    "drawn_paper_ids": {
+      "top_third": [
+        "W2527034962",
+        "W2531237699",
+        "W2766196346",
+        "W2904728440",
+        "W2911388689",
+        "W2953736535",
+        "W2980595852",
+        "W2996203697",
+        "W3082786560",
+        "W3109226628",
+        "W3135288042",
+        "W3193546106",
+        "W4285014818",
+        "W4321021877",
+        "W4321484089",
+        "W4372341092",
+        "W4390018003",
+        "W4393150681",
+        "W4393210522",
+        "W4400744747",
+        "W4402989028",
+        "W4411949586",
+        "W4413119624",
+        "W7130336241",
+        "W7172119411"
+      ],
+      "bottom_two_thirds": [
+        "W2310165094",
+        "W2589306531",
+        "W2799899844",
+        "W2953712194",
+        "W2991270367",
+        "W2999890874",
+        "W3005058934",
+        "W3107642408",
+        "W3185672704",
+        "W4212863220",
+        "W4283157505",
+        "W4295308386",
+        "W4309522700",
+        "W4367393626",
+        "W4386443326",
+        "W4388480674",
+        "W4389501020",
+        "W4391305708",
+        "W4409406531",
+        "W4411201939",
+        "W7125261684",
+        "W7134064809",
+        "W7153347522",
+        "W7160056260",
+        "W7162878167"
+      ]
+    },
+    "outputs": {
+      "sample": "screening/calibration_sample.csv",
+      "labels_todo": "screening/labels_TODO.csv"
+    },
+    "note": "kappa computed on this sample is a kappa ON A STRATIFIED SAMPLE. It is not an estimate of kappa over the full ranked corpus, because the top third is deliberately oversampled 2:1 to put enough includes in the denominator for include-recall to mean anything. `stratum` is carried on every sample row so a later analysis can reweight. labels_TODO.csv omits stratum, rank and every seed-linkage column: a rater who can see how the pipeline ranked a paper is not an independent rater, and the resulting kappa would measure agreement with the ranking instead of agreement about the criteria."
+  }
+}

@@ -11,31 +11,41 @@ include-recall -- the number this whole exercise exists to measure, because a
 false exclude is unrecoverable -- would be estimated from a denominator of two
 or three. Neither number would mean anything.
 
-So the draw is stratified: 25 from the top third of the eligible ranked list and
+So the draw is stratified: 25 from the top third of the pool's ranked list and
 25 from the bottom two-thirds. This oversamples the head, where the includes
 are, and the resulting kappa is therefore a kappa ON THE STRATIFIED SAMPLE, not
 an estimate of kappa over the corpus. That distinction is recorded in provenance
 rather than left for a reader to infer, and stratum is carried on every row so
 any later analysis can reweight.
 
-Eligibility and the order of operations
----------------------------------------
-Rows with `abstract_source=none` are dropped BEFORE the thirds are cut, not
-after. The reasoning was that the OpenAlex abstract gap tracks Elsevier,
+The pool, and the order of operations
+-------------------------------------
+v2.0.0 (2026-10-05 scope change): the pool is rows that are BOTH eligible under
+the access rule (eligibility.py, `eligible=True`) AND carry abstract text
+(`abstract_source` openalex or semantic_scholar, non-empty `abstract`). The
+second condition is stated on the abstract itself, not as
+`abstract_source != none`: a full-text-head row is not `none` either, and it
+has no abstract to put on the sheet.
+
+Both filters are applied BEFORE the thirds are cut, not after. The reasoning was that the OpenAlex abstract gap tracks Elsevier,
 Elsevier tracks certain venues, and venue plausibly correlates with rank -- so
 cutting thirds first and filtering second would leave the two strata holding
 different numbers of papers for a reason having nothing to do with rank.
 
 That was an assumption, so the script MEASURES it rather than asserting it:
-per-third missing-abstract rates and both sets of rank boundaries (on the full
-list and on the eligible list) go into provenance every run.
+per-third pool-exclusion rates, split by cause (ineligible / eligible but no
+abstract), go into provenance every run, alongside both sets of rank
+boundaries.
 
-On the 2026-09-28 corpus the assumption DID NOT HOLD -- 22.7% missing in the
-full-list top third against 21.9% in the bottom two-thirds, which is flat. The
-two orderings were equivalent and nothing was at stake. The ordering is kept
-because it is the one that stays correct if a future corpus does skew, which is
-a different and much weaker claim than the one it was introduced on. Read the
-provenance block, not this docstring, for what the current corpus does.
+On the 2026-09-28 corpus the assumption DID NOT HOLD for the abstract gap --
+22.7% missing in the full-list top third against 21.9% in the bottom
+two-thirds, which is flat. The ordering is kept because it is the one that
+stays correct if a corpus does skew; the eligibility filter is a new and
+different cause, so read the provenance block, not this docstring, for what the
+current corpus does.
+
+The v1 draw (abstract-only pool, before the access rule) is archived under
+screening/archive/v1/ and is not overwritten.
 
 Blinding
 --------
@@ -64,7 +74,9 @@ import sys
 from collections import Counter
 from datetime import datetime, timezone
 
-SCRIPT_VERSION = "1.0.0"
+from eligibility import parse_eligible
+
+SCRIPT_VERSION = "2.0.0"
 
 SAMPLE_COLUMNS = ["paper_id", "doi", "title", "abstract", "year", "venue",
                   "abstract_source", "stratum"]
@@ -80,7 +92,8 @@ FULLTEXT_SAMPLE_COLUMNS = ["paper_id", "doi", "title", "fulltext_head", "year",
 FULLTEXT_LABEL_COLUMNS = ["paper_id", "title", "fulltext_head",
                           "human_decision", "human_criterion_id", "human_notes"]
 
-FULLTEXT_SOURCES = ("fulltext_head_oa", "fulltext_head_elsevier")
+FULLTEXT_SOURCES = ("fulltext_head_oa",)
+ABSTRACT_SOURCES = ("openalex", "semantic_scholar")
 
 # The blind sheet. `human_criterion_id` takes an ID from screening/criteria.md,
 # which Zachary writes -- this script deliberately does not know what the valid
@@ -100,7 +113,14 @@ def read_candidates(path: str) -> list[dict]:
         sys.exit(f"{path} has no rows")
     if "abstract_source" not in rows[0]:
         sys.exit(f"{path} has no abstract_source column -- run abstract_backfill.py first")
+    if "eligible" not in rows[0]:
+        sys.exit(f"{path} has no eligible column -- run eligibility.py first")
     return rows
+
+
+def has_abstract_text(r: dict) -> bool:
+    return ((r.get("abstract_source") or "") in ABSTRACT_SOURCES
+            and bool((r.get("abstract") or "").strip()))
 
 
 def draw_fulltext(rows: list[dict], args) -> int:
@@ -123,8 +143,12 @@ def draw_fulltext(rows: list[dict], args) -> int:
     denominator is visible rather than implied; whether to stratify or to widen
     is a judgement for the run that has the labels in hand.
     """
+    # Eligible rows only, as for the abstract draw. The 2026-09-28 full-text
+    # sample predates the access rule and is left as it was drawn; this filter
+    # governs any future redraw.
     eligible = [r for r in rows
-                if (r.get("abstract_source") or "") in FULLTEXT_SOURCES
+                if parse_eligible(r.get("eligible", ""))
+                and (r.get("abstract_source") or "") in FULLTEXT_SOURCES
                 and (r.get("fulltext_head") or "").strip()]
 
     if not args.quiet:
@@ -188,10 +212,7 @@ def draw_fulltext(rows: list[dict], args) -> int:
             "The draw took the ENTIRE eligible pool, so no sampling occurred "
             "and rng_seed selected nothing -- these 20 are every full-text-head "
             "row that exists, not a sample of them. Metrics computed here "
-            "describe this set exactly and generalise to nothing wider. The "
-            "pool is small because the Elsevier source was skipped for want of "
-            "an API key; when it runs, the pool grows by up to 217 and this "
-            "draw should be redone as an actual sample."
+            "describe this set exactly and generalise to nothing wider."
             if census else
             "A random subset of the eligible pool at the fixed seed."),
         "source_file": args.candidates,
@@ -232,10 +253,7 @@ def draw_fulltext(rows: list[dict], args) -> int:
             print(f"  *** CENSUS, NOT A SAMPLE: the draw took all "
                   f"{len(eligible)} eligible rows, so the seed selected "
                   f"nothing.\n      Metrics on these 20 describe exactly these "
-                  f"20 and generalise no further.\n      The pool is this small "
-                  f"because the Elsevier source needs ELSEVIER_API_KEY;\n"
-                  f"      with it the pool grows by up to 217 and this draw "
-                  f"should be redone.")
+                  f"20 and generalise no further.")
         print(f"  -> {sample_path}")
         print(f"  -> {labels_path}  (blind; text column named `fulltext_head`, "
               f"not `abstract`)")
@@ -274,18 +292,22 @@ def main() -> int:
     for i, r in enumerate(rows, 1):
         r["_full_rank"] = i
 
-    eligible = [r for r in rows if (r.get("abstract_source") or "none") != "none"]
-    excluded = len(rows) - len(eligible)
+    in_scope = [r for r in rows if parse_eligible(r.get("eligible", ""))]
+    eligible = [r for r in in_scope if has_abstract_text(r)]
+    excluded_ineligible = len(rows) - len(in_scope)
+    excluded = len(in_scope) - len(eligible)
 
     if verbose:
-        print(f"[draw] {len(rows)} candidates, {len(eligible)} with an abstract, "
-              f"{excluded} excluded as abstract_source=none")
+        print(f"[draw] {len(rows)} candidates, {len(in_scope)} eligible, "
+              f"{len(eligible)} eligible with abstract text; "
+              f"{excluded_ineligible} out of scope, {excluded} eligible but "
+              f"no abstract")
 
     need = 2 * args.n_per_stratum
     if len(eligible) < need:
         sys.exit(f"only {len(eligible)} eligible rows; need at least {need}")
 
-    # Thirds are cut on the ELIGIBLE list -- see the module docstring.
+    # Thirds are cut on the POOL (eligible + abstract) -- see the docstring.
     cut = len(eligible) // 3
     top = eligible[:cut]
     bottom = eligible[cut:]
@@ -344,13 +366,18 @@ def main() -> int:
             })
 
     # --- what the filter-then-cut ordering actually cost -------------------
-    # Measured, not assumed: if the abstract gap is flat across rank these two
-    # numbers match and the ordering was immaterial.
+    # Measured, not assumed: if pool exclusion is flat across rank these rates
+    # match and the ordering was immaterial. Split by cause, because the access
+    # rule and the abstract gap are different mechanisms.
     full_cut = len(rows) // 3
-    miss_top_full = sum(1 for r in rows[:full_cut]
-                        if (r.get("abstract_source") or "none") == "none")
-    miss_bottom_full = sum(1 for r in rows[full_cut:]
-                           if (r.get("abstract_source") or "none") == "none")
+
+    def gap(part: list[dict]) -> dict:
+        inel = sum(1 for r in part if not parse_eligible(r["eligible"]))
+        noab = sum(1 for r in part
+                   if parse_eligible(r["eligible"]) and not has_abstract_text(r))
+        return {"size": len(part), "ineligible": inel,
+                "eligible_no_abstract": noab, "not_in_pool": inel + noab,
+                "pct_not_in_pool": round(100 * (inel + noab) / max(len(part), 1), 1)}
 
     block = {
         "script": "draw_calibration_sample.py",
@@ -361,8 +388,15 @@ def main() -> int:
                "then random.sample() per stratum, then shuffle() of the 50",
         "source_file": args.candidates,
         "candidates_total": len(rows),
+        "pool_definition": ("eligible == True (eligibility.py) AND "
+                            "abstract_source in openalex|semantic_scholar AND "
+                            "abstract non-empty"),
+        "eligible_total": len(in_scope),
+        "excluded_ineligible": excluded_ineligible,
         "eligible_with_abstract": len(eligible),
         "excluded_no_abstract": excluded,
+        "excluded_no_abstract_basis": "eligible rows only; ineligible rows are "
+                                      "counted under excluded_ineligible",
         "n_per_stratum": args.n_per_stratum,
         "sample_size": len(sample),
         "strata": {
@@ -377,19 +411,16 @@ def main() -> int:
                 "drawn": args.n_per_stratum,
             },
         },
-        "abstract_gap_by_full_list_third": {
+        "pool_exclusion_by_full_list_third": {
             "full_list_cut_at_rank": full_cut,
-            "missing_in_top_third": miss_top_full,
-            "missing_in_bottom_two_thirds": miss_bottom_full,
-            "pct_missing_top_third": round(100 * miss_top_full / max(full_cut, 1), 1),
-            "pct_missing_bottom_two_thirds": round(
-                100 * miss_bottom_full / max(len(rows) - full_cut, 1), 1),
+            "top_third": gap(rows[:full_cut]),
+            "bottom_two_thirds": gap(rows[full_cut:]),
             "basis": (
-                "Thirds are cut on the ELIGIBLE list, so these two rates say "
-                "how much that choice mattered. Equal rates mean cutting before "
-                "or after the filter was the same decision; divergent rates mean "
-                "the abstract gap is rank-correlated and the eligible-list cut "
-                "sits at a different paper than the full-list cut would."
+                "Thirds are cut on the POOL, so these rates say how much that "
+                "choice mattered. Equal rates mean cutting before or after the "
+                "filters was the same decision; divergent rates mean pool "
+                "exclusion is rank-correlated and the pool cut sits at a "
+                "different paper than the full-list cut would."
             ),
         },
         "drawn_paper_ids": {
@@ -423,14 +454,15 @@ def main() -> int:
         by_stratum = Counter(r["stratum"] for r in sample)
         by_source = Counter(r["abstract_source"] for r in sample)
         print(f"[draw] rng_seed={args.rng_seed}")
-        print(f"[draw] eligible thirds: top=ranks 1-{cut} ({len(top)}), "
+        print(f"[draw] pool thirds: top=ranks 1-{cut} ({len(top)}), "
               f"bottom=ranks {cut + 1}-{len(eligible)} ({len(bottom)})")
         print(f"[draw] drawn: " + ", ".join(f"{k}={v}" for k, v in sorted(by_stratum.items())))
         print(f"[draw] abstract_source in sample: "
               + ", ".join(f"{k}={v}" for k, v in sorted(by_source.items())))
-        print(f"[draw] abstract gap by full-list third: "
-              f"top={block['abstract_gap_by_full_list_third']['pct_missing_top_third']}%, "
-              f"bottom={block['abstract_gap_by_full_list_third']['pct_missing_bottom_two_thirds']}%")
+        g = block["pool_exclusion_by_full_list_third"]
+        print(f"[draw] not in pool by full-list third: "
+              f"top={g['top_third']['pct_not_in_pool']}%, "
+              f"bottom={g['bottom_two_thirds']['pct_not_in_pool']}%")
         print(f"  -> {sample_path}")
         print(f"  -> {labels_path}  (blind: no stratum, no rank, no seed links)")
         print(f"  -> {args.provenance}  (calibration_sample block)")
