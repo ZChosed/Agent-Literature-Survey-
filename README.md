@@ -680,6 +680,8 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 | `screen.py` | The screening harness: eligible rows only (eligibility read from `--candidates`), Batches API, full per-call provenance, pre-submission budget guard. |
 | `benchmark.py` | κ, recall, precision, confusion, cost. Pure pandas. Applies the selection rule, or declines to. |
 | `test_screening.py` | Offline test. No network, no API key: the Anthropic SDK is stubbed, including `models.list`, and the stub records every request so "ineligible rows never reach the API" is asserted, not assumed. |
+| `build_document_list.py` | Turns a full-corpus screening run into `screening/final/`: one outcome per candidate, the document list, the human-review list and a summary. Pure Python. |
+| `test_document_list.py` | Offline test of every outcome path; pins that a failed response goes to review, never to exclude. |
 | `test_eligibility.py` | Offline test of the access rule and of `eligibility.py` end to end against a fixture call log. |
 
 | Generated | What it is |
@@ -717,6 +719,7 @@ python draw_calibration_sample.py --fulltext    # the 20-paper head sample
 
 python test_eligibility.py                      # must print ALL CHECKS PASSED
 python test_screening.py                        # must print ALL CHECKS PASSED
+python test_document_list.py                    # must print ALL CHECKS PASSED
 
 # 1. sync smoke test FIRST, 3 eligible papers, one per input shape:
 #    an OpenAlex abstract, a Semantic Scholar abstract, an OA full-text head
@@ -1166,6 +1169,45 @@ pool excluding these 50 (same method, new seed), labelled blind against the
 current `criteria.md` before any model output is seen, then one Opus run scored
 against it. These 50 papers now serve as the set used to refine the
 criteria, and should be reported as such.
+
+## Full-corpus screening, 2026-10-06 (Opus 5.5)
+
+Run `corpus_opus_20261006`. All 1,941 candidates went in
+(`screening/corpus_screen_input.csv`). The 794 ineligible rows were recorded and
+never sent, and the 56 eligible title-only rows were forced to `uncertain` with
+no model call. **1,091 Opus calls, $6.28 actual** (pre-submission estimate
+$15.87, cap $17.50, ceiling $20). 1,090 valid; 1 failed on `max_tokens` (routed
+to human review); 4 `reason_overrun` warnings, scored. Criteria sha256
+`55452fe0…` (the 40-word version).
+
+`python build_document_list.py --run screening/runs/corpus_opus_20261006`
+assigns every candidate exactly one outcome and writes `screening/final/`:
+
+| Outcome | n | file |
+|---|---:|---|
+| **included** | **113** | `document_list.csv` |
+| needs human review | 130 | `needs_human_review.csv` (73 model `uncertain`, 56 title-only, 1 failed response) |
+| excluded at screening | 904 | in `screening_outcomes.csv` |
+| excluded at eligibility | 794 | in `screening_outcomes.csv` |
+
+Included by criterion: I4 45, D1 44, I1 17, I2 7 (no I3). Excluded at
+screening: E3 352, E2 312, E4 158, E7 62, E1 10, E6 10. `framework_core`-linked
+candidates: 35 included, 16 to review, 51 excluded at screening, 52 at
+eligibility.
+
+**The document list is not final** until a human decides the 130 review rows. A
+failed response is routed to review, never treated as an exclude. Read the
+list knowing that **the screening model was not independently calibrated**:
+on the only blind labels (v1) Opus scored κ 0.59 and include recall 0.67. So
+`excluded_at_screening` should be expected to hold some false excludes, and a
+spot check of it is the cheapest way to size that. The run also re-screened the
+50 calibration papers, under the new 40-word prompt. It agrees with label v3
+on 47 of 50 (binary), with no v3 include excluded. That is a consistency check,
+not a calibration, since v3 was revised toward Opus.
+
+Note the D1 count. The DT side was scoped in the proposal as a roughly
+15-paper comparison subset, and 44 D1 includes is about three times that.
+Expect to prune it at extraction, or to tighten D1.
 
 ## Next stage (not yet built)
 
