@@ -50,13 +50,16 @@ Selection rule
 --------------
 Cheapest model with binary kappa >= 0.7 AND include recall >= 0.95.
 
-One caveat the rule cannot express: cost is not like-for-like across models
-when one of them cannot be run without thinking. Claude Opus 5.5 always thinks
-and bills those tokens as output, so it carries a cost component Haiku 4.5 and
-Sonnet 5.5 do not. `thinking_unavoidable` is carried per model from the run
-manifest and printed with the table; the rule is still applied exactly as
-specified, but the comparison should be read with that in view. If none
-qualifies, that is reported and NO model is chosen -- the fix is to revise
+Since screen.py v3.0.0 (2026-10-06) runs use Opus 5.5 only, so the rule
+reduces to a pass/fail on the floors: does Opus qualify. The rule is still
+applied exactly as written, and this script still scores whatever models a call
+log holds, so the archived three-model run calib_v3_20261006 scores unchanged.
+Choosing Opus was a decision, not this rule's output -- on that run the rule
+selected no model (see README "Model choice").
+
+Opus 5.5 always thinks and bills those tokens as output; `thinking_unavoidable`
+is carried from the run manifest and printed with the table. If the floors are
+not met, that is reported and NO model is chosen -- the fix is to revise
 criteria.md and rerun, and disagreements.csv is the input for that revision.
 
 Usage
@@ -76,7 +79,7 @@ import pandas as pd
 
 from collections import Counter
 
-SCRIPT_VERSION = "2.0.0"
+SCRIPT_VERSION = "2.1.0"
 
 DECISIONS = ["include", "exclude", "uncertain"]
 BINARY = ["include", "exclude"]

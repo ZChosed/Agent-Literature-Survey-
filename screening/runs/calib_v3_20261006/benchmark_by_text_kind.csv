@@ -1,0 +1,4 @@
+model,model_alias,text_kind,n_scored,kappa_binary,include_recall_binary,include_precision_binary,uncertain_rate_model,true_include,false_exclude,false_include,meets_kappa_floor,meets_recall_floor
+claude-haiku-4-5-20251001,haiku,abstract,50,0.3626,0.4444,0.5,0.04,4,5,4,False,False
+claude-opus-5-5,opus,abstract,47,0.5877,0.6667,0.6667,0.0426,6,3,3,False,False
+claude-sonnet-5-5,sonnet,abstract,46,0.4538,0.75,0.4615,0.1304,6,2,7,False,False

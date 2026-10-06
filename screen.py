@@ -43,19 +43,15 @@ Structured output, and why it is not a forced tool call
 A tool call returning {decision, criterion_id, reason}, with
 `tool_choice: {"type": "auto"}` and `strict: true`.
 
-The brief asked for a FORCED tool call. That is no longer possible on two of
-the three models: `tool_choice` `{"type": "any"}` and `{"type": "tool", ...}`
+The brief asked for a FORCED tool call. That is not possible on
+`claude-opus-5-5`: `tool_choice` `{"type": "any"}` and `{"type": "tool", ...}`
 return
 
     400 tool_choice: type "tool" and "any" are not supported for this model.
 
-on `claude-opus-5-5` and `claude-sonnet-5-5`, and the same check applies to the
-token counting endpoint, so even the budget estimate would fail. The documented
-replacement is `auto` plus strict tool use, and that is what this harness
-sends -- to ALL THREE models, including Haiku 4.5, which would still accept
-forcing. Using a different request shape per model would mean the benchmark
-compares request shapes as well as models, and the whole point is to compare
-models.
+and the same check applies to the token counting endpoint, so even the budget
+estimate would fail. The documented replacement is `auto` plus strict tool
+use, and that is what this harness sends.
 
 The cost of `auto` is that a model may answer in prose instead of calling the
 tool. That is not hidden: the system prompt says the tool must be called for
@@ -73,19 +69,22 @@ all.
 Validation failures are logged and NOT retried. A silent retry would turn a
 measured malformed-output rate into an unmeasurable one.
 
-Thinking is minimised per model, and on one model that is impossible
----------------------------------------------------------------------
-The brief asked for no extended thinking. Achievable on two of three:
+One model: Opus 5.5 (v3.0.0)
+----------------------------
+Screening uses `claude-opus-5-5` only. Haiku 4.5 and Sonnet 5.5 were removed on
+2026-10-06 by Zachary's decision after calibration run calib_v3_20261006, in
+which Opus had the best binary kappa (0.59) and include precision (0.67) of the
+three. That was a CHOICE, not the selection rule's output: Opus did NOT meet
+the pre-registered floors (kappa >= 0.70, include recall >= 0.95; it scored
+recall 0.67, missing 3 of 9 human includes, with 3 of 50 responses failing
+validation), and the rule selected no model. See README "Model choice". The
+three-model comparison is reproducible only from the commit before this one.
 
-    claude-haiku-4-5-20251001  omit `thinking`          -> none
-    claude-sonnet-5-5          `between_tools`          -> no up-front thinking
-    claude-opus-5-5            NOT POSSIBLE             -> effort=low only
-
-Opus 5.5 runs adaptive thinking always; both `disabled` and `enabled` return
-400. Its thinking tokens are billed as output tokens, so it pays for something
-the other two do not, and the selection rule picks the cheapest qualifying
-model. `benchmark.py` carries `thinking_unavoidable` per model so that cost
-comparison is read with the asymmetry visible rather than silently folded in.
+The brief asked for no extended thinking, which is NOT POSSIBLE on Opus 5.5:
+it runs adaptive thinking always, and both `disabled` and `enabled` return
+400. `thinking` is omitted and effort is `low`, the only lever on thinking
+depth. Its thinking tokens bill as output tokens; `benchmark.py` carries
+`thinking_unavoidable` so that is visible in the cost figures.
 
 criterion_id membership
 -----------------------
@@ -116,7 +115,7 @@ Usage
     python screen.py --criteria screening/criteria.md \\
                      --input screening/calibration_sample.csv \\
                      --candidates corpus/candidates.csv \\
-                     --models haiku,sonnet,opus
+                     --models opus
 
     python screen.py --criteria screening/criteria.md \\
                      --input screening/calibration_sample.csv \\
@@ -147,7 +146,7 @@ try:
 except ImportError:
     sys.exit("anthropic is required:  pip install anthropic")
 
-SCRIPT_VERSION = "2.0.0"
+SCRIPT_VERSION = "3.0.0"
 
 # --------------------------------------------------------------------------
 # Models
@@ -165,83 +164,50 @@ SCRIPT_VERSION = "2.0.0"
 # stop, not a reason to guess.
 #
 # Verified against platform.claude.com/docs/en/about-claude/pricing and
-# .../models/overview on 2026-09-28. Haiku's dated form is the pinned snapshot,
-# which is what reproducibility wants.
+# .../models/overview on 2026-09-28.
+#
+# Opus 5.5 only (v3.0.0). Haiku 4.5 and Sonnet 5.5 were removed on 2026-10-06;
+# see the module docstring for why, and for what that choice does NOT claim.
 MODEL_IDS = {
-    "haiku": "claude-haiku-4-5-20251001",
-    "sonnet": "claude-sonnet-5-5",
     "opus": "claude-opus-5-5",
 }
 
 PRICING_SOURCE = "https://platform.claude.com/docs/en/about-claude/pricing"
 PRICING_CHECKED_UTC = "2026-09-28"
 
-# USD per million tokens, base (non-batch) rates, plus the per-model cache-read
-# multiplier. That multiplier is NOT a global constant: Opus 5.5 reads cache at
-# 0.05x base input ($0.20/MTok) where the others read at 0.10x. Hardcoding 0.10
-# for everything overstates Opus 5.5's cache cost, and the selection rule picks
-# on cost.
+# USD per million tokens, base (non-batch) rates, plus the cache-read
+# multiplier. Opus 5.5 reads cache at 0.05x base input ($0.20/MTok), not the
+# 0.10x many models use; hardcoding 0.10 would overstate its cache cost.
 PRICING = {
-    "claude-haiku-4-5-20251001": {
-        "input": 1.00, "output": 5.00, "cache_read_mult": 0.10},
-    "claude-haiku-4-5": {
-        "input": 1.00, "output": 5.00, "cache_read_mult": 0.10},
-    "claude-sonnet-5-5": {
-        "input": 2.00, "output": 10.00, "cache_read_mult": 0.10},
     "claude-opus-5-5": {
         "input": 4.00, "output": 20.00, "cache_read_mult": 0.05},
 }
 
-CACHE_WRITE_MULT = 1.25   # 5-minute TTL, all current models
+CACHE_WRITE_MULT = 1.25   # 5-minute TTL
 BATCH_MULT = 0.50
 
 # Minimum cacheable prefix, in tokens. Below this the API silently does not
-# cache -- no error, cache_creation_input_tokens just comes back 0. Haiku 4.5's
-# 4096 is the one that bites: a criteria.md short enough to be readable is very
-# likely under it, so the "marked for prompt caching" system block may simply
-# not cache on the cheapest model. Both 5.5 models dropped to 512.
+# cache -- no error, cache_creation_input_tokens just comes back 0.
 CACHE_MIN_PREFIX = {
-    "claude-haiku-4-5-20251001": 4096,
-    "claude-haiku-4-5": 4096,
-    "claude-sonnet-5-5": 512,
     "claude-opus-5-5": 512,
 }
 
-# Per-model request shape. The three models do NOT agree on how to minimise
-# thinking, and on two of them forced tool use no longer exists at all.
+# Request shape. Kept as a per-model table so manifest.json and benchmark.py
+# read the same structure they always have.
 #
 #   thinking   -- what to send to get the least thinking the model allows.
 #                 None means send no `thinking` field.
-#   effort     -- output_config.effort, or None where the model has no effort
-#                 parameter (Haiku 4.5).
-#   min_think  -- False where the model can genuinely run without thinking.
-#                 True where thinking is unavoidable and its tokens are billed
-#                 as output. This asymmetry is a real confound in a cost
-#                 comparison and is surfaced, not buried.
+#   effort     -- output_config.effort.
+#   thinking_unavoidable -- True: thinking cannot be switched off and its
+#                 tokens bill as output. Surfaced in the cost figures.
 MODEL_REQUEST = {
-    "claude-haiku-4-5-20251001": {
-        "thinking": None, "effort": None, "thinking_unavoidable": False,
-        "basis": "Haiku 4.5 uses manual extended thinking; omitting the "
-                 "`thinking` field runs it with none. No effort parameter."},
-    "claude-haiku-4-5": {
-        "thinking": None, "effort": None, "thinking_unavoidable": False,
-        "basis": "as claude-haiku-4-5-20251001"},
-    "claude-sonnet-5-5": {
-        "thinking": {"type": "between_tools"}, "effort": "low",
-        "thinking_unavoidable": False,
-        "basis": "Sonnet 5.5 rejects thinking.type=disabled with a 400 naming "
-                 "`between_tools`, which is its lowest thinking setting. Since "
-                 "screening makes one tool call and stops, there is no "
-                 "between-tool moment, so this is effectively no thinking. "
-                 "`between_tools` is accepted at low/medium/high effort only."},
     "claude-opus-5-5": {
         "thinking": None, "effort": "low", "thinking_unavoidable": True,
         "basis": "Opus 5.5 runs adaptive thinking ALWAYS; thinking.type "
                  "disabled and enabled both return 400. The `thinking` field "
                  "is omitted (equivalent to adaptive) and effort is set to "
                  "`low`, the only lever on thinking depth. Its thinking tokens "
-                 "bill as output tokens, so its cost is not comparable "
-                 "like-for-like with the other two."},
+                 "bill as output tokens."},
 }
 
 TOOL_NAME = "screen_paper"
@@ -249,8 +215,8 @@ DECISIONS = ("include", "exclude", "uncertain")
 MAX_REASON_WORDS = 25
 
 # max_tokens is a hard cap on TOTAL output -- thinking plus response text -- on
-# every current model. The tool call itself is ~60 tokens, but Opus 5.5 always
-# thinks and Sonnet 5.5 may, so a tight cap would truncate those calls into
+# Opus 5.5. The tool call itself is ~60 tokens, but Opus 5.5 always thinks, so
+# a tight cap would truncate calls into
 # max_tokens validation failures and measure the cap rather than the model.
 # Output is billed on tokens actually produced, so headroom is close to free.
 MAX_TOKENS = 4096
@@ -420,23 +386,12 @@ def build_tool(strict: bool = True) -> dict:
 
 def model_kwargs(model_id: str) -> dict:
     """
-    Per-model request options for "as little thinking as the model permits".
+    Request options for "as little thinking as the model permits".
 
-    The brief asked for no extended thinking. That is achievable on two of the
-    three models and IMPOSSIBLE on the third, so it is implemented per model
-    and the gap is reported rather than papered over:
-
-      claude-haiku-4-5-20251001  omit `thinking`            -> no thinking
-      claude-sonnet-5-5          thinking=between_tools     -> no up-front
-                                 (`disabled` returns 400)      thinking
-      claude-opus-5-5            thinking always on         -> effort=low is
-                                 (`disabled` returns 400)      the only lever
-
-    Opus 5.5's thinking tokens are billed as output tokens. Its cost in the
-    benchmark therefore includes a component the other two do not pay, which
-    matters because the selection rule picks the cheapest qualifying model.
-    `benchmark.py` reports `thinking_unavoidable` per model so the comparison
-    is read with that in mind.
+    On Opus 5.5 that is effort=low with no `thinking` field: thinking cannot
+    be disabled (`disabled` returns 400), and its thinking tokens bill as
+    output. `benchmark.py` reports `thinking_unavoidable` so the cost is read
+    with that in mind.
     """
     spec = MODEL_REQUEST.get(model_id)
     if spec is None:
@@ -843,7 +798,9 @@ def main() -> int:
     ap.add_argument("--eligibility", default="corpus/eligibility.csv",
                     help="eligible/exclusion_reason per paper, joined on "
                          "paper_id = openalex_id")
-    ap.add_argument("--models", default="haiku,sonnet,opus")
+    ap.add_argument("--models", default="opus",
+                    help="opus only (v3.0.0); kept as a flag so run commands "
+                         "and manifests keep their shape")
     ap.add_argument("--model-id", action="append", default=[],
                     metavar="ALIAS=ID", help="override a model ID")
     ap.add_argument("--runs-dir", default="screening/runs")
@@ -881,12 +838,16 @@ def main() -> int:
         if "=" not in spec:
             sys.exit(f"--model-id wants ALIAS=ID, got {spec!r}")
         alias, mid = spec.split("=", 1)
+        if alias.strip() not in MODEL_IDS:
+            sys.exit(f"--model-id can only re-pin an existing alias "
+                     f"({sorted(MODEL_IDS)}); screening uses Opus only")
         MODEL_IDS[alias.strip()] = mid.strip()
 
     aliases = [a.strip() for a in args.models.split(",") if a.strip()]
     unknown = [a for a in aliases if a not in MODEL_IDS]
     if unknown:
-        sys.exit(f"unknown model alias(es): {unknown}; known: {sorted(MODEL_IDS)}")
+        sys.exit(f"unknown model alias(es): {unknown}; known: {sorted(MODEL_IDS)}. "
+                 f"Screening uses Opus only since v3.0.0 (2026-10-06).")
     model_ids = [MODEL_IDS[a] for a in aliases]
 
     if not os.path.exists(args.criteria):
@@ -1010,17 +971,13 @@ def main() -> int:
         "repeat": args.repeat,
         "api_mode": "sync" if args.sync else "batch",
         "thinking": (
-            "minimised per model, not uniform: Haiku 4.5 omits the field, "
-            "Sonnet 5.5 uses between_tools (disabled returns 400), Opus 5.5 "
-            "CANNOT disable thinking and runs at effort=low. Opus 5.5's "
+            "Opus 5.5 CANNOT disable thinking and runs at effort=low; its "
             "thinking tokens bill as output."),
         "tool_choice": {"type": "auto"},
         "tool_choice_basis": (
             "Forced tool_choice ({'type':'tool'}) returns 400 on "
-            "claude-opus-5-5 and claude-sonnet-5-5, including on the token "
-            "counting endpoint. The documented replacement is tool_choice auto "
-            "plus strict tool use, applied uniformly to all three models so "
-            "the benchmark compares models rather than request shapes."),
+            "claude-opus-5-5, including on the token counting endpoint. The "
+            "documented replacement is tool_choice auto plus strict tool use."),
         "strict_tool": strict_tool,
         "max_tokens": MAX_TOKENS,
         "criterion_ids_known": ids,

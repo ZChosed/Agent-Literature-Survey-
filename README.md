@@ -720,18 +720,18 @@ python test_screening.py                        # must print ALL CHECKS PASSED
 
 # 1. sync smoke test FIRST, 3 eligible papers, one per input shape:
 #    an OpenAlex abstract, a Semantic Scholar abstract, an OA full-text head
-python screen.py --criteria screening/criteria.md \
+python screen.py --criteria criteria.md \
                  --input screening/smoke3.csv \
-                 --models haiku,sonnet,opus --sync --limit 3
+                 --models opus --sync --limit 3
 # inspect raw_response and the cache_* token fields in calls.jsonl, THEN:
 
 # 2. the batch runs, one per sample
-python screen.py --criteria screening/criteria.md \
+python screen.py --criteria criteria.md \
                  --input screening/calibration_sample.csv \
-                 --models haiku,sonnet,opus
-python screen.py --criteria screening/criteria.md \
+                 --models opus
+python screen.py --criteria criteria.md \
                  --input screening/calibration_sample_fulltext.csv \
-                 --models haiku,sonnet,opus
+                 --models opus
 
 python benchmark.py --run screening/runs/<abstract_run> \
                     --labels screening/labels.csv
@@ -967,75 +967,38 @@ about the criteria.
 
 ### Three API facts that constrain the method
 
-All three verified against `platform.claude.com` on 2026-09-28. Two of them
-force a documented deviation from the brief.
+Verified against `platform.claude.com` on 2026-09-28. Since 2026-10-06 the
+harness uses Opus 5.5 only (see "Model choice" below). Two of these facts force
+a documented deviation from the brief.
 
-**1. The brief's model IDs are correct and are used verbatim.** `claude-opus-5-5`,
-`claude-sonnet-5-5` and `claude-haiku-4-5-20251001` are all current; the dated
-Haiku form is its pinned snapshot, which is what reproducibility wants.
-**`screen.py` never substitutes a model ID.** Every requested ID is checked
-against `GET /v1/models` at startup and the run aborts, having submitted
-nothing, if one is not served. A substitution would change which models the
-benchmark is about, change the cost basis the selection rule picks on, and
-leave a logged but unrequested change to the method.
+**1. The model ID is used verbatim.** `screen.py` never substitutes a model ID.
+The ID is checked against `GET /v1/models` at startup, and the run aborts,
+having submitted nothing, if it is not served. `--models` accepts only `opus`,
+and `--model-id` can only re-pin that alias. Opus 5.5 is priced in `PRICING`
+at $4/$20 per MTok, with cache reads at 0.05× ($0.20/MTok) and a 512-token
+minimum cacheable prefix. An unpriced model is a hard abort, never a $0.00
+estimate.
 
-Prices are pinned in `PRICING` with the source and date, and an unpriced model
-is a hard abort rather than a $0.00 estimate — the selection rule picks the
-cheapest, so a missing price would win on a fiction. Note the cache-read
-multiplier is **per model**: 0.05× on Opus 5.5 ($0.20/MTok) against 0.10×
-elsewhere.
-
-| | Haiku 4.5 | Sonnet 5.5 | Opus 5.5 |
-|---|---|---|---|
-| in / out $ per MTok | 1 / 5 | 2 / 10 | 4 / 20 |
-| cache read | 0.10× | 0.10× | **0.05×** |
-| min cacheable prefix | **4,096** | 512 | 512 |
-| forced `tool_choice` | supported | **400** | **400** |
-| thinking off | omit field | `between_tools` | **impossible** |
-
-**2. Forced tool use no longer exists on the 5.5 models,** so the structured
-output is not a forced call. `tool_choice` `{"type":"any"}` and
-`{"type":"tool",...}` return
+**2. Forced tool use does not exist on Opus 5.5,** so the structured output is
+not a forced call. `tool_choice` `{"type":"any"}` and `{"type":"tool",...}`
+return
 
 ```
 400 tool_choice: type "tool" and "any" are not supported for this model.
 ```
 
-on both Opus 5.5 and Sonnet 5.5, and the same check applies to the token
-counting endpoint — so even the budget estimate would fail. The documented
-replacement is `tool_choice: auto` plus `strict: true`, and that is what the
-harness sends **to all three models**, including Haiku 4.5, which would still
-accept forcing. A per-model request shape would make the benchmark compare
-request shapes as well as models.
+and the same check applies to the token counting endpoint. The documented
+replacement is `tool_choice: auto` plus `strict: true`. A prose answer instead
+of a tool call is logged as a `no_tool_use` validation failure: a measurable
+rate, not a hidden failure.
 
-The cost is that a model may answer in prose instead of calling the tool. The
-system prompt says the tool must be called for every paper, and a prose answer
-is logged as a `no_tool_use` validation failure — a measurable rate, and a
-finding about the model rather than a hidden failure.
-
-**3. Thinking cannot be disabled on Opus 5.5,** so "no extended thinking" is
-achievable on two models out of three:
-
-- `claude-haiku-4-5-20251001` — omit the `thinking` field. No thinking, no
-  effort parameter.
-- `claude-sonnet-5-5` — `thinking: {"type":"between_tools"}`; `disabled`
-  returns a 400 naming `between_tools`. Since screening makes one tool call and
-  stops, there is no between-tool moment, so this is effectively no thinking.
-- `claude-opus-5-5` — adaptive thinking is **always on**; both `disabled` and
-  `enabled` return 400. `effort: "low"` is the only lever.
-
-**This is a real confound in the cost comparison, not a footnote.** Opus 5.5's
-thinking tokens are billed as output tokens, so it pays for something the other
-two do not — and the selection rule picks the cheapest qualifying model.
-`benchmark.py` carries `thinking_unavoidable` per model into `benchmark.csv`
-and prints a warning with the table. The rule is still applied exactly as
-specified; the comparison is just not like-for-like, and the record says so.
-
-A consequence: `max_tokens` caps **total** output, thinking included. It is set
-to 4,096 rather than a tight 300, because a tight cap would truncate every
-Opus 5.5 call into a `max_tokens` validation failure and measure the cap rather
-than the model. Output bills on tokens produced, so the headroom is close to
-free.
+**3. Thinking cannot be disabled on Opus 5.5.** Adaptive thinking is always on,
+and both `disabled` and `enabled` return 400. `effort: "low"` is the only
+lever. Its thinking tokens bill as output; `benchmark.py` carries
+`thinking_unavoidable` into `benchmark.csv`. `max_tokens` caps **total**
+output, thinking included, so it is 4,096 rather than a tight 300. A tight cap
+would truncate calls into `max_tokens` validation failures and measure the cap
+rather than the model.
 
 ### criteria.md, and what the harness had to change to read it
 
@@ -1068,25 +1031,12 @@ now states that the criteria are the only authority on the decision and
 contains no decision rules of its own. It also no longer claims the input is
 always an abstract.
 
-**Cache minimums, now that the file has a real size.** The system prompt is
-8,254 characters, roughly 2,060 tokens. That clears the 512-token minimum on
-Opus 5.5 and Sonnet 5.5 — both will cache — and **falls short of Haiku 4.5's
-4,096**, so the cached system block will not cache on the cheapest model. Not a
-bug and not fixable by padding; just a fact to read the cost column with. The
-logged `cache_creation_input_tokens` / `cache_read_input_tokens` settle it on
-the first real run.
+**Caching.** The system prompt clears Opus 5.5's 512-token cache minimum, and
+the 10-06 runs confirm it caches: the first call writes about 3,157 cached
+tokens and later calls read them.
 
-**Estimated batch cost**, from actual prompt sizes at current prices, all three
-models:
-
-| Run | n | mean input tok/call | est. cost |
-|---|---:|---:|---:|
-| abstract sample | 50 | ~2,430 | **$0.78** |
-| full-text sample | 20 | ~3,325 | **$0.37** |
-
-Both well under the $2 target and the $10 `--max-usd` default. Opus 5.5 is
-about 70% of each total, because its thinking cannot be disabled and those
-tokens bill as output.
+**Measured cost.** The 50-paper abstract calibration batch on Opus 5.5 cost
+**$0.23** (run `calib_v3_20261006`), well under the $10 `--max-usd` default.
 
 ### The selection rule declines rather than compromises
 
@@ -1104,6 +1054,49 @@ If no model clears both floors, `benchmark.py` reports that and selects nothing.
 The fix is to revise `criteria.md` using `disagreements.csv` and rerun — not to
 lower a floor after seeing the results, which is the same error
 `expansion_policy.json` exists to prevent on the retrieval side.
+
+### Model choice: Opus 5.5 only (2026-10-06)
+
+**Decision.** Zachary chose `claude-opus-5-5` as the only screening model on
+2026-10-06. Haiku 4.5 and Sonnet 5.5 were removed from `screen.py` (v3.0.0):
+from its ID, pricing, cache and request-shape tables, the docs and the tests.
+
+**Basis.** The three-model calibration run `calib_v3_20261006`: the 50-paper v3
+abstract sample, `criteria.md` sha256 `f1c7063c…`, scored against
+`screening/labels.csv` (9 human includes, 41 excludes).
+
+| | Haiku 4.5 | Sonnet 5.5 | Opus 5.5 |
+|---|---:|---:|---:|
+| binary κ (floor 0.70) | 0.36 | 0.45 | **0.59** |
+| 3-class κ | 0.38 | 0.37 | **0.46** |
+| include recall (floor 0.95) | 0.44 | **0.75** | 0.67 |
+| include precision | 0.50 | 0.46 | **0.67** |
+| false excludes / false includes | 5 / 4 | 2 / 7 | 3 / 3 |
+| invalid responses (of 50) | 0 | 4 | 3 |
+| cost (batch) | $0.085 | $0.113 | $0.229 |
+
+Opus had the best κ (both kinds), the best precision and the fewest total
+errors.
+
+**What this choice does not establish:**
+
+- **Opus did not meet the pre-registered floors.** Its binary κ was 0.59
+  against 0.70, and include recall 0.67 against 0.95.
+- **It missed 3 of the 9 human includes** (false excludes, the unrecoverable
+  error), and 3 of its 50 responses failed validation, all on the 25-word
+  reason cap.
+- **Sonnet had higher include recall** (0.75).
+- **The selection rule selected no model** on this run. Choosing Opus is a
+  decision made over that result, not the rule's output.
+- The floors still stand. An Opus run is fit to screen the corpus only once it
+  clears them on calibration. Per `benchmark.py`, the route there is revising
+  `criteria.md` from `disagreements.csv`, not lowering a floor.
+
+**Reproducibility.** `screening/runs/smoke_20261006/` and
+`screening/runs/calib_v3_20261006/` hold the full call logs, manifests and
+benchmark outputs. `benchmark.py` still scores the three-model log unchanged.
+Re-running Haiku or Sonnet needs `screen.py` from commit `53fecde`, the last
+commit before the removal.
 
 ## Next stage (not yet built)
 

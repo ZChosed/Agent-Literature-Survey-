@@ -669,43 +669,31 @@ def test_prompt_hashes():
     check(sc.TOOL_NAME in sys_a, "the system prompt names the tool it forces")
     check(str(sc.MAX_REASON_WORDS) in sys_a, "the system prompt states the word cap")
 
-    # Cache minimums are model-dependent, and Haiku's is the one that bites.
-    check(sc.CACHE_MIN_PREFIX["claude-haiku-4-5-20251001"] == 4096,
-          "Haiku 4.5's 4096-token cache minimum is recorded")
-    check(sc.CACHE_MIN_PREFIX["claude-opus-5-5"] == 512,
-          "Opus 5.5's 512-token cache minimum is recorded")
-    check(sc.CACHE_MIN_PREFIX["claude-sonnet-5-5"] == 512,
-          "Sonnet 5.5's 512-token cache minimum is recorded")
+    check(sc.CACHE_MIN_PREFIX == {"claude-opus-5-5": 512},
+          "Opus 5.5's 512-token cache minimum is the only one recorded")
 
 
 def test_model_table():
-    print("\n[models] the brief's model IDs are used verbatim, never substituted")
-    check(sc.MODEL_IDS == {"haiku": "claude-haiku-4-5-20251001",
-                           "sonnet": "claude-sonnet-5-5",
-                           "opus": "claude-opus-5-5"},
-          f"the three IDs are exactly as the brief specified (got {sc.MODEL_IDS})")
+    print("\n[models] Opus 5.5 only, its ID used verbatim, never substituted")
+    check(sc.MODEL_IDS == {"opus": "claude-opus-5-5"},
+          f"Opus 5.5 is the only model (got {sc.MODEL_IDS})")
+    for table in ("PRICING", "CACHE_MIN_PREFIX", "MODEL_REQUEST"):
+        check(set(getattr(sc, table)) == {"claude-opus-5-5"},
+              f"{table} holds Opus 5.5 and nothing else")
     check(not hasattr(sc, "BRIEF_MODEL_IDS"),
           "the substitution table is gone entirely")
 
-    # Prices, verified against the pricing page. Getting Opus 5.5 wrong by
-    # using Opus 5's $5/$25 inflates it 25% against a rule that picks on cost.
+    # Prices, verified against the pricing page. Opus 5's $5/$25 would
+    # overstate every cost figure by 25%.
     check(sc.PRICING["claude-opus-5-5"]["input"] == 4.00
           and sc.PRICING["claude-opus-5-5"]["output"] == 20.00,
           "Opus 5.5 priced at $4/$20, not Opus 5's $5/$25")
-    check(sc.PRICING["claude-sonnet-5-5"]["input"] == 2.00
-          and sc.PRICING["claude-sonnet-5-5"]["output"] == 10.00,
-          "Sonnet 5.5 priced at $2/$10")
-    check(sc.PRICING["claude-haiku-4-5-20251001"]["input"] == 1.00
-          and sc.PRICING["claude-haiku-4-5-20251001"]["output"] == 5.00,
-          "Haiku 4.5 priced at $1/$5")
 
-    # The cache-read multiplier is NOT global: Opus 5.5 reads at 0.05x.
+    # Opus 5.5 reads cache at 0.05x, not the 0.10x many models use.
     check(sc.PRICING["claude-opus-5-5"]["cache_read_mult"] == 0.05,
           "Opus 5.5 cache reads at 0.05x base input")
-    check(sc.PRICING["claude-sonnet-5-5"]["cache_read_mult"] == 0.10,
-          "Sonnet 5.5 cache reads at the standard 0.10x")
     check(not hasattr(sc, "CACHE_READ_MULT"),
-          "no single global cache-read constant survives -- it is per model")
+          "no global cache-read constant -- it is per model")
 
     # A cache-heavy call, priced by hand. 100k cache-read tokens on Opus 5.5:
     # 100_000 * ($4/1e6) * 0.05 = $0.02. At the old global 0.1x it would be
@@ -717,8 +705,7 @@ def test_model_table():
     check(abs(c - 0.02) < 1e-12,
           f"100k Opus 5.5 cache-read tokens cost $0.02 (got ${c})")
 
-    # An unpriced model must raise, not silently cost nothing: the selection
-    # rule picks the cheapest, so $0.00 would win on a fiction.
+    # An unpriced model must raise, not silently cost nothing.
     try:
         sc.cost_usd("claude-not-a-model", {"input_tokens": 1000}, batch=False)
         check(False, "an unpriced model must raise rather than cost $0.00")
@@ -728,11 +715,9 @@ def test_model_table():
 
 
 def test_request_shape_per_model():
-    print("\n[request] forced tool use is gone; thinking is minimised per model")
+    print("\n[request] forced tool use is gone; thinking is minimised")
 
-    # Forced tool_choice returns 400 on both 5.5 models, so the harness must
-    # not send it to ANY of them -- a per-model request shape would make the
-    # benchmark compare request shapes as well as models.
+    # Forced tool_choice returns 400 on Opus 5.5, so the harness must not send it.
     src = open("screen.py", encoding="utf-8").read()
     check('tool_choice={"type": "auto"}' in src,
           "requests send tool_choice auto")
@@ -745,19 +730,6 @@ def test_request_shape_per_model():
     check("strict" not in sc.build_tool(False),
           "--no-strict-tool can still drop it")
 
-    # Haiku 4.5: omit thinking entirely, no effort parameter.
-    kw = sc.model_kwargs("claude-haiku-4-5-20251001")
-    check("thinking" not in kw and "output_config" not in kw,
-          f"Haiku 4.5 sends no thinking and no effort (got {kw})")
-
-    # Sonnet 5.5: `disabled` is a 400; between_tools is the lowest setting,
-    # and it is only valid at low/medium/high effort.
-    kw = sc.model_kwargs("claude-sonnet-5-5")
-    check(kw.get("thinking") == {"type": "between_tools"},
-          f"Sonnet 5.5 sends thinking=between_tools, not disabled (got {kw})")
-    check(kw.get("output_config", {}).get("effort") in ("low", "medium", "high"),
-          "and an effort level between_tools actually accepts")
-
     # Opus 5.5: thinking cannot be disabled at all; effort is the only lever.
     kw = sc.model_kwargs("claude-opus-5-5")
     check("thinking" not in kw,
@@ -767,9 +739,8 @@ def test_request_shape_per_model():
     check(sc.MODEL_REQUEST["claude-opus-5-5"]["thinking_unavoidable"] is True,
           "Opus 5.5 is flagged thinking_unavoidable so the cost comparison "
           "can be read with the asymmetry visible")
-    check(sc.MODEL_REQUEST["claude-sonnet-5-5"]["thinking_unavoidable"] is False
-          and sc.MODEL_REQUEST["claude-haiku-4-5-20251001"]["thinking_unavoidable"] is False,
-          "the other two are not")
+    check(sc.model_kwargs("claude-not-a-model") == {},
+          "an unknown model gets no thinking/effort parameters rather than a guess")
 
     # max_tokens now covers thinking + text, so a 300-token cap would truncate
     # every Opus 5.5 call into a max_tokens validation failure.
@@ -880,7 +851,7 @@ def test_title_only_forced_uncertain(tmpdir: str):
     proc = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
          "--candidates", cand, "--eligibility", elig_path_for(cand),
-         "--models", "haiku", "--runs-dir", runs, "--run-id", "forcetest",
+         "--models", "opus", "--runs-dir", runs, "--run-id", "forcetest",
          "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env,
         cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -967,7 +938,7 @@ def test_ineligible_never_reach_api(tmpdir: str):
         run_id = f"elig_{mode}"
         proc = subprocess.run(
             [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-             "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "haiku", "--runs-dir", runs,
+             "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "opus", "--runs-dir", runs,
              "--run-id", run_id, "--max-usd", "5.00", "--yes"]
             + (["--sync"] if mode == "sync" else []),
             capture_output=True, text=True, env=env,
@@ -1012,7 +983,7 @@ def test_ineligible_never_reach_api(tmpdir: str):
                PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
     proc = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-         "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "haiku", "--runs-dir", runs,
+         "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "opus", "--runs-dir", runs,
          "--run-id", "elig_unknown", "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env,
         cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -1093,7 +1064,7 @@ def test_eligibility_staleness(tmpdir: str):
         proc = subprocess.run(
             [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
              "--candidates", cand, "--eligibility", eligibility,
-             "--models", "haiku", "--runs-dir", os.path.join(d, "runs"),
+             "--models", "opus", "--runs-dir", os.path.join(d, "runs"),
              "--run-id", tag, "--max-usd", "5.00", "--yes"],
             capture_output=True, text=True, env=env,
             cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -1326,25 +1297,16 @@ def test_budget_guard(tmpdir: str):
           f"without batching the same run is exactly double: "
           f"${nobatch['total_estimated_usd']}")
 
-    # Sonnet 5.5 can suppress thinking, so its output is NOT scaled:
-    # 75,000 in x $2/MTok = $0.150; 50 x 80 = 4,000 out x $10/MTok = $0.040.
-    # Batch: (0.150 + 0.040) / 2 = $0.095.
-    son = sc.estimate_cost(client, papers, ["claude-sonnet-5-5"], sys_blocks,
-                           tools, 1, True, 80, 200, verbose=False)
-    check(abs(son["total_estimated_usd"] - 0.095) < 1e-6,
-          f"Sonnet 5.5's output estimate is unscaled "
-          f"(${son['total_estimated_usd']})")
-
-    three = sc.estimate_cost(
+    full = sc.estimate_cost(
         client, papers, list(sc.MODEL_IDS.values()),
         sys_blocks, tools, 1, True, 80, 200, verbose=False)
-    check(three["total_estimated_usd"] < 2.0,
-          f"a 50-paper calibration run across all three models is under $2 "
-          f"(${three['total_estimated_usd']})")
+    check(full["total_estimated_usd"] < 2.0,
+          f"a 50-paper calibration run on Opus 5.5 is under $2 "
+          f"(${full['total_estimated_usd']})")
 
-    check(three["total_estimated_usd"] < 10.0,
+    check(full["total_estimated_usd"] < 10.0,
           f"and therefore under the $10 default cap "
-          f"(${three['total_estimated_usd']} < $10.00)")
+          f"(${full['total_estimated_usd']} < $10.00)")
 
     # The guard itself, end to end. screen.py is run in a subprocess against a
     # STUB anthropic module (see _stub_anthropic) so the test is fully offline
@@ -1410,9 +1372,10 @@ def test_budget_guard(tmpdir: str):
           "and that tool_choice was auto, not forced")
 
     # --- never substitute: an unserved ID must abort ----------------------
-    # The stub serves only Haiku, so the requested Opus ID is not available.
+    # The stub serves Opus 5 but not Opus 5.5: a near-miss ID is the case a
+    # "helpful" substitution would paper over.
     stub_partial = _stub_anthropic(tmpdir, token_count=1500,
-                                   served=["claude-haiku-4-5-20251001"])
+                                   served=["claude-opus-5"])
     env2 = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub",
                 PYTHONPATH=stub_partial + os.pathsep
                 + os.environ.get("PYTHONPATH", ""))
@@ -1434,6 +1397,23 @@ def test_budget_guard(tmpdir: str):
           "and states that it will not substitute one")
     check(not os.path.exists(os.path.join(runs, "guard_badmodel", "calls.jsonl")),
           "nothing was submitted")
+
+    # --- Opus only: the removed models cannot be requested ----------------
+    record = os.path.join(tmpdir, "stub_record_removed.jsonl")
+    env3 = dict(env, STUB_RECORD=record)
+    for extra, label in ((["--models", "haiku"], "--models haiku"),
+                         (["--models", "opus", "--model-id",
+                           "sonnet=claude-sonnet-5-5"], "--model-id sonnet=...")):
+        proc = subprocess.run(
+            [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+             "--candidates", cand, "--eligibility", elig_path_for(cand),
+             *extra, "--runs-dir", runs, "--run-id", "guard_removed",
+             "--max-usd", "5.00", "--yes"],
+            capture_output=True, text=True, env=env3,
+            cwd=os.path.dirname(os.path.abspath(__file__)))
+        check(proc.returncode != 0 and "Opus only" in proc.stderr,
+              f"{label} aborts: screening uses Opus only")
+    check(not os.path.exists(record), "and nothing reached the API")
 
 
 # ---------------------------------------------------------------------------
@@ -1611,27 +1591,30 @@ def test_benchmark_refuses_partial_labels(tmpdir: str):
 
 
 def test_selection_rule(tmpdir: str):
+    # benchmark.py scores whatever models a call log holds (the archived
+    # three-model run must still score), so the rule is tested on placeholder
+    # IDs -- they are fixture labels, not models screen.py can call.
     print("\n[select] the cheapest qualifying model wins; otherwise none does")
     run_dir = os.path.join(tmpdir, "runs", "selecttest")
     os.makedirs(run_dir, exist_ok=True)
 
     # 20 papers. Human: 10 include, 10 exclude.
     human = ["include"] * 10 + ["exclude"] * 10
-    # haiku: cheap, misses two includes -> recall 0.8, fails the recall floor.
-    haiku = ["include"] * 8 + ["exclude"] * 2 + ["exclude"] * 10
-    # sonnet: catches every include, one false include -> recall 1.0,
+    # cheap: cheap, misses two includes -> recall 0.8, fails the recall floor.
+    cheap = ["include"] * 8 + ["exclude"] * 2 + ["exclude"] * 10
+    # mid: catches every include, one false include -> recall 1.0,
     #         binary kappa = (0.95 - 0.505)/0.495 = 0.8990 -> qualifies.
-    sonnet = ["include"] * 10 + ["include"] + ["exclude"] * 9
-    # opus: perfect, but more expensive -> must NOT be chosen over sonnet.
+    mid = ["include"] * 10 + ["include"] + ["exclude"] * 9
+    # opus: perfect, but more expensive -> must NOT be chosen over mid.
     opus = list(human)
 
-    per_call_cost = {"claude-haiku-4-5-20251001": 0.0001,
-                     "claude-sonnet-5-5": 0.0005,
+    per_call_cost = {"test-model-cheap": 0.0001,
+                     "test-model-mid": 0.0005,
                      "claude-opus-5-5": 0.0020}
     with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
         for mid, alias, decisions in (
-                ("claude-haiku-4-5-20251001", "haiku", haiku),
-                ("claude-sonnet-5-5", "sonnet", sonnet),
+                ("test-model-cheap", "cheap", cheap),
+                ("test-model-mid", "mid", mid),
                 ("claude-opus-5-5", "opus", opus)):
             for i, d in enumerate(decisions):
                 f.write(json.dumps({
@@ -1663,16 +1646,16 @@ def test_selection_rule(tmpdir: str):
                              encoding="utf-8"))
     sel = summary["selection"]
     check(sel["selected"] is True, "a model qualifies")
-    check(sel["model_alias"] == "sonnet",
+    check(sel["model_alias"] == "mid",
           f"the CHEAPEST qualifying model is chosen, not the best "
           f"(got {sel.get('model_alias')})")
 
     b = pd.read_csv(os.path.join(run_dir, "benchmark.csv"))
     by = {r["model_alias"]: r for _, r in b.iterrows()}
-    check(abs(by["haiku"]["include_recall_binary"] - 0.8) < 1e-9,
-          f"haiku recall 0.8 (got {by['haiku']['include_recall_binary']})")
-    check(not by["haiku"]["meets_recall_floor"],
-          "haiku fails the 0.95 recall floor despite being cheapest")
+    check(abs(by["cheap"]["include_recall_binary"] - 0.8) < 1e-9,
+          f"cheap recall 0.8 (got {by['cheap']['include_recall_binary']})")
+    check(not by["cheap"]["meets_recall_floor"],
+          "cheap fails the 0.95 recall floor despite being cheapest")
     check(by["opus"]["include_recall_binary"] == 1.0
           and by["opus"]["kappa_binary_primary"] == 1.0,
           "opus is perfect but costlier, so it is passed over")
@@ -1683,10 +1666,10 @@ def test_selection_rule(tmpdir: str):
     run2 = os.path.join(tmpdir, "runs", "noqualify")
     os.makedirs(run2, exist_ok=True)
     with open(os.path.join(run2, "calls.jsonl"), "w", encoding="utf-8") as f:
-        for i, d in enumerate(haiku):
+        for i, d in enumerate(cheap):
             f.write(json.dumps({
-                "run_id": "noqualify", "model_alias": "haiku",
-                "model": "claude-haiku-4-5-20251001", "paper_id": f"W{i}", "repeat": 1,
+                "run_id": "noqualify", "model_alias": "cheap",
+                "model": "test-model-cheap", "paper_id": f"W{i}", "repeat": 1,
                 "parsed": {"decision": d, "criterion_id": "I1", "reason": "r"},
                 "validation_status": "valid", "input_tokens": 1000,
                 "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
@@ -1712,7 +1695,7 @@ def test_thinking_asymmetry_is_surfaced(tmpdir: str):
 
     human = ["include"] * 5 + ["exclude"] * 5
     with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
-        for mid, alias in (("claude-sonnet-5-5", "sonnet"),
+        for mid, alias in (("test-model-mid", "mid"),
                            ("claude-opus-5-5", "opus")):
             for i, d in enumerate(human):
                 f.write(json.dumps({
@@ -1727,8 +1710,9 @@ def test_thinking_asymmetry_is_surfaced(tmpdir: str):
     # The manifest is what carries the request-shape fact into scoring.
     with open(os.path.join(run_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump({"per_model_request_shape": {
-            m: {**sc.MODEL_REQUEST[m], "sent": sc.model_kwargs(m)}
-            for m in ("claude-sonnet-5-5", "claude-opus-5-5")}}, f)
+            "test-model-mid": {"thinking_unavoidable": False, "sent": {}},
+            "claude-opus-5-5": {**sc.MODEL_REQUEST["claude-opus-5-5"],
+                                "sent": sc.model_kwargs("claude-opus-5-5")}}}, f)
 
     labels_path = os.path.join(tmpdir, "labels_think.csv")
     _write_labels(labels_path, [
@@ -1746,8 +1730,8 @@ def test_thinking_asymmetry_is_surfaced(tmpdir: str):
     by = {r["model_alias"]: r for _, r in b.iterrows()}
     check(bool(by["opus"]["thinking_unavoidable"]) is True,
           "opus is marked thinking_unavoidable in benchmark.csv")
-    check(bool(by["sonnet"]["thinking_unavoidable"]) is False,
-          "sonnet is not")
+    check(bool(by["mid"]["thinking_unavoidable"]) is False,
+          "mid is not")
     check("thinking could not be disabled" in proc.stdout,
           "and the report warns that the cost comparison is not like-for-like")
 
@@ -1766,8 +1750,8 @@ def test_benchmark_exclusion_stages(tmpdir: str):
     with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
         for i, d in enumerate(decisions):
             f.write(json.dumps({
-                "run_id": "stagetest", "model_alias": "haiku",
-                "model": "claude-haiku-4-5-20251001", "paper_id": f"W{i}",
+                "run_id": "stagetest", "model_alias": "cheap",
+                "model": "test-model-cheap", "paper_id": f"W{i}",
                 "repeat": 1,
                 "parsed": {"decision": d, "criterion_id": "I1", "reason": "r"},
                 "validation_status": "valid", "input_tokens": 1000,
@@ -1809,18 +1793,18 @@ def test_benchmark_exclusion_stages(tmpdir: str):
           "the summary carries stage 1 by reason")
     check(st1["n_labelled_dropped_from_scoring"] == 2,
           "and says 2 labelled papers were dropped from scoring for it")
-    check(summ["excluded_at_screening_by_model"] == {"claude-haiku-4-5-20251001": 3},
+    check(summ["excluded_at_screening_by_model"] == {"test-model-cheap": 3},
           "stage 2 is reported per model, separately")
     check("excluded at eligibility: 2" in proc.stdout
-          and "excluded at screening by haiku: 3" in proc.stdout,
+          and "excluded at screening by cheap: 3" in proc.stdout,
           "and the report prints the two stages on separate lines")
 
     # A call log holding a paper the manifest says was ineligible is a broken
     # run, not something to score around.
     with open(os.path.join(run_dir, "calls.jsonl"), "a", encoding="utf-8") as f:
         f.write(json.dumps({
-            "run_id": "stagetest", "model_alias": "haiku",
-            "model": "claude-haiku-4-5-20251001", "paper_id": "W6", "repeat": 1,
+            "run_id": "stagetest", "model_alias": "cheap",
+            "model": "test-model-cheap", "paper_id": "W6", "repeat": 1,
             "parsed": {"decision": "exclude", "criterion_id": "E1", "reason": "r"},
             "validation_status": "valid", "input_tokens": 1,
             "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
