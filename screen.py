@@ -62,7 +62,7 @@ model, which is exactly what Report 2 is for.
 `strict: true` is therefore ON by default (`--no-strict-tool` drops it). With
 forcing gone it is the mechanism that keeps the tool INPUT schema-valid, and
 the client-side validator is not made redundant by it: two of the checks --
-criterion_id membership and the 25-word reason cap -- are not expressible in
+criterion_id membership and the reason word cap -- are not expressible in
 JSON Schema, and `strict` says nothing about whether the tool was called at
 all.
 
@@ -146,7 +146,7 @@ try:
 except ImportError:
     sys.exit("anthropic is required:  pip install anthropic")
 
-SCRIPT_VERSION = "3.0.0"
+SCRIPT_VERSION = "3.1.0"
 
 # --------------------------------------------------------------------------
 # Models
@@ -212,7 +212,16 @@ MODEL_REQUEST = {
 
 TOOL_NAME = "screen_paper"
 DECISIONS = ("include", "exclude", "uncertain")
-MAX_REASON_WORDS = 25
+# The reason cap. MAX_REASON_WORDS is what the model is TOLD (system prompt and
+# tool schema). A reason over it but under REASON_FAIL_WORDS is a format
+# overrun, not a judgment failure: it is kept as valid and logged as a
+# `reason_overrun` WARNING. Only REASON_FAIL_WORDS or more fails validation.
+#
+# Raised 2026-10-06 from a hard 25: on calib_v3_20261006, 3 of 50 Opus
+# responses (6%) were discarded for 27-29-word reasons, and 7 of 150 across
+# the three models -- format failures that cost those papers their scores.
+MAX_REASON_WORDS = 40
+REASON_FAIL_WORDS = 50
 
 # max_tokens is a hard cap on TOTAL output -- thinking plus response text -- on
 # Opus 5.5. The tool call itself is ~60 tokens, but Opus 5.5 always thinks, so
@@ -525,7 +534,7 @@ def validate(parsed: dict | None, failure: str | None,
     reason = parsed.get("reason")
     if not isinstance(reason, str) or not reason.strip():
         errors.append("empty_reason")
-    elif len(reason.split()) > MAX_REASON_WORDS:
+    elif len(reason.split()) >= REASON_FAIL_WORDS:
         errors.append(f"reason_too_long:{len(reason.split())}w")
 
     extra = set(parsed) - {"decision", "criterion_id", "reason"}
@@ -533,6 +542,23 @@ def validate(parsed: dict | None, failure: str | None,
         errors.append(f"unexpected_keys:{sorted(extra)}")
 
     return ("invalid" if errors else "valid"), errors
+
+
+def validation_warnings(parsed: dict | None) -> list[str]:
+    """
+    Non-fatal findings on a response. Logged per call and counted by
+    benchmark.py, but they never change validation_status.
+
+    `reason_overrun:<n>w` -- the reason exceeds MAX_REASON_WORDS (what the model
+    was told) but is under REASON_FAIL_WORDS.
+    """
+    reason = (parsed or {}).get("reason")
+    if not isinstance(reason, str):
+        return []
+    n = len(reason.split())
+    if MAX_REASON_WORDS < n < REASON_FAIL_WORDS:
+        return [f"reason_overrun:{n}w"]
+    return []
 
 
 def parse_response(message) -> tuple[dict | None, str | None]:
@@ -980,6 +1006,10 @@ def main() -> int:
             "documented replacement is tool_choice auto plus strict tool use."),
         "strict_tool": strict_tool,
         "max_tokens": MAX_TOKENS,
+        "reason_word_limits": {
+            "stated_to_model": MAX_REASON_WORDS,
+            "warning_range": [MAX_REASON_WORDS + 1, REASON_FAIL_WORDS - 1],
+            "fails_at": REASON_FAIL_WORDS},
         "criterion_ids_known": ids,
         "criterion_ids_source": id_source,
         "criterion_id_enforced": enforce_ids,
@@ -1015,6 +1045,7 @@ def main() -> int:
     total_cost = 0.0
     by_model_cost: dict[str, float] = defaultdict(float)
     err_counter: Counter[str] = Counter()
+    warn_counter: Counter[str] = Counter()
 
     def record(alias, mid, paper, rep, message, err, batch):
         nonlocal n_valid, n_invalid, total_cost
@@ -1028,6 +1059,9 @@ def main() -> int:
             usage = usage_dict(message.usage)
             raw = json.loads(message.to_json())
         status, errors = validate(parsed, failure, valid_ids)
+        warnings = validation_warnings(parsed) if status == "valid" else []
+        for w in warnings:
+            warn_counter[w.split(":")[0]] += 1
         c = cost_usd(mid, usage, batch)
         total_cost += c
         by_model_cost[mid] += c
@@ -1053,6 +1087,7 @@ def main() -> int:
             "parsed": parsed,
             "validation_status": status,
             "validation_errors": errors,
+            "validation_warnings": warnings,
             "criterion_id_in_criteria": (
                 None if not ids else (isinstance(cid, str) and cid.strip() in set(ids))),
             "input_tokens": usage["input_tokens"],
@@ -1091,6 +1126,7 @@ def main() -> int:
                                  "uncertain without a model call."},
             "validation_status": "forced",
             "validation_errors": [],
+            "validation_warnings": [],
             "criterion_id_in_criteria": None,
             "input_tokens": 0, "cache_read_input_tokens": 0,
             "cache_creation_input_tokens": 0, "output_tokens": 0,
@@ -1195,6 +1231,9 @@ def main() -> int:
         "validated": n_valid,
         "failed_validation": n_invalid,
         "validation_failure_kinds": dict(err_counter),
+        "validation_warning_kinds": dict(warn_counter),
+        "reason_word_limits": {"stated_to_model": MAX_REASON_WORDS,
+                               "fails_at": REASON_FAIL_WORDS},
         "actual_cost_usd": round(total_cost, 6),
         "actual_cost_usd_by_model": {k: round(v, 6) for k, v in by_model_cost.items()},
         "estimate_vs_actual": {
@@ -1214,6 +1253,11 @@ def main() -> int:
             f"{k}={v}" for k, v in err_counter.most_common()))
         print("       (not retried -- a silent retry would make the malformed-"
               "output rate unmeasurable)")
+    if warn_counter:
+        print(f"[done] warnings (still valid): " + ", ".join(
+            f"{k}={v}" for k, v in warn_counter.most_common())
+              + f"  -- reason over {MAX_REASON_WORDS} words but under "
+                f"{REASON_FAIL_WORDS}")
     print(f"[done] actual cost ${total_cost:.4f} "
           f"(estimated ${est['total_estimated_usd']:.4f})")
     print(f"  -> {calls_path}")

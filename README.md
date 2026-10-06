@@ -949,6 +949,15 @@ about the criteria.
   off by default for the same reason: schema enforcement at the API would make
   the client-side validator dead code, and "how often did the model emit
   something unusable" is a Report 2 finding.
+- **The reason cap separates format slippage from failure** (screen.py 3.1.0,
+  2026-10-06). The model is told **40 words**, in the system prompt and the
+  tool schema. A valid response with a 41–49-word reason is **kept and scored**
+  and logged as a `reason_overrun` warning (`validation_warnings` in
+  `calls.jsonl`, `n_reason_overrun_warnings` in `benchmark.csv`). Only **50+
+  words fails** validation. The cap used to be a hard 25: on
+  `calib_v3_20261006`, 3 of 50 Opus responses (6%) were discarded for 27–29
+  words, a format failure that cost those papers their scores. That run's
+  statuses stay as logged under the 25-word rule.
 - **A hallucinated `criterion_id` is a validation failure** — but only when the
   ID set parsed out of `criteria.md` is trustworthy (≥2 IDs found). Below that,
   membership is recorded and not enforced, because a parser that found nothing
@@ -1097,6 +1106,66 @@ errors.
 benchmark outputs. `benchmark.py` still scores the three-model log unchanged.
 Re-running Haiku or Sonnet needs `screen.py` from commit `53fecde`, the last
 commit before the removal.
+
+### Rescoring against revised labels (2026-10-06): not an independent result
+
+After the run, the human labels were revised twice. Each version was rescored
+against the **same logged responses** of `calib_v3_20261006`, with no new API
+calls. The run was rescored on a copy, so the committed outputs in
+`screening/runs/calib_v3_20261006/` are against v1 and are unchanged.
+
+| Label version | What it is |
+|---|---|
+| **v1** | as first labelled, committed in `53fecde` (9 include / 41 exclude) |
+| **v2** | v1 with changes 1–3 below (8 / 42). Not kept as a separate file. |
+| **v3** | v2 with changes 4–5 below (8 / 42); `screening/labels.csv` from here on |
+
+| # | Paper | v1 | Changed to | in | Opus's answer |
+|---:|---|---|---|---|---|
+| 1 | W4415932305, DT framework for construction logistics | include/D1 | exclude/E3 | v2 | exclude/E3 |
+| 2 | W4303644424, collective intelligence in industrial CPS | include/I4 | exclude/E2 | v2 | exclude/E2 |
+| 3 | W3005323329, 5-dimensional DT definition | exclude/E7 | include/D1 | v2 | include/D1 |
+| 4 | W3036215542, quality-monitor DT with stacked autoencoder | include/D1 | exclude/E7 | v3 | exclude/E7 |
+| 5 | W3026959602, anarchic manufacturing, distributed control | exclude/E4 | include/I4 | v3 | include/I4 |
+
+Opus 5.5 on each version:
+
+| | v1 | v2 | v3 | floor |
+|---|---:|---:|---:|---:|
+| binary κ | 0.5877 | 0.7847 | **0.9282** | 0.70 |
+| 3-class κ | 0.4644 | 0.6498 | 0.7899 | |
+| include recall | 0.6667 (6/9) | 0.875 (7/8) | **1.00 (8/8)** | 0.95 |
+| include precision | 0.6667 | 0.7778 | 0.8889 | |
+| false excludes / false includes | 3 / 3 | 1 / 2 | 0 / 1 | |
+| selection rule | selects none | selects none | **selects Opus** | |
+
+The other two models on the same versions, for completeness:
+
+| binary κ / include recall | v1 | v2 | v3 |
+|---|---:|---:|---:|
+| Haiku 4.5 | 0.3626 / 0.4444 | 0.5536 / 0.625 | 0.7024 / 0.75 |
+| Sonnet 5.5 | 0.4538 / 0.75 | 0.5752 / 0.875 | 0.6966 / 1.00 |
+
+On v3, Opus's one remaining binary disagreement is W4317772700 (human E4,
+Opus D1).
+
+**Why the v2 and v3 figures are not a calibration result.** The labels were
+revised after the model's outputs were known. The v2 revision was made with
+Opus's answers and reasons in view. The v3 revision was made without reopening
+Opus's output, but changes 4 and 5 are the two papers just presented with
+Opus's decision and reasoning, as its remaining disagreements. **All five
+changes moved a label to Opus's answer.** Several are defensible readings of
+`criteria.md` (changes 1–3 especially). But v2 and v3 are not independent of
+the run they score, so κ against them measures convergence between the labels
+and the model as much as screening quality. **The independent figures are
+v1's**, the only labels made before any model output was seen: κ 0.59, recall
+0.67. Opus has not yet been shown to clear the floors.
+
+**What would establish it.** A fresh calibration sample drawn from the eligible
+pool excluding these 50 (same method, new seed), labelled blind against the
+current `criteria.md` before any model output is seen, then one Opus run scored
+against it. These 50 papers now serve as the set used to refine the
+criteria, and should be reported as such.
 
 ## Next stage (not yet built)
 

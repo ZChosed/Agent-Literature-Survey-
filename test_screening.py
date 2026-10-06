@@ -1225,16 +1225,30 @@ def test_parser_and_validator():
     check(status == "valid",
           "with an untrusted ID set, membership is not enforced")
 
-    # Reason over the word cap.
-    long_reason = " ".join(["word"] * (sc.MAX_REASON_WORDS + 1))
-    status, errors = sc.validate(
-        {"decision": "include", "criterion_id": "I1", "reason": long_reason}, None, ids)
-    check(status == "invalid" and any(e.startswith("reason_too_long") for e in errors),
-          f"a reason over {sc.MAX_REASON_WORDS} words is rejected (got {errors})")
-    status, errors = sc.validate(
-        {"decision": "include", "criterion_id": "I1",
-         "reason": " ".join(["word"] * sc.MAX_REASON_WORDS)}, None, ids)
-    check(status == "valid", f"exactly {sc.MAX_REASON_WORDS} words is fine")
+    # Reason length: stated cap 40, warning band 41-49, failure from 50.
+    check((sc.MAX_REASON_WORDS, sc.REASON_FAIL_WORDS) == (40, 50),
+          f"the model is told 40 words; 50 fails "
+          f"(got {sc.MAX_REASON_WORDS}, {sc.REASON_FAIL_WORDS})")
+
+    def reason_of(n):
+        return {"decision": "include", "criterion_id": "I1",
+                "reason": " ".join(["word"] * n)}
+
+    for n, want_status, want_warn in ((27, "valid", []),     # the 10-06 overruns
+                                      (40, "valid", []),
+                                      (41, "valid", ["reason_overrun:41w"]),
+                                      (49, "valid", ["reason_overrun:49w"]),
+                                      (50, "invalid", [])):
+        status, errors = sc.validate(reason_of(n), None, ids)
+        warns = sc.validation_warnings(reason_of(n)) if status == "valid" else []
+        check(status == want_status and warns == want_warn
+              and (status == "valid" or any(e.startswith("reason_too_long")
+                                            for e in errors)),
+              f"{n}-word reason -> {want_status}"
+              + (f", warning {want_warn}" if want_warn else "")
+              + f" (got {status}, {errors}, {warns})")
+    check("40" in sc.build_tool()["input_schema"]["properties"]["reason"]["description"],
+          "the tool schema tells the model 40 words, not the failure threshold")
 
     # Missing fields.
     status, errors = sc.validate({"decision": "include"}, None, ids)
@@ -1817,6 +1831,63 @@ def test_benchmark_exclusion_stages(tmpdir: str):
           "a call row for an ineligible paper makes the run unscoreable")
 
 
+def test_reason_overrun_is_a_warning(tmpdir: str):
+    print("\n[warn] a reason overrun is scored and counted, not failed")
+    run_dir = os.path.join(tmpdir, "runs", "warntest")
+    os.makedirs(run_dir, exist_ok=True)
+    with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
+        for i in range(4):
+            f.write(json.dumps({
+                "run_id": "warntest", "model_alias": "opus",
+                "model": "claude-opus-5-5", "paper_id": f"W{i}", "repeat": 1,
+                "parsed": {"decision": "include", "criterion_id": "I1",
+                           "reason": "r"},
+                "validation_status": "valid", "validation_errors": [],
+                "validation_warnings": ["reason_overrun:44w"] if i < 2 else [],
+                "input_tokens": 1000, "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0, "output_tokens": 40,
+                "cost_usd": 0.001,
+            }) + "\n")
+    labels_path = os.path.join(tmpdir, "labels_warn.csv")
+    _write_labels(labels_path, [
+        {"paper_id": f"W{i}", "title": f"T{i}", "abstract": "a",
+         "human_decision": "include", "human_criterion_id": "I1",
+         "human_notes": ""} for i in range(4)])
+    proc = subprocess.run(
+        [sys.executable, "benchmark.py", "--run", run_dir, "--labels", labels_path],
+        capture_output=True, text=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    r = pd.read_csv(os.path.join(run_dir, "benchmark.csv")).iloc[0]
+    check(r["n_scored"] == 4 and r["coverage"] == 1.0 and r["n_invalid_responses"] == 0,
+          f"all 4 scored, none invalid (got {r['n_scored']}, {r['n_invalid_responses']})")
+    check(r["n_reason_overrun_warnings"] == 2,
+          f"the 2 overruns are counted (got {r['n_reason_overrun_warnings']})")
+    check("overran the stated reason word cap" in proc.stdout,
+          "and reported as a warning")
+
+    # A log written before warnings existed still scores, with zero warnings.
+    run2 = os.path.join(tmpdir, "runs", "warn_legacy")
+    os.makedirs(run2, exist_ok=True)
+    with open(os.path.join(run2, "calls.jsonl"), "w", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "run_id": "warn_legacy", "model_alias": "opus",
+            "model": "claude-opus-5-5", "paper_id": "W0", "repeat": 1,
+            "parsed": {"decision": "include", "criterion_id": "I1", "reason": "r"},
+            "validation_status": "valid", "input_tokens": 1,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+            "output_tokens": 1, "cost_usd": 0.0}) + "\n")
+    _write_labels(labels_path, [{"paper_id": "W0", "title": "T", "abstract": "a",
+                                 "human_decision": "include",
+                                 "human_criterion_id": "I1", "human_notes": ""}])
+    proc = subprocess.run(
+        [sys.executable, "benchmark.py", "--run", run2, "--labels", labels_path],
+        capture_output=True, text=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)))
+    check(proc.returncode == 0 and pd.read_csv(os.path.join(run2, "benchmark.csv"))
+          .iloc[0]["n_reason_overrun_warnings"] == 0,
+          "a pre-warning call log still scores, with 0 warnings")
+
+
 def test_invalid_responses_shrink_coverage(tmpdir: str):
     print("\n[coverage] invalid responses shrink n_scored but not cost")
     run_dir = os.path.join(tmpdir, "runs", "covtest")
@@ -1884,6 +1955,7 @@ def main() -> int:
         test_thinking_asymmetry_is_surfaced(tmpdir)
         test_invalid_responses_shrink_coverage(tmpdir)
         test_benchmark_exclusion_stages(tmpdir)
+        test_reason_overrun_is_a_warning(tmpdir)
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 

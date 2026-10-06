@@ -79,7 +79,7 @@ import pandas as pd
 
 from collections import Counter
 
-SCRIPT_VERSION = "2.1.0"
+SCRIPT_VERSION = "2.2.0"
 
 DECISIONS = ["include", "exclude", "uncertain"]
 BINARY = ["include", "exclude"]
@@ -214,6 +214,12 @@ def load_calls(run_dir: str) -> pd.DataFrame:
     df["model_reason"] = parsed.apply(lambda d: str(d.get("reason", "")).strip())
     if "repeat" not in df.columns:
         df["repeat"] = 1
+    # Non-fatal validation findings (screen.py >= 3.1.0). Older logs have no
+    # such field; their calls simply carry no warnings.
+    if "validation_warnings" not in df.columns:
+        df["validation_warnings"] = [[] for _ in range(len(df))]
+    df["validation_warnings"] = df["validation_warnings"].apply(
+        lambda w: w if isinstance(w, list) else [])
     if "text_kind" not in df.columns:
         df["text_kind"] = "abstract"
     df["text_kind"] = df["text_kind"].fillna("abstract")
@@ -330,6 +336,11 @@ def main() -> int:
             "n_invalid_responses": int(
                 (~g["validation_status"].isin(["valid", "forced"])).sum()),
             "n_forced_uncertain": int((g["validation_status"] == "forced").sum()),
+            # Valid responses that carry a non-fatal warning, e.g. a reason
+            # over the stated word cap but under the failure threshold. They
+            # ARE scored; this only makes the format slippage visible.
+            "n_reason_overrun_warnings": int(g["validation_warnings"].apply(
+                lambda ws: any(str(w).startswith("reason_overrun") for w in ws)).sum()),
             # Stage 2 only: a model `exclude` on an eligible paper. Stage 1
             # (eligibility) is a run-level count, never mixed in here.
             "n_excluded_at_screening": int(
@@ -565,6 +576,10 @@ def main() -> int:
               f"      that asymmetry in view, not as like-for-like.")
 
     for _, r in bench.iterrows():
+        if r["n_reason_overrun_warnings"]:
+            print(f"\n  [warn] {r['model_alias']}: {r['n_reason_overrun_warnings']} "
+                  f"valid response(s) overran the stated reason word cap "
+                  f"(scored, not failed)")
         if r["coverage"] < 1.0:
             print(f"\n  *** {r['model_alias']}: {r['n_invalid_responses']} "
                   f"response(s) failed validation, so its kappa is computed over "

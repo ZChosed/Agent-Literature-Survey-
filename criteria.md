@@ -79,4 +79,4 @@ Validation quality, novelty, and citation count.
 How relevant an included paper is. Do not downgrade a qualifying paper to uncertain or exclude because it seems minor.
 Output
 
-Return exactly one decision (include / exclude / uncertain), one criterion ID from the lists above, and a reason of at most 25 words that refers to the text.
+Return exactly one decision (include / exclude / uncertain), one criterion ID from the lists above, and a reason of at most 40 words that refers to the text.
