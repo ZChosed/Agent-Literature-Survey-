@@ -8,14 +8,14 @@ test, so every OpenAlex and Unpaywall "response" is a fixture.
 
 Covers:
 
-  * a 10.1016 DOI is ineligible EVEN WHEN OpenAlex and Unpaywall both say OA,
-    and the prefix match is exact (10.10160 is not Elsevier)
+  * rule 1 is gone (v2.0.0): a 10.1016 DOI is decided by OA status alone --
+    eligible when OA, no_oa when not -- and no `elsevier` reason exists
   * rules 2 and 3 on every path, including no-DOI rows and an Unpaywall 404
   * rows are never deleted, reordered or altered: candidates.csv is not
     written at all, and eligibility.csv holds exactly one row per candidate,
     in order, stamped with the candidates key
-  * the rule-1-removed counterfactual, against hand counts, with its
-    OpenAlex-only lower-bound rows counted
+  * the doi_10_1016_rows provenance figures that measure the removal, and the
+    retired counterfactual block is dropped from provenance
   * provenance counts by reason, by reason x rank stratum, top venues and the
     framework_core fraction, checked against hand counts of the fixture
   * all-or-nothing: an undecidable row or a cache miss writes nothing
@@ -57,18 +57,28 @@ UP_404 = {"outcome": "not_found", "http_status": 404}
 def test_rule():
     print("\n[rule] the classification, as a pure function")
 
-    # Rule 1 fires on the DOI alone, whatever the OA evidence says.
-    for oa, up in ((True, UP_OA), (False, UP_OA), (True, None), (None, None)):
-        got = el.classify("10.1016/j.jmsy.2020.01.001", oa, up)
-        check(got == (False, "elsevier", "doi_prefix_10.1016"),
-              f"10.1016 is ineligible with openalex_is_oa={oa}, "
-              f"unpaywall={'OA' if up else None} (got {got})")
-    check(el.classify("10.1016/J.CIRP.2019.1", True, UP_OA)[1] == "elsevier",
-          "the prefix match is case-insensitive")
-    check(el.classify("10.10160/x.1", True, None)[0] is True,
-          "10.10160 is a different registrant and is not caught by rule 1")
-    check(el.classify("10.1109/10.1016.x", True, None)[0] is True,
-          "10.1016 appearing later in the DOI suffix does not fire rule 1")
+    # Rule 1 is removed: a 10.1016 DOI is judged on OA status like any other.
+    els = "10.1016/j.jmsy.2020.01.001"
+    check(el.classify(els, True, None) == (True, "none", "openalex_is_oa"),
+          "a 10.1016 DOI that OpenAlex calls OA is eligible")
+    check(el.classify(els, False, UP_OA) == (True, "none", "unpaywall_oa_location"),
+          "a 10.1016 DOI with only an Unpaywall OA location is eligible")
+    check(el.classify(els, False, UP_CLOSED)
+          == (False, "no_oa", "no_oa:unpaywall_no_location"),
+          "a closed 10.1016 DOI is no_oa -- for being closed, not for its prefix")
+    try:
+        el.classify(els, False, None)
+        check(False, "a closed 10.1016 DOI with no Unpaywall answer must raise")
+    except el.Undecided:
+        check(True, "a closed 10.1016 DOI needs its Unpaywall answer like any "
+                    "other -- the prefix no longer decides anything")
+    check("elsevier" not in el.REASONS,
+          f"`elsevier` is no longer an exclusion reason (REASONS={el.REASONS})")
+    check(el.is_elsevier_doi("10.1016/J.CIRP.2019.1")
+          and not el.is_elsevier_doi("10.10160/x.1")
+          and not el.is_elsevier_doi("10.1109/10.1016.x"),
+          "is_elsevier_doi (now used only to measure the removal) matches the "
+          "registrant exactly")
 
     # Rule 3 via OpenAlex, rule 3 via Unpaywall, rule 2 both ways.
     check(el.classify("10.1109/x", True, None) == (True, "none", "openalex_is_oa"),
@@ -121,20 +131,21 @@ def test_rule():
 
 # (id, doi, venue, framework_core, openalex is_oa, unpaywall record or None)
 FIXTURE = [
-    ("W1", "10.1016/j.a.1", "JMSy",      "1", True,  None),       # elsevier, OA anyway
-    ("W2", "10.1016/j.a.2", "JMSy",      "0", False, None),       # elsevier
+    ("W1", "10.1016/j.a.1", "JMSy",      "1", True,  None),       # 10.1016, OA: eligible
+    ("W2", "10.1016/j.a.2", "JMSy",      "0", False, UP_CLOSED),  # 10.1016, closed: no_oa
     ("W3", "10.1109/b.3",   "TII",       "1", True,  None),       # eligible
     ("W4", "10.1109/b.4",   "TII",       "0", False, UP_OA),      # eligible via Unpaywall
     ("W5", "10.1007/c.5",   "IJAMT",     "1", False, UP_CLOSED),  # no_oa
     ("W6", "10.1007/c.6",   "IJAMT",     "0", False, UP_404),     # no_oa
     ("W7", "",              "",          "0", False, None),       # no_oa, no DOI
     ("W8", "",              "arXiv",     "0", True,  None),       # eligible, no DOI
-    ("W9", "10.1016/j.a.9", "CIRP",      "0", True,  None),       # elsevier, OA anyway
+    ("W9", "10.1016/j.a.9", "CIRP",      "0", True,  None),       # 10.1016, OA: eligible
 ]
 # Hand counts. n=9, top third = ranks 1-3 (W1-W3), bottom = W4-W9.
-EXPECT_REASON = {"W1": "elsevier", "W2": "elsevier", "W3": "none",
+# no_oa: W2 W5 W6 W7 (4); eligible: W1 W3 W4 W8 W9 (5).
+EXPECT_REASON = {"W1": "none", "W2": "no_oa", "W3": "none",
                  "W4": "none", "W5": "no_oa", "W6": "no_oa", "W7": "no_oa",
-                 "W8": "none", "W9": "elsevier"}
+                 "W8": "none", "W9": "none"}
 
 COLS = ["openalex_id", "doi", "title", "venue", "linked_to_framework_core",
         "abstract", "abstract_source", "oa_pdf_url"]
@@ -195,106 +206,63 @@ def test_end_to_end(tmpdir: str):
           f"eligibility.csv columns (got {list(after[0].keys())})")
     check({r[el.KEY_COLUMN] for r in after} == {el.candidates_key(before)},
           "every row is stamped with the current candidates key")
-    check(el.load_eligibility(epath, before)["W1"]["eligible"] is False,
+    check(el.load_eligibility(epath, before)["W2"]["eligible"] is False,
           "and load_eligibility accepts it against the same candidates")
     inel = [r for r in after if r["eligible"] == "False"]
-    check(len(inel) == 6, f"all 6 ineligible rows are still present (got {len(inel)})")
+    check(len(inel) == 4, f"all 4 ineligible rows are still present (got {len(inel)})")
 
     got = {r["openalex_id"]: r["exclusion_reason"] for r in after}
     check(got == EXPECT_REASON, f"every row classified as hand-computed ({got})")
     by = {r["openalex_id"]: r for r in after}
-    check(by["W1"]["eligible"] == "False" and by["W1"]["eligibility_rule"]
-          == "doi_prefix_10.1016",
-          "W1: a 10.1016 DOI that OpenAlex says is OA is still ineligible")
+    check(by["W1"]["eligible"] == "True" and by["W1"]["eligibility_rule"]
+          == "openalex_is_oa",
+          "W1: a 10.1016 DOI that OpenAlex says is OA is eligible (rule 1 gone)")
+    check(by["W2"]["eligibility_rule"] == "no_oa:unpaywall_no_location",
+          "W2: a closed 10.1016 DOI is no_oa through the OA rule, not the prefix")
     check(all((r["eligible"] == "True") == (r["exclusion_reason"] == "none")
               for r in after),
           "eligible and exclusion_reason never disagree")
 
-    prov = json.load(open(os.path.join(d, "prov.json"), encoding="utf-8"))["eligibility"]
-    check(prov["counts_by_exclusion_reason"] == {"elsevier": 3, "no_oa": 3, "none": 3},
-          f"counts by reason (got {prov['counts_by_exclusion_reason']})")
+    full = json.load(open(os.path.join(d, "prov.json"), encoding="utf-8"))
+    prov = full["eligibility"]
+    check(prov["counts_by_exclusion_reason"] == {"no_oa": 4, "none": 5},
+          f"counts by reason, no `elsevier` key (got {prov['counts_by_exclusion_reason']})")
     x = prov["counts_by_exclusion_reason_x_rank_stratum"]
-    check((x["top_third"]["elsevier"], x["top_third"]["no_oa"], x["top_third"]["none"])
-          == (2, 0, 1) and x["top_third"]["total"] == 3,
-          f"top third W1-W3: elsevier 2, no_oa 0, eligible 1 (got {x['top_third']})")
-    check((x["bottom_two_thirds"]["elsevier"], x["bottom_two_thirds"]["no_oa"],
-           x["bottom_two_thirds"]["none"]) == (1, 3, 2),
-          f"bottom W4-W9: elsevier 1, no_oa 3, eligible 2 "
-          f"(got {x['bottom_two_thirds']})")
+    check((x["top_third"]["no_oa"], x["top_third"]["none"], x["top_third"]["total"])
+          == (1, 2, 3),
+          f"top third W1-W3: no_oa 1 (W2), eligible 2 (got {x['top_third']})")
+    check((x["bottom_two_thirds"]["no_oa"], x["bottom_two_thirds"]["none"]) == (3, 3)
+          and x["bottom_two_thirds"]["pct_excluded"] == 50.0,
+          f"bottom W4-W9: no_oa 3, eligible 3, 50.0% (got {x['bottom_two_thirds']})")
     v = [(t["venue"], t["excluded"]) for t in prov["top_excluded_venues"]]
-    check(v == [("IJAMT", 2), ("JMSy", 2), ("(no venue)", 1), ("CIRP", 1)],
+    check(v == [("IJAMT", 2), ("(no venue)", 1), ("JMSy", 1)],
           f"venues by count, ties alphabetical, blank named (got {v})")
     fc = prov["framework_core_linked"]
-    check(fc["total"] == 3 and fc["excluded"] == 2
-          and abs(fc["fraction_excluded"] - 0.6667) < 1e-4,
-          f"framework_core: W1, W3, W5 linked, W1 and W5 excluded -> 2/3 "
-          f"(got {fc})")
-    check(prov["elsevier_rows_openalex_is_oa_true"] == 2,
-          "the cost of rule 1 is measured: W1 and W9 were OA and excluded anyway")
+    check(fc["total"] == 3 and fc["excluded"] == 1
+          and abs(fc["fraction_excluded"] - 0.3333) < 1e-4,
+          f"framework_core: W1, W3, W5 linked, only W5 excluded -> 1/3 (got {fc})")
+    e = prov["doi_10_1016_rows"]
+    check((e["total"], e["eligible"], e["no_oa"]) == (3, 2, 1)
+          and e["framework_core_linked"] == 1
+          and e["framework_core_linked_eligible"] == 1,
+          f"the removal is measured: 3 rows at 10.1016, 2 now eligible (W1, W9), "
+          f"1 no_oa (W2); W1 framework_core and eligible (got {e})")
+    check("eligibility_counterfactual_no_rule1" not in full,
+          "no counterfactual block is written: it would describe a rule that "
+          "no longer exists")
     check(prov["candidates_modified"] is False and prov["rows_written"] == 9,
           "provenance states candidates.csv was not modified, 9 rows written")
 
-    # --- the counterfactual, rule 1 removed --------------------------------
-    # W1, W9: 10.1016 and OpenAlex OA -> eligible. W2: 10.1016, OpenAlex
-    # closed, no Unpaywall answer -> no_oa on OpenAlex alone (lower bound).
-    # Others as in the real run. Eligible: W1 W3 W4 W8 W9 = 5; no_oa: W2 W5
-    # W6 W7 = 4. Top third W1-W3: W2 excluded (1/3). Bottom W4-W9: W5 W6 W7
-    # (3/6). framework_core W1 W3 W5: W5 excluded -> 1/3.
-    full = json.load(open(os.path.join(d, "prov.json"), encoding="utf-8"))
-    cf = full["eligibility_counterfactual_no_rule1"]
-    check(cf["eligible"] == 5 and cf["counts_by_exclusion_reason"]
-          == {"elsevier": 0, "no_oa": 4, "none": 5},
-          f"counterfactual eligible 5, no_oa 4, elsevier 0 "
-          f"(got {cf['counts_by_exclusion_reason']})")
-    cx = cf["counts_by_exclusion_reason_x_rank_stratum"]
-    check(cx["top_third"]["excluded"] == 1 and cx["bottom_two_thirds"]["excluded"] == 3,
-          f"counterfactual excluded by stratum: top 1, bottom 3 "
-          f"(got {cx['top_third']['excluded']}, {cx['bottom_two_thirds']['excluded']})")
-    check(abs(cf["framework_core_linked"]["fraction_excluded"] - 0.3333) < 1e-4,
-          f"counterfactual framework_core fraction 1/3 "
-          f"(got {cf['framework_core_linked']['fraction_excluded']})")
-    check([(t["venue"], t["excluded"]) for t in cf["top_excluded_venues"]]
-          == [("IJAMT", 2), ("(no venue)", 1), ("JMSy", 1)],
-          f"counterfactual venues (got {cf['top_excluded_venues']})")
-    cov = cf["unpaywall_coverage_10_1016"]
-    check(cov["rows_excluded_on_openalex_alone"] == 1 and cf["exact"] is False,
-          "W2 has no Unpaywall answer: counted as excluded on OpenAlex alone and "
-          "the block is marked NOT exact -- the caveat is measured, not stated")
-    check("LOWER bound" in cov["basis"], "and its basis says lower bound")
-    check(proc.returncode == 0,
-          "a missing counterfactual-only lookup does not block --offline")
-    check(cf["delta_vs_actual"]["eligible"] == 2,
-          "delta vs actual: +2 eligible")
-    check("COUNTERFACTUAL" in cf["status"], "the block says it decides nothing")
-    real = {r["openalex_id"]: r["exclusion_reason"]
-            for r in csv.DictReader(open(epath, encoding="utf-8"))}
-    check(real == EXPECT_REASON,
-          "and the real decisions in eligibility.csv are unchanged by it "
-          "(W1, W9 still elsevier)")
-
-    # With W2's Unpaywall answer in the log the counterfactual becomes exact,
-    # and the REAL decision for W2 does not move (rule 1 still fires first).
-    log2 = os.path.join(d, "calls_cf.jsonl")
-    shutil.copy(log, log2)
-    with open(log2, "a", encoding="utf-8") as f:
-        f.write(json.dumps({"source": "unpaywall", "doi": "10.1016/j.a.2",
-                            **UP_OA}) + "\n")
-    d2 = os.path.join(d, "cf_exact")
-    os.makedirs(d2)
-    run(d2, cand, log2)
-    cf2 = json.load(open(os.path.join(d2, "prov.json"),
-                         encoding="utf-8"))["eligibility_counterfactual_no_rule1"]
-    check(cf2["exact"] is True
-          and cf2["unpaywall_coverage_10_1016"]["rows_excluded_on_openalex_alone"] == 0,
-          "with every 10.1016 closed row answered, the block is marked exact")
-    check(cf2["eligible"] == 6 and "EXACT" in cf2["unpaywall_coverage_10_1016"]["basis"],
-          f"and W2's OA location moves it to eligible in the counterfactual "
-          f"(6, got {cf2['eligible']})")
-    real2 = {r["openalex_id"]: r["exclusion_reason"] for r in
-             csv.DictReader(open(os.path.join(d2, "eligibility.csv"), encoding="utf-8"))}
-    check(real2 == EXPECT_REASON,
-          "while the real decision for W2 stays elsevier -- the lookup feeds "
-          "the counterfactual only")
+    # A provenance.json that still carries the retired v1 block loses it.
+    d3 = os.path.join(d, "retired")
+    os.makedirs(d3)
+    with open(os.path.join(d3, "prov.json"), "w", encoding="utf-8") as f:
+        json.dump({"eligibility_counterfactual_no_rule1": {"stale": True},
+                   "other": 1}, f)
+    run(d3, cand, log)
+    p3 = json.load(open(os.path.join(d3, "prov.json"), encoding="utf-8"))
+    check("eligibility_counterfactual_no_rule1" not in p3 and p3.get("other") == 1,
+          "a stale v1 counterfactual block is removed; other blocks are kept")
 
     # Idempotent: a second offline run changes nothing.
     snap = open(epath, "rb").read()

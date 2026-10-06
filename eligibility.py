@@ -11,23 +11,24 @@ it is recorded per row rather than applied by deleting rows. An out-of-scope
 paper keeps a row in corpus/eligibility.csv with the reason it is out, so
 "why isn't Smith 2023 in the review?" always has an answer on file.
 
-The rules, evaluated in order, first match wins
------------------------------------------------
-    1. DOI prefix 10.1016                        -> ineligible, `elsevier`
-    2. no OA copy: OpenAlex open_access.is_oa is
-       false AND Unpaywall has no OA location     -> ineligible, `no_oa`
-    3. otherwise                                  -> eligible,   `none`
+The rule (v2.0.0)
+-----------------
+    no OA copy: OpenAlex open_access.is_oa is
+    false AND Unpaywall has no OA location        -> ineligible, `no_oa`
+    otherwise                                     -> eligible,   `none`
 
-Rule 1 fires on the DOI alone and fires EVEN WHEN the paper is open access.
-That is deliberate and is the rule as specified, not an oversight: the count of
-10.1016 rows that were OA anyway is measured and reported in provenance so the
-cost of the rule is visible.
+That is the only rule. v1 also had a rule 1 -- DOI prefix 10.1016 ->
+ineligible `elsevier`, even when OA -- which was removed on 2026-10-05
+(eligibility v2.0.0). Publisher plays no part in the
+decision now; a 10.1016 paper is in scope exactly when it is open access. The
+v1 decisions and provenance are archived under
+corpus/archive/2026-10-05_eligibility_v1/, and the effect of the removal is
+measured in provenance (`doi_10_1016_rows`).
 
-Rows with no DOI cannot be looked up in Unpaywall, so for them rule 2 is
-decided on OpenAlex is_oa alone. The rule that fired is recorded in
-`eligibility_rule`, which distinguishes every path:
+Rows with no DOI cannot be looked up in Unpaywall, so for them the rule is
+decided on OpenAlex is_oa alone. The path taken is recorded in
+`eligibility_rule`:
 
-    doi_prefix_10.1016
     openalex_is_oa                    eligible: OpenAlex says OA
     unpaywall_oa_location             eligible: OpenAlex said not OA, Unpaywall found a location
     no_oa:unpaywall_no_location       ineligible: Unpaywall knows the DOI, lists no OA location
@@ -101,19 +102,6 @@ An `eligibility` block in provenance.json carries every count the Report 1
 limitation statement cites: by reason, by reason x rank stratum, the top 15
 excluded venues, and the share of framework_core-linked candidates lost.
 
-Counterfactual: rule 1 removed
-------------------------------
-`eligibility_counterfactual_no_rule1` in provenance.json is the same block
-computed as if rule 1 did not exist, so 10.1016 rows are judged by rule 2 like
-any other. It changes NO decision and is computed offline from the call log.
-Unpaywall is not needed for the real decision on a 10.1016 row (rule 1 fires
-first), so by default it is not queried for them. `--counterfactual-lookups`
-queries it for the 10.1016 rows OpenAlex calls closed. The answers go into the
-call log and are used ONLY by the counterfactual. Any such row still without
-an Unpaywall answer is excluded there on OpenAlex alone and counted. While that
-count is non-zero the counterfactual eligible count is a LOWER bound; at zero
-it is exact, and the block says which.
-
 Usage
 -----
     python eligibility.py --mailto zchosed@umich.edu
@@ -133,7 +121,7 @@ import time
 from collections import Counter
 from datetime import datetime, timezone
 
-SCRIPT_VERSION = "1.1.0"
+SCRIPT_VERSION = "2.0.0"
 
 OPENALEX = "https://api.openalex.org"
 UNPAYWALL = "https://api.unpaywall.org/v2"
@@ -142,7 +130,7 @@ ELSEVIER_PREFIX = "10.1016"
 OPENALEX_BATCH = 50
 TOP_VENUES = 15
 
-REASONS = ("elsevier", "no_oa", "none")
+REASONS = ("no_oa", "none")
 STRATA = ("top_third", "bottom_two_thirds")
 
 OUT_COLUMNS = ["eligible", "exclusion_reason", "eligibility_rule"]
@@ -182,13 +170,10 @@ def classify(doi: str, openalex_is_oa: bool | None,
 
     `openalex_is_oa` is None when OpenAlex has not answered for this row.
     `unpaywall` is the cached Unpaywall record for the DOI, or None when it was
-    not queried. Missing inputs that the rule actually needs raise Undecided --
-    rule 1 needs neither, so an Elsevier row is decided even with no lookups.
+    not queried. Missing inputs that the rule actually needs raise Undecided.
+    The DOI prefix plays no part (rule 1 was removed in v2.0.0).
     """
     doi = (doi or "").strip()
-
-    if doi and is_elsevier_doi(doi):
-        return False, "elsevier", "doi_prefix_10.1016"
 
     if openalex_is_oa is None:
         if (doi and unpaywall is not None and unpaywall.get("outcome") == OK
@@ -208,33 +193,6 @@ def classify(doi: str, openalex_is_oa: bool | None,
     if unpaywall.get("n_oa_locations", 0) > 0:
         return True, "none", "unpaywall_oa_location"
     return False, "no_oa", "no_oa:unpaywall_no_location"
-
-
-def classify_no_rule1(doi: str, openalex_is_oa: bool | None,
-                      unpaywall: dict | None) -> tuple[bool, str, str]:
-    """
-    The counterfactual: rule 1 deleted, so a 10.1016 row faces rule 2 like any
-    other. Never used for a real decision.
-
-    Unpaywall was not queried for 10.1016 rows, so for one OpenAlex calls
-    closed there is no Unpaywall answer. Offline only, so that row is excluded
-    on OpenAlex alone and labelled as such -- which can only understate the
-    counterfactual eligible count.
-    """
-    doi = (doi or "").strip()
-    if not (doi and is_elsevier_doi(doi)):
-        return classify(doi, openalex_is_oa, unpaywall)
-    if openalex_is_oa is None:
-        raise Undecided("no OpenAlex is_oa")
-    if openalex_is_oa:
-        return True, "none", "cf:10.1016:openalex_is_oa"
-    if unpaywall is None or unpaywall.get("outcome") not in (OK, NOT_FOUND):
-        return False, "no_oa", "cf:10.1016:no_oa:openalex_only_unpaywall_not_queried"
-    if unpaywall["outcome"] == NOT_FOUND:
-        return False, "no_oa", "cf:10.1016:no_oa:unpaywall_doi_unknown"
-    if unpaywall.get("n_oa_locations", 0) > 0:
-        return True, "none", "cf:10.1016:unpaywall_oa_location"
-    return False, "no_oa", "cf:10.1016:no_oa:unpaywall_no_location"
 
 
 def candidates_key(rows: list[dict]) -> str:
@@ -492,7 +450,7 @@ def summarise(rows: list[dict], oa_cache: dict[str, dict]) -> dict:
         stratum_size[s] += 1
     cross_out = {}
     for s in STRATA:
-        excl = cross[s]["elsevier"] + cross[s]["no_oa"]
+        excl = cross[s]["no_oa"]
         cross_out[s] = {**cross[s], "total": stratum_size[s],
                         "excluded": excl,
                         "pct_excluded": round(100 * excl / max(stratum_size[s], 1), 1)}
@@ -505,17 +463,17 @@ def summarise(rows: list[dict], oa_cache: dict[str, dict]) -> dict:
         venue_counts[v] += 1
         venue_reason.setdefault(v, Counter())[r["exclusion_reason"]] += 1
     top = sorted(venue_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:TOP_VENUES]
-    top_venues = [{"venue": v, "excluded": c,
-                   "elsevier": venue_reason[v]["elsevier"],
-                   "no_oa": venue_reason[v]["no_oa"]} for v, c in top]
+    top_venues = [{"venue": v, "excluded": c} for v, c in top]
 
     fc = [r for r in rows if str(r.get("linked_to_framework_core", "")).strip() == "1"]
     fc_reason = Counter(r["exclusion_reason"] for r in fc)
-    fc_excl = fc_reason["elsevier"] + fc_reason["no_oa"]
+    fc_excl = fc_reason["no_oa"]
 
-    els = [r for r in rows if r["exclusion_reason"] == "elsevier"]
-    els_oa = sum(1 for r in els
-                 if (oa_cache.get(r["openalex_id"]) or {}).get("is_oa") is True)
+    # What removing rule 1 did, measured on this run: every 10.1016 row is now
+    # decided by the OA rule like any other.
+    els = [r for r in rows if is_elsevier_doi(r.get("doi") or "")]
+    els_rule = Counter(r["eligibility_rule"] for r in els)
+    els_fc = [r for r in els if str(r.get("linked_to_framework_core", "")).strip() == "1"]
 
     return {
         "candidates_total": n,
@@ -543,11 +501,21 @@ def summarise(rows: list[dict], oa_cache: dict[str, dict]) -> dict:
             "by_exclusion_reason": {k: fc_reason[k] for k in REASONS},
             "basis": "rows with linked_to_framework_core == 1",
         },
-        "elsevier_rows_openalex_is_oa_true": els_oa,
-        "elsevier_rows_openalex_is_oa_true_note": (
-            "10.1016 rows that OpenAlex reports as open access. Rule 1 excludes "
-            "them regardless; this is the number of readable papers the rule "
-            "costs."),
+        "doi_10_1016_rows": {
+            "total": len(els),
+            "eligible": sum(1 for r in els if r["eligible"] == "True"),
+            "no_oa": sum(1 for r in els if r["eligible"] == "False"),
+            "by_eligibility_rule": dict(sorted(els_rule.items())),
+            "framework_core_linked": len(els_fc),
+            "framework_core_linked_eligible": sum(
+                1 for r in els_fc if r["eligible"] == "True"),
+            "note": ("Rule 1 (10.1016 -> ineligible regardless of OA) was "
+                     "removed in v2.0.0; these rows are decided by the OA rule "
+                     "alone. Every one of them was ineligible under v1 "
+                     "(corpus/archive/2026-10-05_eligibility_v1/), so "
+                     "`eligible` here is exactly the number of rows the "
+                     "removal brought into scope."),
+        },
     }
 
 
@@ -573,9 +541,6 @@ def main() -> int:
                     help="replay the call log only; abort on any cache miss")
     ap.add_argument("--refresh-errors", action="store_true",
                     help="retry cached transient failures")
-    ap.add_argument("--counterfactual-lookups", action="store_true",
-                    help="also query Unpaywall for 10.1016 rows OpenAlex calls "
-                         "closed; used ONLY by the no-rule-1 counterfactual")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
     verbose = not args.quiet
@@ -614,8 +579,6 @@ def main() -> int:
 
     try:
         # --- 1. OpenAlex is_oa, every row ---------------------------------
-        # Fetched for 10.1016 rows too, although rule 1 does not need it:
-        # it is the input to `elsevier_rows_openalex_is_oa_true`.
         ids = [r["openalex_id"] for r in rows]
         need = [w for w in ids if not _is_answer(oa_cache.get(w), args.refresh_errors)]
         replayed["openalex"] = len(ids) - len(need)
@@ -647,8 +610,6 @@ def main() -> int:
             doi = (r.get("doi") or "").strip().lower()
             if not doi:
                 continue
-            if is_elsevier_doi(doi) and not args.counterfactual_lookups:
-                continue
             oa = oa_cache.get(r["openalex_id"]) or {}
             # Queried when OpenAlex says not-OA, and also when OpenAlex has
             # no record at all (see the docstring); not when OpenAlex says OA.
@@ -662,9 +623,7 @@ def main() -> int:
                 up_need.append(doi)
         up_need = sorted(set(up_need))
         if args.offline:
-            # Counterfactual-only lookups never block the real decision.
-            misses += [f"unpaywall:{d}" for d in up_need
-                       if not is_elsevier_doi(d)]
+            misses += [f"unpaywall:{d}" for d in up_need]
         else:
             if verbose and up_need:
                 print(f"[elig] Unpaywall: {len(up_need)} DOIs to query, "
@@ -695,21 +654,11 @@ def main() -> int:
     # Decisions are held in these dicts in memory and written to args.out;
     # the candidate rows are never written back.
     decided = [dict(r) for r in rows]
-    cf_rows = [dict(r) for r in rows]
-    for r, cf in zip(decided, cf_rows):
+    for r in decided:
         doi = (r.get("doi") or "").strip().lower()
         oa = oa_cache.get(r["openalex_id"]) or {}
         oa_is_oa = oa.get("is_oa") if oa.get("outcome") == OK else None
         ov = overrides.get(r["openalex_id"])
-        try:
-            cfe, cfr, cfrule = classify_no_rule1(doi, oa_is_oa, up_cache.get(doi))
-        except Undecided:
-            if ov:   # the same human judgment, applied identically
-                cfe, cfr, cfrule = (parse_eligible(ov["eligible"]),
-                                    ov["exclusion_reason"], "manual_override")
-            else:
-                cfe, cfr, cfrule = None, None, None   # undecided; aborts below
-        cf.update(eligible=str(cfe), exclusion_reason=cfr, eligibility_rule=cfrule)
         try:
             elig, reason, rule = classify(doi, oa_is_oa, up_cache.get(doi))
         except Undecided as exc:
@@ -764,57 +713,6 @@ def main() -> int:
                                     if r.get("eligibility_rule", "").startswith(
                                         ("unpaywall", "no_oa:unpaywall"))})
 
-    # --- counterfactual: rule 1 removed -----------------------------------
-    cf_summary = summarise(cf_rows, oa_cache)
-    for k in ("elsevier_rows_openalex_is_oa_true",
-              "elsevier_rows_openalex_is_oa_true_note"):
-        cf_summary.pop(k, None)
-    els_cf = [c for c in cf_rows if is_elsevier_doi(c.get("doi") or "")]
-    cf_rule = Counter(c["eligibility_rule"] for c in els_cf)
-    n_oa_only = cf_rule["cf:10.1016:no_oa:openalex_only_unpaywall_not_queried"]
-    n_els_closed = sum(1 for c in els_cf
-                       if (oa_cache.get(c["openalex_id"]) or {}).get("is_oa") is False)
-    els_up = Counter((up_cache.get((c.get("doi") or "").strip().lower()) or {})
-                     .get("outcome") for c in els_cf
-                     if (oa_cache.get(c["openalex_id"]) or {}).get("is_oa") is False)
-    exact = n_oa_only == 0
-    cf_block = {
-        "script": "eligibility.py",
-        "script_version": SCRIPT_VERSION,
-        "computed_utc": datetime.now(timezone.utc).isoformat(),
-        "status": ("COUNTERFACTUAL ONLY -- no decision uses it. Rule 1 is in "
-                   "force; whether to drop it is pending with the advisors."),
-        "assumption": ("rule 1 removed: a 10.1016 row is excluded only if "
-                       "rule 2 excludes it (not OA). Everything else, including "
-                       "the manual override, is unchanged."),
-        "computed_offline_from": args.log,
-        **cf_summary,
-        "rows_10_1016": len(els_cf),
-        "rows_10_1016_by_counterfactual_rule": dict(sorted(cf_rule.items())),
-        "exact": exact,
-        "unpaywall_coverage_10_1016": {
-            "openalex_closed_rows": n_els_closed,
-            "unpaywall_outcomes": {str(k): v for k, v in sorted(
-                els_up.items(), key=lambda kv: str(kv[0]))},
-            "rows_excluded_on_openalex_alone": n_oa_only,
-            "basis": (
-                "EXACT: every 10.1016 row OpenAlex calls closed has an "
-                "Unpaywall answer, so rule 2 was applied to them in full."
-                if exact else
-                "LOWER bound on the counterfactual eligible count: these rows "
-                "have no Unpaywall answer and are excluded on OpenAlex alone; "
-                "a lookup can only move them to eligible. Close with "
-                "eligibility.py --counterfactual-lookups."),
-            "lookups_source": ("eligibility.py --counterfactual-lookups; "
-                               "answers used by this block only"),
-        },
-        "delta_vs_actual": {
-            "eligible": cf_summary["eligible"] - summary["eligible"],
-            "framework_core_fraction_excluded": round(
-                (cf_summary["framework_core_linked"]["fraction_excluded"] or 0)
-                - (summary["framework_core_linked"]["fraction_excluded"] or 0), 4),
-        },
-    }
     block = {
         "script": "eligibility.py",
         "script_version": SCRIPT_VERSION,
@@ -822,20 +720,24 @@ def main() -> int:
         "decided_by": "advisor meeting 2026-10-05: candidates restricted to "
                       "accessible papers",
         "rules_in_order": [
-            "1. DOI registrant prefix == 10.1016 -> ineligible, elsevier "
-            "(fires even when the paper is OA)",
-            "2. OpenAlex open_access.is_oa false AND no Unpaywall OA location "
+            "OpenAlex open_access.is_oa false AND no Unpaywall OA location "
             "(oa_locations empty, or DOI unknown to Unpaywall) -> ineligible, "
             "no_oa. No DOI: OpenAlex is_oa alone.",
-            "3. otherwise -> eligible, none",
+            "otherwise -> eligible, none",
         ],
+        "rule_history": (
+            "v1 (commit 1a41053) also had rule 1: DOI prefix 10.1016 -> "
+            "ineligible `elsevier`, even when OA. Removed 2026-10-05 in v2.0.0. "
+            "v1 decisions and provenance: "
+            "corpus/archive/2026-10-05_eligibility_v1/. Effect of the removal: "
+            "see doi_10_1016_rows."),
         "inputs": {
             "openalex": "GET /works?filter=openalex:<ids>&select=id,doi,"
                         "open_access, 50 IDs per request; IDs missing from the "
                         "batch retried singly via /works/<id> (follows merges)",
-            "unpaywall": "GET /v2/<doi>; queried only for rows with a DOI, "
-                         "not 10.1016, and OpenAlex is_oa false or OpenAlex "
-                         "record missing (404)",
+            "unpaywall": "GET /v2/<doi>; queried for every row with a DOI "
+                         "where OpenAlex is_oa is false or the OpenAlex record "
+                         "is missing (404)",
             "call_log": args.log,
         },
         "api_requests": {
@@ -872,7 +774,9 @@ def main() -> int:
         with open(args.provenance, encoding="utf-8") as f:
             prov = json.load(f)
     prov["eligibility"] = block
-    prov["eligibility_counterfactual_no_rule1"] = cf_block
+    # The v1 counterfactual describes a rule that no longer exists; its
+    # figures are now the actual ones, and the block itself is archived.
+    prov.pop("eligibility_counterfactual_no_rule1", None)
     with open(args.provenance, "w", encoding="utf-8") as f:
         json.dump(prov, f, indent=2)
         f.write("\n")
@@ -882,30 +786,20 @@ def main() -> int:
         fc = summary["framework_core_linked"]
         print()
         print(f"[elig] {summary['candidates_total']} candidates: eligible="
-              f"{c['none']}, elsevier={c['elsevier']}, no_oa={c['no_oa']} "
+              f"{c['none']}, no_oa={c['no_oa']} "
               f"({summary['pct_excluded']}% excluded)")
         for s, d in summary["counts_by_exclusion_reason_x_rank_stratum"].items():
             print(f"[elig]   {s}: {d['excluded']}/{d['total']} excluded "
-                  f"({d['pct_excluded']}%) -- elsevier={d['elsevier']}, "
-                  f"no_oa={d['no_oa']}")
+                  f"({d['pct_excluded']}%)")
         print(f"[elig] framework_core-linked: {fc['excluded']}/{fc['total']} "
               f"excluded ({fc['fraction_excluded']})")
-        print(f"[elig] 10.1016 rows OpenAlex reports as OA (excluded anyway): "
-              f"{summary['elsevier_rows_openalex_is_oa_true']}")
+        e = summary["doi_10_1016_rows"]
+        print(f"[elig] 10.1016 rows (no longer a rule): {e['eligible']}/"
+              f"{e['total']} eligible on OA status")
         print(f"[elig] rules: " + ", ".join(
             f"{k}={v}" for k, v in summary["counts_by_eligibility_rule"].items()))
-        cfc = cf_summary
-        print(f"[cf ] without rule 1 (counterfactual, not applied): eligible="
-              f"{cfc['eligible']} ({cf_block['delta_vs_actual']['eligible']:+d}), "
-              f"framework_core excluded "
-              f"{cfc['framework_core_linked']['fraction_excluded']}; "
-              + ("exact (every 10.1016 closed row has an Unpaywall answer)"
-                 if exact else
-                 f"{n_oa_only} 10.1016 rows excluded on OpenAlex alone "
-                 f"(LOWER bound)"))
         print(f"  -> {args.out}  (candidates.csv not modified)")
-        print(f"  -> {args.provenance}  (eligibility, "
-              f"eligibility_counterfactual_no_rule1)")
+        print(f"  -> {args.provenance}  (eligibility block)")
         if log is not None:
             print(f"  -> {args.log}")
     return 0

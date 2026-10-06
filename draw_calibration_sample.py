@@ -28,7 +28,8 @@ second condition is stated on the abstract itself, not as
 `abstract_source != none`: a full-text-head row is not `none` either, and it
 has no abstract to put on the sheet.
 
-Both filters are applied BEFORE the thirds are cut, not after. The reasoning was that the OpenAlex abstract gap tracks Elsevier,
+Both filters are applied BEFORE the thirds are cut, not after. The reasoning
+was that the OpenAlex abstract gap tracks Elsevier,
 Elsevier tracks certain venues, and venue plausibly correlates with rank -- so
 cutting thirds first and filtering second would leave the two strata holding
 different numbers of papers for a reason having nothing to do with rank.

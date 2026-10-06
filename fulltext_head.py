@@ -27,9 +27,10 @@ Sources, in order, stopping at the first success
 1. Open-access PDF: `best_oa_location.pdf_url` as OpenAlex already recorded it
    in candidates.csv, then Unpaywall by DOI.
 2. Nothing else. No publisher HTML scraping, no shadow libraries, and -- since
-   v2.0.0 -- no Elsevier Article Retrieval API: 10.1016 DOIs are out of scope
-   under the access rule, so that path and its ELSEVIER_API_KEY handling are
-   gone. An eligible row no OA source covers keeps abstract_source=none and is
+   v2.0.0 -- no Elsevier Article Retrieval API and no ELSEVIER_API_KEY
+   handling. Eligibility requires an OA copy, so an eligible 10.1016 paper is
+   reached through the same OA path as any other. An eligible row no OA source
+   covers keeps abstract_source=none and is
    screened on title alone, forced to `uncertain`.
 
 Extraction is deterministic
@@ -109,6 +110,14 @@ HTTP_ERROR = "http_error"           # other 4xx/5xx, plausibly transient
 NETWORK_ERROR = "network_error"
 
 TRANSIENT = {HTTP_ERROR, NETWORK_ERROR}
+
+# Outcomes written by the v1 Elsevier path, which no longer exists. In v1 that
+# path ran AFTER the OA attempt and overwrote its outcome, so a cached
+# `no_elsevier_key` says only "OA did not succeed" and hides why. These rows
+# were out of scope while rule 1 stood; with rule 1 removed (eligibility
+# v2.0.0) the OA-copy ones are eligible again, so their cache entries are not
+# replayed: they are retried on the OA path and get a real outcome.
+LEGACY_ELSEVIER_OUTCOMES = {"no_elsevier_key", "not_entitled", "ok_elsevier"}
 SUCCESSES = {OK_OA}
 
 SOURCE_OF_OUTCOME = {OK_OA: "fulltext_head_oa"}
@@ -373,8 +382,8 @@ def main() -> int:
             # excluded every network error from --refresh-errors, which is the
             # one class of failure a rerun exists to fix.
             prior = (rec or {}).get("outcome", "").split(":")[0]
-            replayable = rec is not None and not (
-                args.refresh_errors and prior in TRANSIENT)
+            replayable = rec is not None and prior not in LEGACY_ELSEVIER_OUTCOMES \
+                and not (args.refresh_errors and prior in TRANSIENT)
 
             if replayable:
                 outcome = rec["outcome"]
@@ -487,7 +496,8 @@ def main() -> int:
             "Unpaywall by DOI",
         ],
         "elsevier_path": "removed in v2.0.0 with the 2026-10-05 access rule; "
-                         "10.1016 DOIs are ineligible and never targeted",
+                         "eligible 10.1016 rows are OA by definition and go "
+                         "through the OA path like any other",
         "publisher_html_scraped": False,
         "shadow_libraries_used": False,
         "scope": "eligible rows (eligibility.py) lacking an abstract; "

@@ -1127,16 +1127,17 @@
   "calibration_sample": {
     "script": "draw_calibration_sample.py",
     "script_version": "2.0.0",
-    "drawn_utc": "2026-10-05T23:41:03.826963+00:00",
+    "drawn_utc": "2026-10-06T00:25:08.464191+00:00",
     "rng_seed": 20260928,
     "rng": "python random.Random(rng_seed); strata sorted by paper_id, then random.sample() per stratum, then shuffle() of the 50",
     "source_file": "corpus/candidates.csv",
     "candidates_total": 1941,
-    "pool_definition": "eligible == True (eligibility.py) AND abstract_source in openalex|semantic_scholar AND abstract non-empty",
-    "eligible_total": 793,
-    "excluded_ineligible": 1148,
-    "eligible_with_abstract": 751,
-    "excluded_no_abstract": 42,
+    "eligibility_source": "corpus/eligibility.csv",
+    "pool_definition": "eligible == True (eligibility.csv) AND abstract_source in openalex|semantic_scholar AND abstract non-empty",
+    "eligible_total": 1147,
+    "excluded_ineligible": 794,
+    "eligible_with_abstract": 1070,
+    "excluded_no_abstract": 77,
     "excluded_no_abstract_basis": "eligible rows only; ineligible rows are counted under excluded_ineligible",
     "n_per_stratum": 25,
     "sample_size": 50,
@@ -1144,17 +1145,17 @@
       "top_third": {
         "eligible_rank_range": [
           1,
-          250
+          356
         ],
-        "eligible_size": 250,
+        "eligible_size": 356,
         "drawn": 25
       },
       "bottom_two_thirds": {
         "eligible_rank_range": [
-          251,
-          751
+          357,
+          1070
         ],
-        "eligible_size": 501,
+        "eligible_size": 714,
         "drawn": 25
       }
     },
@@ -1162,74 +1163,74 @@
       "full_list_cut_at_rank": 647,
       "top_third": {
         "size": 647,
-        "ineligible": 396,
-        "eligible_no_abstract": 20,
-        "not_in_pool": 416,
-        "pct_not_in_pool": 64.3
+        "ineligible": 237,
+        "eligible_no_abstract": 40,
+        "not_in_pool": 277,
+        "pct_not_in_pool": 42.8
       },
       "bottom_two_thirds": {
         "size": 1294,
-        "ineligible": 752,
-        "eligible_no_abstract": 22,
-        "not_in_pool": 774,
-        "pct_not_in_pool": 59.8
+        "ineligible": 557,
+        "eligible_no_abstract": 37,
+        "not_in_pool": 594,
+        "pct_not_in_pool": 45.9
       },
       "basis": "Thirds are cut on the POOL, so these rates say how much that choice mattered. Equal rates mean cutting before or after the filters was the same decision; divergent rates mean pool exclusion is rank-correlated and the pool cut sits at a different paper than the full-list cut would."
     },
     "drawn_paper_ids": {
       "top_third": [
-        "W2529052589",
-        "W2531237699",
-        "W2783918566",
-        "W2950385347",
-        "W2953595181",
-        "W2977510036",
-        "W2996203697",
-        "W3082786560",
-        "W3110512320",
-        "W3203113685",
-        "W3214061769",
+        "W2561517067",
+        "W2566153859",
+        "W2735909839",
+        "W2802015343",
+        "W2807652022",
+        "W2963243831",
+        "W2970248153",
+        "W2986445385",
+        "W3026959602",
+        "W3085661954",
+        "W3162505946",
+        "W3195113251",
         "W4224214151",
-        "W4288722505",
-        "W4362514681",
-        "W4386741987",
-        "W4387370281",
+        "W4303644424",
+        "W4317772700",
+        "W4386526154",
         "W4390444616",
-        "W4394675721",
-        "W4399906738",
-        "W4403688629",
-        "W4406126160",
-        "W4413224248",
-        "W4415422927",
-        "W7161150664",
-        "W7167843363"
+        "W4393150681",
+        "W4400724190",
+        "W4411234108",
+        "W4415932305",
+        "W7161150470",
+        "W7172022827",
+        "W7208704687",
+        "W7213562827"
       ],
       "bottom_two_thirds": [
-        "W2460937040",
-        "W2736276569",
-        "W2891008330",
-        "W2964344300",
-        "W3003667836",
-        "W3021134042",
+        "W1540327028",
+        "W2279695571",
+        "W2541884796",
+        "W2925250670",
+        "W2997902937",
+        "W3003037563",
+        "W3005323329",
         "W3024943271",
-        "W3190713433",
-        "W4282966242",
-        "W4311764548",
-        "W4322718191",
-        "W4383535257",
-        "W4385982606",
-        "W4388904803",
-        "W4391531094",
-        "W4393202545",
-        "W4394923308",
-        "W4396973240",
-        "W4410983991",
-        "W4414074653",
-        "W7133793116",
-        "W7161941493",
-        "W7163747936",
-        "W7163922933",
-        "W7166869729"
+        "W3036215542",
+        "W3083664991",
+        "W3085294687",
+        "W3096193793",
+        "W3133743901",
+        "W3165857918",
+        "W4225095256",
+        "W4282981352",
+        "W4285298778",
+        "W4386443326",
+        "W4397017380",
+        "W4409473943",
+        "W4413376129",
+        "W7126109560",
+        "W7128712997",
+        "W7164889179",
+        "W7166861263"
       ]
     },
     "outputs": {
@@ -1241,8 +1242,8 @@
   "fulltext_head": {
     "script": "fulltext_head.py",
     "script_version": "2.0.0",
-    "run_started_utc": "2026-10-05T23:41:13.550783+00:00",
-    "run_seconds": 4.5,
+    "run_started_utc": "2026-10-06T00:26:37.753570+00:00",
+    "run_seconds": 6.4,
     "head_chars": 5000,
     "truncation": "first N CHARACTERS of the extracted text; a character count, not a token estimate. No model is involved.",
     "extractors": {
@@ -1253,44 +1254,45 @@
       "OpenAlex best_oa_location.pdf_url (from candidates.csv)",
       "Unpaywall by DOI"
     ],
-    "elsevier_path": "removed in v2.0.0 with the 2026-10-05 access rule; 10.1016 DOIs are ineligible and never targeted",
+    "elsevier_path": "removed in v2.0.0 with the 2026-10-05 access rule; eligible 10.1016 rows are OA by definition and go through the OA path like any other",
     "publisher_html_scraped": false,
     "shadow_libraries_used": false,
     "scope": "eligible rows (eligibility.py) lacking an abstract; ineligible rows are not targeted and not modified",
-    "api_requests": 5,
-    "responses_replayed_from_cache": 40,
+    "api_requests": 7,
+    "responses_replayed_from_cache": 74,
     "candidates_total": 1941,
-    "eligible_total": 793,
-    "targets": 42,
+    "eligible_total": 1147,
+    "targets": 77,
     "before": {
-      "no_text": 27,
-      "pct_of_eligible": 3.4,
+      "no_text": 56,
+      "pct_of_eligible": 4.9,
       "basis": "eligible rows with abstract_source=none at the start of this run"
     },
     "after": {
-      "no_text": 27,
-      "pct_of_eligible": 3.4,
+      "no_text": 56,
+      "pct_of_eligible": 4.9,
       "basis": "eligible rows still with no abstract and no full-text head"
     },
     "recovered_by_source": {
-      "fulltext_head_oa": 15,
-      "total": 15
+      "fulltext_head_oa": 21,
+      "total": 21
     },
     "abstract_source_counts_eligible": {
-      "openalex": 731,
-      "fulltext_head_oa": 15,
-      "semantic_scholar": 20,
-      "none": 27
+      "openalex": 979,
+      "none": 56,
+      "semantic_scholar": 91,
+      "fulltext_head_oa": 21
     },
     "outcome_counts": {
-      "ok_oa": 15,
-      "forbidden": 17,
-      "http_error": 1,
-      "not_pdf": 8,
-      "network_error:ConnectionError": 1
+      "not_pdf": 28,
+      "ok_oa": 21,
+      "forbidden": 23,
+      "http_error": 2,
+      "network_error:ConnectionError": 1,
+      "no_source": 2
     },
-    "unrecovered_transient_failures": 2,
-    "unrecoverable_forbidden": 17,
+    "unrecovered_transient_failures": 3,
+    "unrecoverable_forbidden": 23,
     "note": "A full-text head is NOT an abstract: it is the opening of the paper, truncated by character count, and it is stored in its own column so the screening prompt can label it as such. Because it is a different input distribution, these rows are calibrated on their own 20-paper sample rather than mixed into the 50-paper abstract sample. Eligible rows still at abstract_source=none are screened on title alone and forced to `uncertain`; ineligible rows are not screened at all."
   },
   "calibration_sample_fulltext": {
@@ -1343,17 +1345,17 @@
   },
   "eligibility": {
     "script": "eligibility.py",
-    "script_version": "1.1.0",
-    "run_started_utc": "2026-10-06T00:17:50.350732+00:00",
+    "script_version": "2.0.0",
+    "run_started_utc": "2026-10-06T00:26:44.215683+00:00",
     "decided_by": "advisor meeting 2026-10-05: candidates restricted to accessible papers",
     "rules_in_order": [
-      "1. DOI registrant prefix == 10.1016 -> ineligible, elsevier (fires even when the paper is OA)",
-      "2. OpenAlex open_access.is_oa false AND no Unpaywall OA location (oa_locations empty, or DOI unknown to Unpaywall) -> ineligible, no_oa. No DOI: OpenAlex is_oa alone.",
-      "3. otherwise -> eligible, none"
+      "OpenAlex open_access.is_oa false AND no Unpaywall OA location (oa_locations empty, or DOI unknown to Unpaywall) -> ineligible, no_oa. No DOI: OpenAlex is_oa alone.",
+      "otherwise -> eligible, none"
     ],
+    "rule_history": "v1 (commit 1a41053) also had rule 1: DOI prefix 10.1016 -> ineligible `elsevier`, even when OA. Removed 2026-10-05 in v2.0.0. v1 decisions and provenance: corpus/archive/2026-10-05_eligibility_v1/. Effect of the removal: see doi_10_1016_rows.",
     "inputs": {
       "openalex": "GET /works?filter=openalex:<ids>&select=id,doi,open_access, 50 IDs per request; IDs missing from the batch retried singly via /works/<id> (follows merges)",
-      "unpaywall": "GET /v2/<doi>; queried only for rows with a DOI, not 10.1016, and OpenAlex is_oa false or OpenAlex record missing (404)",
+      "unpaywall": "GET /v2/<doi>; queried for every row with a DOI where OpenAlex is_oa is false or the OpenAlex record is missing (404)",
       "call_log": "corpus/eligibility_calls.jsonl"
     },
     "api_requests": {
@@ -1362,11 +1364,11 @@
     },
     "responses_replayed_from_cache": {
       "openalex": 1941,
-      "unpaywall": 501
+      "unpaywall": 793
     },
     "offline_replay": true,
     "unpaywall_outcomes_for_rows_decided_by_it": {
-      "ok": 498,
+      "ok": 790,
       "not_found": 2
     },
     "manual_overrides": [
@@ -1387,7 +1389,7 @@
     "candidates_modified": false,
     "candidates_key_sha256": "4aa2763e5a7ac57fbfc6c440ff389211e55d227400cd49355b640012fd583e1a",
     "candidates_key_basis": "SHA-256 of ordered (openalex_id, lowercased doi) pairs; the staleness check",
-    "candidates_file_sha256_at_decision": "2ca72eb674da36e28a431cbeeca3e11c90f846c3d409f5c66df70148339afef2",
+    "candidates_file_sha256_at_decision": "3802126ffc086cb7f5f6fe3e261685c1881d31f8a7d7030da74c852c748f714f",
     "rows_written": 1941,
     "columns_written": [
       "openalex_id",
@@ -1397,179 +1399,23 @@
       "candidates_key_sha256"
     ],
     "candidates_total": 1941,
-    "eligible": 793,
-    "excluded": 1148,
-    "pct_excluded": 59.1,
-    "counts_by_exclusion_reason": {
-      "elsevier": 646,
-      "no_oa": 502,
-      "none": 793
-    },
-    "counts_by_eligibility_rule": {
-      "doi_prefix_10.1016": 646,
-      "manual_override": 1,
-      "no_oa:no_doi_openalex_only": 2,
-      "no_oa:unpaywall_doi_unknown": 2,
-      "no_oa:unpaywall_no_location": 498,
-      "openalex_is_oa": 788,
-      "openalex_is_oa_no_doi": 4
-    },
-    "counts_by_exclusion_reason_x_rank_stratum": {
-      "top_third": {
-        "elsevier": 234,
-        "no_oa": 162,
-        "none": 251,
-        "total": 647,
-        "excluded": 396,
-        "pct_excluded": 61.2
-      },
-      "bottom_two_thirds": {
-        "elsevier": 412,
-        "no_oa": 340,
-        "none": 542,
-        "total": 1294,
-        "excluded": 752,
-        "pct_excluded": 58.1
-      }
-    },
-    "rank_stratum_definition": "position in the FULL ranked candidates.csv (corpus_build.py rank order); top_third = ranks 1..n//3, bottom_two_thirds = the rest. Same cut as draw_calibration_sample.py but on the full list, since eligibility is decided before any filtering.",
-    "top_excluded_venues": [
-      {
-        "venue": "Journal of Manufacturing Systems",
-        "excluded": 74,
-        "elsevier": 74,
-        "no_oa": 0
-      },
-      {
-        "venue": "Procedia CIRP",
-        "excluded": 58,
-        "elsevier": 58,
-        "no_oa": 0
-      },
-      {
-        "venue": "IFAC-PapersOnLine",
-        "excluded": 40,
-        "elsevier": 40,
-        "no_oa": 0
-      },
-      {
-        "venue": "Robotics and Computer-Integrated Manufacturing",
-        "excluded": 38,
-        "elsevier": 38,
-        "no_oa": 0
-      },
-      {
-        "venue": "(no venue)",
-        "excluded": 36,
-        "elsevier": 0,
-        "no_oa": 36
-      },
-      {
-        "venue": "Computers in Industry",
-        "excluded": 35,
-        "elsevier": 35,
-        "no_oa": 0
-      },
-      {
-        "venue": "The International Journal of Advanced Manufacturing Technology",
-        "excluded": 27,
-        "elsevier": 0,
-        "no_oa": 27
-      },
-      {
-        "venue": "International Journal of Production Research",
-        "excluded": 23,
-        "elsevier": 0,
-        "no_oa": 23
-      },
-      {
-        "venue": "Journal of Intelligent Manufacturing",
-        "excluded": 23,
-        "elsevier": 0,
-        "no_oa": 23
-      },
-      {
-        "venue": "Advanced Engineering Informatics",
-        "excluded": 21,
-        "elsevier": 21,
-        "no_oa": 0
-      },
-      {
-        "venue": "IEEE Transactions on Industrial Informatics",
-        "excluded": 21,
-        "elsevier": 0,
-        "no_oa": 21
-      },
-      {
-        "venue": "Procedia Manufacturing",
-        "excluded": 21,
-        "elsevier": 21,
-        "no_oa": 0
-      },
-      {
-        "venue": "CIRP Annals",
-        "excluded": 17,
-        "elsevier": 17,
-        "no_oa": 0
-      },
-      {
-        "venue": "Elsevier eBooks",
-        "excluded": 17,
-        "elsevier": 17,
-        "no_oa": 0
-      },
-      {
-        "venue": "Expert Systems with Applications",
-        "excluded": 17,
-        "elsevier": 17,
-        "no_oa": 0
-      }
-    ],
-    "top_excluded_venues_basis": "top 15 venues by count of ineligible rows (either reason), ties broken alphabetically; blank venue reported as '(no venue)'. 364 distinct venues have at least one excluded row.",
-    "framework_core_linked": {
-      "total": 154,
-      "excluded": 82,
-      "fraction_excluded": 0.5325,
-      "by_exclusion_reason": {
-        "elsevier": 44,
-        "no_oa": 38,
-        "none": 72
-      },
-      "basis": "rows with linked_to_framework_core == 1"
-    },
-    "elsevier_rows_openalex_is_oa_true": 354,
-    "elsevier_rows_openalex_is_oa_true_note": "10.1016 rows that OpenAlex reports as open access. Rule 1 excludes them regardless; this is the number of readable papers the rule costs.",
-    "note": "Eligibility is a scope decision, not a screening decision. Ineligible rows keep their row in eligibility.csv, are never sent to a screening model, and are never forced to `uncertain`: they are out of scope, not undecided. Counts here are the 'excluded at eligibility' stage; 'excluded at screening' is reported separately by benchmark.py."
-  },
-  "eligibility_counterfactual_no_rule1": {
-    "script": "eligibility.py",
-    "script_version": "1.1.0",
-    "computed_utc": "2026-10-06T00:17:50.360192+00:00",
-    "status": "COUNTERFACTUAL ONLY -- no decision uses it. Rule 1 is in force; whether to drop it is pending with the advisors.",
-    "assumption": "rule 1 removed: a 10.1016 row is excluded only if rule 2 excludes it (not OA). Everything else, including the manual override, is unchanged.",
-    "computed_offline_from": "corpus/eligibility_calls.jsonl",
-    "candidates_total": 1941,
     "eligible": 1147,
     "excluded": 794,
     "pct_excluded": 40.9,
     "counts_by_exclusion_reason": {
-      "elsevier": 0,
       "no_oa": 794,
       "none": 1147
     },
     "counts_by_eligibility_rule": {
-      "cf:10.1016:no_oa:unpaywall_no_location": 292,
-      "cf:10.1016:openalex_is_oa": 354,
       "manual_override": 1,
       "no_oa:no_doi_openalex_only": 2,
       "no_oa:unpaywall_doi_unknown": 2,
-      "no_oa:unpaywall_no_location": 498,
-      "openalex_is_oa": 788,
+      "no_oa:unpaywall_no_location": 790,
+      "openalex_is_oa": 1142,
       "openalex_is_oa_no_doi": 4
     },
     "counts_by_exclusion_reason_x_rank_stratum": {
       "top_third": {
-        "elsevier": 0,
         "no_oa": 237,
         "none": 410,
         "total": 647,
@@ -1577,7 +1423,6 @@
         "pct_excluded": 36.6
       },
       "bottom_two_thirds": {
-        "elsevier": 0,
         "no_oa": 557,
         "none": 737,
         "total": 1294,
@@ -1589,93 +1434,63 @@
     "top_excluded_venues": [
       {
         "venue": "Journal of Manufacturing Systems",
-        "excluded": 52,
-        "elsevier": 0,
-        "no_oa": 52
+        "excluded": 52
       },
       {
         "venue": "(no venue)",
-        "excluded": 36,
-        "elsevier": 0,
-        "no_oa": 36
+        "excluded": 36
       },
       {
         "venue": "The International Journal of Advanced Manufacturing Technology",
-        "excluded": 27,
-        "elsevier": 0,
-        "no_oa": 27
+        "excluded": 27
       },
       {
         "venue": "International Journal of Production Research",
-        "excluded": 23,
-        "elsevier": 0,
-        "no_oa": 23
+        "excluded": 23
       },
       {
         "venue": "Journal of Intelligent Manufacturing",
-        "excluded": 23,
-        "elsevier": 0,
-        "no_oa": 23
+        "excluded": 23
       },
       {
         "venue": "Robotics and Computer-Integrated Manufacturing",
-        "excluded": 23,
-        "elsevier": 0,
-        "no_oa": 23
+        "excluded": 23
       },
       {
         "venue": "IEEE Transactions on Industrial Informatics",
-        "excluded": 21,
-        "elsevier": 0,
-        "no_oa": 21
+        "excluded": 21
       },
       {
         "venue": "Computers in Industry",
-        "excluded": 16,
-        "elsevier": 0,
-        "no_oa": 16
+        "excluded": 16
       },
       {
         "venue": "Advanced Engineering Informatics",
-        "excluded": 15,
-        "elsevier": 0,
-        "no_oa": 15
+        "excluded": 15
       },
       {
         "venue": "Elsevier eBooks",
-        "excluded": 15,
-        "elsevier": 0,
-        "no_oa": 15
+        "excluded": 15
       },
       {
         "venue": "IEEE Internet of Things Journal",
-        "excluded": 15,
-        "elsevier": 0,
-        "no_oa": 15
+        "excluded": 15
       },
       {
         "venue": "Expert Systems with Applications",
-        "excluded": 11,
-        "elsevier": 0,
-        "no_oa": 11
+        "excluded": 11
       },
       {
         "venue": "IEEE Transactions on Automation Science and Engineering",
-        "excluded": 11,
-        "elsevier": 0,
-        "no_oa": 11
+        "excluded": 11
       },
       {
         "venue": "CIRP Annals",
-        "excluded": 10,
-        "elsevier": 0,
-        "no_oa": 10
+        "excluded": 10
       },
       {
         "venue": "Computers & Industrial Engineering",
-        "excluded": 10,
-        "elsevier": 0,
-        "no_oa": 10
+        "excluded": 10
       }
     ],
     "top_excluded_venues_basis": "top 15 venues by count of ineligible rows (either reason), ties broken alphabetically; blank venue reported as '(no venue)'. 291 distinct venues have at least one excluded row.",
@@ -1684,30 +1499,23 @@
       "excluded": 52,
       "fraction_excluded": 0.3377,
       "by_exclusion_reason": {
-        "elsevier": 0,
         "no_oa": 52,
         "none": 102
       },
       "basis": "rows with linked_to_framework_core == 1"
     },
-    "rows_10_1016": 646,
-    "rows_10_1016_by_counterfactual_rule": {
-      "cf:10.1016:no_oa:unpaywall_no_location": 292,
-      "cf:10.1016:openalex_is_oa": 354
-    },
-    "exact": true,
-    "unpaywall_coverage_10_1016": {
-      "openalex_closed_rows": 292,
-      "unpaywall_outcomes": {
-        "ok": 292
-      },
-      "rows_excluded_on_openalex_alone": 0,
-      "basis": "EXACT: every 10.1016 row OpenAlex calls closed has an Unpaywall answer, so rule 2 was applied to them in full.",
-      "lookups_source": "eligibility.py --counterfactual-lookups; answers used by this block only"
-    },
-    "delta_vs_actual": {
+    "doi_10_1016_rows": {
+      "total": 646,
       "eligible": 354,
-      "framework_core_fraction_excluded": -0.1948
-    }
+      "no_oa": 292,
+      "by_eligibility_rule": {
+        "no_oa:unpaywall_no_location": 292,
+        "openalex_is_oa": 354
+      },
+      "framework_core_linked": 44,
+      "framework_core_linked_eligible": 30,
+      "note": "Rule 1 (10.1016 -> ineligible regardless of OA) was removed in v2.0.0; these rows are decided by the OA rule alone. Every one of them was ineligible under v1 (corpus/archive/2026-10-05_eligibility_v1/), so `eligible` here is exactly the number of rows the removal brought into scope."
+    },
+    "note": "Eligibility is a scope decision, not a screening decision. Ineligible rows keep their row in eligibility.csv, are never sent to a screening model, and are never forced to `uncertain`: they are out of scope, not undecided. Counts here are the 'excluded at eligibility' stage; 'excluded at screening' is reported separately by benchmark.py."
   }
 }

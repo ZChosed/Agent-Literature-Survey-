@@ -122,8 +122,8 @@ def make_candidates(path: str, n: int = 300, missing_every: int = 5,
     """
     A ranked candidates.csv. Every `missing_every`-th row has no abstract --
     alternately `none` and a full-text-head row, which is not `none` but has
-    no abstract either -- and every `ineligible_every`-th row is a 10.1016 DOI
-    marked ineligible. So the pool is not the full set and the strata cannot
+    no abstract either -- and every `ineligible_every`-th row is marked
+    ineligible (no_oa, the only exclusion reason since rule 1 was removed). So the pool is not the full set and the strata cannot
     be read off the raw row numbers.
     """
     cols = ["openalex_id", "doi", "title", "year", "venue", "authors", "type",
@@ -142,7 +142,7 @@ def make_candidates(path: str, n: int = 300, missing_every: int = 5,
                    "fulltext_head_oa" if i % (2 * missing_every) == 0 else "none")
             w.writerow({
                 "openalex_id": f"W{100000 + i}",
-                "doi": f"10.1016/test.{i}" if inel else f"10.0000/test.{i}",
+                "doi": f"10.0000/test.{i}",
                 "title": f"Paper number {i} on agents and manufacturing",
                 "year": 2015 + (i % 11),
                 "venue": f"Journal {i % 7}",
@@ -163,8 +163,9 @@ def make_candidates(path: str, n: int = 300, missing_every: int = 5,
                 "fulltext_head": (f"Introduction to paper {i}. " * 5
                                   if src == "fulltext_head_oa" else ""),
                 "eligible": "False" if inel else "True",
-                "exclusion_reason": "elsevier" if inel else "none",
-                "eligibility_rule": "doi_prefix_10.1016" if inel else "openalex_is_oa",
+                "exclusion_reason": "no_oa" if inel else "none",
+                "eligibility_rule": ("no_oa:unpaywall_no_location" if inel
+                                     else "openalex_is_oa"),
             })
     _split_eligibility(path)
 
@@ -413,8 +414,6 @@ def test_sample_draw(tmpdir: str):
         open(elig_path_for(os.path.join(tmpdir, "candidates.csv")), encoding="utf-8"))}
     check(all(cand[r["paper_id"]]["eligible"] == "True" for r in sample),
           "no ineligible row was drawn")
-    check(not any(r["doi"].startswith("10.1016") for r in sample),
-          "in particular no 10.1016 row")
     check(all(r["abstract_source"] in ("openalex", "semantic_scholar")
               for r in sample),
           "no abstract_source=none row and no full-text-head row was drawn")
@@ -941,12 +940,11 @@ def test_ineligible_never_reach_api(tmpdir: str):
     with open(crit, "w", encoding="utf-8") as f:
         f.write(CRITERIA_A)
 
-    # Five eligible, five ineligible (both reasons), every one with a real
+    # Five eligible, five ineligible (no_oa), every one with a real
     # abstract -- so if the gate failed, they WOULD be sent. Each carries a
     # unique marker string to search the recorded requests for.
     inp = os.path.join(tmpdir, "elig_input.csv")
-    inel = {"W5": "elsevier", "W6": "elsevier", "W7": "no_oa", "W8": "no_oa",
-            "W9": "elsevier"}
+    inel = {f"W{i}": "no_oa" for i in range(5, 10)}
     with open(inp, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["paper_id", "title", "abstract",
                                           "abstract_source"])
@@ -1001,7 +999,7 @@ def test_ineligible_never_reach_api(tmpdir: str):
         ex = man["excluded_at_eligibility"]
         check(ex["n"] == 5 and ex["paper_ids"] == inel,
               f"[{mode}] the manifest records all 5, each with its reason")
-        check(ex["by_reason"] == {"elsevier": 3, "no_oa": 2},
+        check(ex["by_reason"] == {"no_oa": 5},
               f"[{mode}] counted by reason (got {ex['by_reason']})")
         check(man["papers"] == 5, f"[{mode}] only the 5 eligible are papers to "
                                   f"screen (got {man['papers']})")
@@ -1778,8 +1776,8 @@ def test_benchmark_exclusion_stages(tmpdir: str):
             }) + "\n")
     with open(os.path.join(run_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump({"excluded_at_eligibility": {
-            "n": 2, "by_reason": {"elsevier": 1, "no_oa": 1},
-            "paper_ids": {"W6": "elsevier", "W7": "no_oa"}}}, f)
+            "n": 2, "by_reason": {"no_oa": 2},
+            "paper_ids": {"W6": "no_oa", "W7": "no_oa"}}}, f)
 
     # The sheet labels all 8, including the two out-of-scope papers.
     labels_path = os.path.join(tmpdir, "labels_stages.csv")
@@ -1807,7 +1805,7 @@ def test_benchmark_exclusion_stages(tmpdir: str):
     summ = json.load(open(os.path.join(run_dir, "benchmark_summary.json"),
                           encoding="utf-8"))["exclusion_stages"]
     st1 = summ["excluded_at_eligibility"]
-    check(st1["n_in_run"] == 2 and st1["by_reason_in_run"] == {"elsevier": 1, "no_oa": 1},
+    check(st1["n_in_run"] == 2 and st1["by_reason_in_run"] == {"no_oa": 2},
           "the summary carries stage 1 by reason")
     check(st1["n_labelled_dropped_from_scoring"] == 2,
           "and says 2 labelled papers were dropped from scoring for it")

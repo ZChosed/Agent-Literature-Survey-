@@ -3043,7 +3043,106 @@ W4362554202,10.1007/s11831-023-09921-0,Effectiveness Review of the Machine Learn
 W2926527602,10.1109/access.2019.2906654,A 3D-CNN and LSTM Based Multi-Task Learning Architecture for Action Recognition,2019,IEEE Access,Xi Ouyang; Shuangjie Xu; Chaoyun Zhang; Pan Zhou; Yang Yang; Guanghui Liu,article,77,11.0,1,0.2148,0.215,backward,35,foundation_models,0,backward,https://ieeexplore.ieee.org/ielx7/6287639/8600701/08677269.pdf,"Multi-task learning (MTL) is a machine learning method to share knowledge for multiple related machine learning tasks via learning those tasks jointly. It has been shown to be capable of effectively improving the generalization capability of each single task (learning just one task at a time). In this paper, we propose a novel MTL architecture that first combines 3D convolutional neural networks (3D CNN) plus the long short-term memory (LSTM) networks together with the MTL mechanism, tailored to information sharing of video inputs. We split each video into several clips and apply the hybrid deep model of 3D CNN and LSTM to extract the sequential features of those video clips. Therefore, our MTL model can share visual knowledge based on those video-clip features among different categories more efficiently. We evaluate our method on three popular public action recognition video datasets. The experimental results show that our novel MTL method can efficiently share detailed information in video clips among multiple action categories and outperforms other multi-task methods.",openalex,,,,,
 W3034050230,10.1049/iet-ipr.2020.0088,Retracted: Jointly network image processing: multi‐task image semantic segmentation of indoor scene based on CNN,2020,IET Image Processing,Li Huang; Meiling He; Chong Boon Tan; Du Jiang; Gongfa Li; Hui Ling Yu,article,65,10.83,1,0.2148,0.215,backward,35,foundation_models,0,backward,https://ietresearch.onlinelibrary.wiley.com/doi/pdfdirect/10.1049/iet-ipr.2020.0088,"Image semantic segmentation has always been a research hotspot in the field of robots. Its purpose is to assign different semantic category labels to objects by segmenting different objects. However, in practical applications, in addition to knowing the semantic category information of objects, robots also need to know the position information of objects to complete more complex visual tasks. Aiming at a complex indoor environment, this study designs an image semantic segmentation network framework of joint target detection. Using the parallel operation of adding semantic segmentation branches to the target detection network, it innovatively implements multi‐vision task combining object classification, detection and semantic segmentation. By designing a new loss function, adjusting the training using the idea of transfer learning, and finally verifying it on the self‐built indoor scene data set, the experiment proves that the method in this study is feasible and effective, and has good robustness.",openalex,,,,,
 W2240797419,10.1049/joe.2014.0303,Prognostic and health management for engineering systems: a review of the data‐driven approach and algorithms,2015,The Journal of Engineering,Thamo Sutharssan; Stoyan K. Stoyanov; C. Bailey; Chunyan Yin,article,117,10.64,1,0.2148,0.215,backward,35,foundation_models,0,backward,https://onlinelibrary.wiley.com/doi/pdfdirect/10.1049/joe.2014.0303,"Prognostics and health management (PHM) has become an important component of many engineering systems and products, where algorithms are used to detect anomalies, diagnose faults and predict remaining useful lifetime (RUL). PHM can provide many advantages to users and maintainers. Although primary goals are to ensure the safety, provide state of the health and estimate RUL of the components and systems, there are also financial benefits such as operational and maintenance cost reductions and extended lifetime. This study aims at reviewing the current status of algorithms and methods used to underpin different existing PHM approaches. The focus is on providing a structured and comprehensive classification of the existing state‐of‐the‐art PHM approaches, data‐driven approaches and algorithms.",openalex,,,,,
-W4205819399,10.1016/j.compag.2021.106637,Worker safety in agriculture 4.0: A new approach for mapping operator’s vibration risk through Machine Learning activity recognition,2022,Computers and Electronics in Agriculture,Giuseppe Aiello; Pietro Catania; Mariangela Vallone; Mario Venticinque,article,42,10.5,1,0.2148,0.215,backward,35,foundation_models,0,backward,http://hdl.handle.net/10447/536489,,none,,,,,
+W4205819399,10.1016/j.compag.2021.106637,Worker safety in agriculture 4.0: A new approach for mapping operator’s vibration risk through Machine Learning activity recognition,2022,Computers and Electronics in Agriculture,Giuseppe Aiello; Pietro Catania; Mariangela Vallone; Mario Venticinque,article,42,10.5,1,0.2148,0.215,backward,35,foundation_models,0,backward,http://hdl.handle.net/10447/536489,,fulltext_head_oa,"Computers and Electronics in Agriculture
+Worker safety in agriculture 4.0: a new approach for mapping operator’s vibration risk
+through Machine Learning activity recognition
+--Manuscript Draft--
+Manuscript Number:
+COMPAG-D-21-01032
+Article Type:
+Research Paper
+Keywords:
+Operator safety; vibration risk; Machine Learning; real time monitoring
+Corresponding Author:
+giuseppe aiello
+Palermo, Italy
+First Author:
+giuseppe aiello
+Order of Authors:
+giuseppe aiello
+pietro Catania
+mariangela vallone
+mario venticinque
+Abstract:
+While being a fundamental driver of competitiveness in agroindustry, technological
+innovation has also introduced new critical elements related, for example, to the
+sustainability of the production processes as well as to the safety of workers. In such
+regard, the advent of the 4 th industrial revolution (Agriculture 4.0) based on
+digitalization, is an unprecedented opportunity of rethinking the role of innovation in a
+new human-centric perspective. In particular, the establishment of an interconnected
+work environment and the augmentation of the operator’s physical, sensorial, and
+cognitive capabilities, are two technologies which can be effectively employed for
+substantially improving the ergonomics and safety conditions on the workplace. This
+paper approaches such topic referring to the vibration risk, which is a well-known
+cause of work-related pathologies, and proposes an original methodology for mapping
+the risk exposure of the operators to the activities performed. A miniaturized wearable
+device is employed to collect vibration data, and the signals obtained are segmented in
+time windows and processed in order to extract the significant features. Finally, a
+machine learning classifier has been developed to recognize the worker’s activity and
+to evaluate the related exposure to vibration risks. To validate the methodology
+proposed, an experimental analysis in real operating conditions has been finally carried
+out by monitoring the activities performed by a team of workers during harvesting
+operations. The results obtained demonstrate the feasibility and the effectiveness of
+the methodology proposed.
+Suggested Reviewers:
+antonio padovano
+antonio.padovano@unical.it
+author of similar research (cited)
+Hao Luo
+luohao@szu.edu.cn
+author of similar research (cited)
+daniel Podgorski
+dapod@ciop.pl
+author of similar research (cited)
+Adrien Malaisé
+adrien.malaise@inria.fr
+author of similar research (cited)
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+To Editorial Department of
+Computers
+and
+Electronics
+in
+Agriculture
+Object: Cover Letter for the manuscript “Worker safety in agriculture 4.0: a new
+approach for mapping operator’s vibration risk through Machine Learning activity
+recognition”.
+Dear Editor,
+I am submitting the manuscript entitled “Worker safety in agriculture 4.0: a new approach for
+mapping operator’s vibration risk through Machine Learning activity recognition”, for
+consideration of publication in Computers and Electronics in Agriculture. The manuscript
+discusses the application of machine learning methods for activity recognition and risk
+assessment in agriculture, and reports the results of experimental tests in olive harvesting.
+The manuscript has not been published nor has it been ever submitted elsewhere.
+Thank you for your consideration.
+Giuseppe Aiello
+cover letter
+Highlights
+
+Recognize operator’s activities through a machine learning classifier
+
+Assess Vibration risk in real time to enhance operator’s safety
+
+Develop a lightweight wearable device for real time monitoring
+
+Validate the process in real conditions through experimental tests
+highlights
+Worker safety in agriculture 4.0: a new approach for
+mapping operator’s vibration risk through Machine
+Learning activity recognition
+Abstract
+While being a fundamental driver of competitiveness in agroindustry, technological innovation has
+also introduced new critical elements related, for example, to the sustainability of the production
+processes as well as to the safety of workers. In such regard, the advent of the 4th industrial revolution
+(Agriculture 4.0) based on digitalization, is an unprecedented opportunity of rethinking the role of
+innovation in a new human-centric perspective. In particular, the establishment of an interconnected
+work environment and the augmentation of the operator’s physical, sensorial, and cognitive
+capabilities, are two technologies which can be effectively employed for substantially improving the
+ergonomics and safety conditions on the workplace. This paper approaches such topic referring to the
+vibration risk, which is a well-known cause of work-related pathologies, and proposes an original
+methodology for mapping the risk exposure of the operators to the activities performed. A
+miniaturized wearable device is employed to collect vibration data, and the signals obtained are
+segmented in time windows and processed in order to extract the significant features. Fi",,,,
 W3030236421,10.1016/j.cja.2020.05.001,Coactive design of explainable agent-based task planning and deep reinforcement learning for human-UAVs teamwork,2020,Chinese Journal of Aeronautics,Chang Wang; Lizhen Wu; Chao Yan; Zhichao Wang; Han Long; Chao Yu,article,62,10.33,1,0.2148,0.215,backward,35,foundation_models,0,backward,https://www.sciencedirect.com/science/article/pii/S1000936120301229/pdf,"Unmanned Aerial Vehicles (UAVs) are useful in dangerous and dynamic tasks such as search-and-rescue, forest surveillance, and anti-terrorist operations. These tasks can be solved better through the collaboration of multiple UAVs under human supervision. However, it is still difficult for human to monitor, understand, predict and control the behaviors of the UAVs due to the task complexity as well as the black-box machine learning and planning algorithms being used. In this paper, the coactive design method is adopted to analyze the cognitive capabilities required for the tasks and design the interdependencies among the heterogeneous teammates of UAVs or human for coherent collaboration. Then, an agent-based task planner is proposed to automatically decompose a complex task into a sequence of explainable subtasks under constrains of resources, execution time, social rules and costs. Besides, a deep reinforcement learning approach is designed for the UAVs to learn optimal policies of a flocking behavior and a path planner that are easy for the human operator to understand and control. Finally, a mixed-initiative action selection mechanism is used to evaluate the learned policies as well as the human’s decisions. Experimental results demonstrate the effectiveness of the proposed methods.",openalex,,,,,
 W4285266921,10.14569/ijacsa.2022.0130581,Demand Forecasting Model using Deep Learning Methods for Supply Chain Management 4.0,2022,International Journal of Advanced Computer Science and Applications,Loubna Terrada; Mohamed El Khaïli; Hassan Ouajji,article,41,10.25,1,0.2148,0.215,backward,35,foundation_models,0,backward,http://thesai.org/Downloads/Volume13No5/Paper_81-Demand_Forecasting_Model_using_Deep_Learning_Methods.pdf,"In the context of Supply Chain Management 4.0, costumers’ demand forecasting has a crucial role within an industry in order to maintain the balance between the demand and supply, thus improve the decision making. Throughout the Supply Chain (SC), a large amount of data is generated. Artificial Intelligence (AI) can consume this data in order to allow each actor in the SC to gain in performance but also to better know and understand the customer. This study is carried out in order to improve the performance of the demand forecasting system of the SC based on Deep Learning methods, including Auto-Regressive Integrated Moving Average (ARIMA) and Long Short-Term Memory (LSTM) using historical transaction record of a company. The experimental results enable to select the most efficient method that could provide better accuracy than the tested methods.",openalex,,,,,
 W3135079779,10.1007/s42417-021-00286-x,Deep Learning Algorithms for Machinery Health Prognostics Using Time-Series Data: A Review,2021,Journal of Vibration Engineering & Technologies,Nikhil M. Thoppil; Velagapudi Vasu; C. S. P. Rao,article,51,10.2,1,0.2148,0.215,backward,35,foundation_models,0,backward,,,none,,,,,

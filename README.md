@@ -515,12 +515,15 @@ project can read.** `eligibility.py` applies the rule to every row of
 `corpus/candidates.csv` and writes the decisions to **`corpus/eligibility.csv`**
 — `openalex_id`, `eligible`, `exclusion_reason`, `eligibility_rule`,
 `candidates_key_sha256`, one row per candidate in rank order. **It does not
-modify `candidates.csv` and deletes nothing.** Rules, first match wins:
+modify `candidates.csv` and deletes nothing.** One rule:
 
-1. DOI prefix `10.1016` → `elsevier` — **even when the paper is OA**
-2. no OA copy — OpenAlex `open_access.is_oa` false **and** no Unpaywall OA
-   location for the DOI (no DOI: OpenAlex alone) → `no_oa`
-3. otherwise → eligible, `none`
+- no OA copy — OpenAlex `open_access.is_oa` false **and** no Unpaywall OA
+  location for the DOI (no DOI: OpenAlex alone) → `no_oa`
+- otherwise → eligible, `none`
+
+Publisher plays no part. Eligibility v1 also had a rule 1, DOI prefix `10.1016`
+→ `elsevier` even when OA. It was **removed on 2026-10-05** (eligibility v2.0.0);
+see "Rule 1 removed" below.
 
 `is_oa` is fetched fresh, not inferred: `candidates.csv` only carried
 `oa_pdf_url`, and an empty PDF link is not the same claim as `is_oa=false`. Every
@@ -555,63 +558,57 @@ the new rows, otherwise with `--mailto`.
 ### The limitation statement for Report 1
 
 All numbers below are from the `eligibility` block of `corpus/provenance.json`
-(run 2026-10-05; 1,941 OpenAlex lookups in 39 batched requests, 500 Unpaywall
-lookups).
+(eligibility v2.0.0, 2026-10-05). Inputs: 1,941 OpenAlex lookups in 39 batched
+requests, and Unpaywall for all 792 rows with a DOI that OpenAlex calls closed
+(790 answered, 2 DOIs unknown to Unpaywall).
 
 | | n | share |
 |---|---:|---:|
 | candidates | 1,941 | |
-| **eligible** | **793** | 40.9% |
-| excluded — `elsevier` | 646 | 33.3% |
-| excluded — `no_oa` | 502 | 25.9% |
+| **eligible** | **1,147** | 59.1% |
+| excluded — `no_oa` | 794 | 40.9% |
 
-| Rank stratum (full list) | total | elsevier | no_oa | eligible | % excluded |
-|---|---:|---:|---:|---:|---:|
-| top third (ranks 1–647) | 647 | 234 | 162 | 251 | 61.2% |
-| bottom two-thirds | 1,294 | 412 | 340 | 542 | 58.1% |
+| Rank stratum (full list) | total | no_oa | eligible | % excluded |
+|---|---:|---:|---:|---:|
+| top third (ranks 1–647) | 647 | 237 | 410 | 36.6% |
+| bottom two-thirds | 1,294 | 557 | 737 | 43.0% |
 
-**`framework_core`-linked candidates: 82 of 154 excluded (0.5325)** — 44
-elsevier, 38 no_oa. The rule costs the most relevant slice of the corpus
-slightly *more* than the corpus as a whole, and the top third slightly more than
-the bottom.
+**`framework_core`-linked candidates: 52 of 154 excluded (0.3377).** The top
+of the ranking loses less than the bottom.
 
-**354 of the 646 Elsevier rows are open access according to OpenAlex** and are
-excluded anyway by rule 1. That is the number of readable papers rule 1 costs.
-
-Unpaywall decided 500 rows (OpenAlex said not-OA): 498 had no OA location and
-2 DOIs were unknown to it. **It rescued none**: every row OpenAlex called closed,
-Unpaywall also called closed.
+**Unpaywall rescued none.** Every row OpenAlex called closed was also closed in
+Unpaywall, so `is_oa` from OpenAlex decided every row it had a record for.
 
 Top 15 excluded venues:
 
-| Venue | excluded | elsevier | no_oa |
-|---|---:|---:|---:|
-| Journal of Manufacturing Systems | 74 | 74 | 0 |
-| Procedia CIRP | 58 | 58 | 0 |
-| IFAC-PapersOnLine | 40 | 40 | 0 |
-| Robotics and Computer-Integrated Manufacturing | 38 | 38 | 0 |
-| (no venue) | 36 | 0 | 36 |
-| Computers in Industry | 35 | 35 | 0 |
-| The International Journal of Advanced Manufacturing Technology | 27 | 0 | 27 |
-| International Journal of Production Research | 23 | 0 | 23 |
-| Journal of Intelligent Manufacturing | 23 | 0 | 23 |
-| Advanced Engineering Informatics | 21 | 21 | 0 |
-| IEEE Transactions on Industrial Informatics | 21 | 0 | 21 |
-| Procedia Manufacturing | 21 | 21 | 0 |
-| CIRP Annals | 17 | 17 | 0 |
-| Elsevier eBooks | 17 | 17 | 0 |
-| Expert Systems with Applications | 17 | 17 | 0 |
+| Venue | excluded |
+|---|---:|
+| Journal of Manufacturing Systems | 52 |
+| (no venue) | 36 |
+| The International Journal of Advanced Manufacturing Technology | 27 |
+| International Journal of Production Research | 23 |
+| Journal of Intelligent Manufacturing | 23 |
+| Robotics and Computer-Integrated Manufacturing | 23 |
+| IEEE Transactions on Industrial Informatics | 21 |
+| Computers in Industry | 16 |
+| Advanced Engineering Informatics | 15 |
+| Elsevier eBooks | 15 |
+| IEEE Internet of Things Journal | 15 |
+| Expert Systems with Applications | 11 |
+| IEEE Transactions on Automation Science and Engineering | 11 |
+| CIRP Annals | 10 |
+| Computers & Industrial Engineering | 10 |
 
-Four of the five largest losses are core manufacturing-systems venues (JMSy,
-Procedia CIRP, IFAC-PapersOnLine, RCIM), all Elsevier. A reader of Report 1
-should be told that the review under-represents exactly those venues.
+JMSy is still the single largest loss: 52 closed papers out of the 74 JMSy
+candidates. A reader of Report 1 should be told the review under-represents
+closed-access manufacturing-systems venues, JMSy above all.
 
 ### One manual override
 
 **W4283074224**: Elharrouss et al. (2022), "Backbones-Review: Feature
 Extraction Networks for Deep Learning and Deep Reinforcement Learning
 Approaches", an arXiv preprint (2206.08016). The rules cannot decide it.
-Rule 1 does not apply. Rule 2 needs OpenAlex `is_oa`, but OpenAlex deleted the
+The rule needs OpenAlex `is_oa`, but OpenAlex deleted the
 record after the 09-28 build (404 by ID, 0 results by DOI). Unpaywall returns
 404 for its DataCite (arXiv) DOI. It is marked eligible in
 `corpus/eligibility_overrides.csv`, rule `manual_override`, because the 09-28
@@ -624,34 +621,30 @@ is, why the rules could not decide it, and why it is eligible. It makes no
 topical judgment: that is screening's job. Overrides apply **only** to rows
 the rules cannot decide; an override naming a decidable row aborts the run.
 
-### Counterfactual: without rule 1 (not applied)
+### Rule 1 removed
 
-Rule 1 is under review with the advisors. `provenance.json` →
-`eligibility_counterfactual_no_rule1` is the same block computed as if 10.1016
-rows faced rule 2 like any other paper. **It changes no decision and nothing
-was redrawn.** It is computed offline from the call log on every
-`eligibility.py` run.
+Eligibility v1 (commit `1a41053`) excluded every `10.1016` DOI as `elsevier`,
+even when open access. It was removed on 2026-10-05, after the counterfactual
+below had been computed exactly. The v1 decision file and both v1 provenance
+blocks (`eligibility`, `eligibility_counterfactual_no_rule1`) are archived in
+`corpus/archive/2026-10-05_eligibility_v1/`. The counterfactual block is gone
+from `provenance.json`: it described the current rule as a hypothetical.
 
-| | actual (rule 1) | without rule 1 |
+| | v1 (rule 1) | v2 (OA only) |
 |---|---:|---:|
 | eligible | 793 | **1,147** (+354) |
 | `framework_core`-linked excluded | 82/154 (0.5325) | **52/154 (0.3377)** |
 | excluded, top third | 61.2% | **36.6%** |
 | excluded, bottom two-thirds | 58.1% | **43.0%** |
 
-Without rule 1 the stratum pattern **reverses**: the top of the ranking loses
-less than the bottom, rather than more. The top 15 excluded venues are in the
-block; JMSy drops from 74 to 52 excluded and RCIM from 38 to 23, while
-Procedia CIRP and IFAC-PapersOnLine leave the list.
-
-**These figures are exact.** Unpaywall plays no part in the real decision for
-a 10.1016 row, because rule 1 fires first, so it was not queried for them at
-first. `eligibility.py --counterfactual-lookups` then queried it for all
-**292** Elsevier rows OpenAlex calls closed (2026-10-05, 292/292 answered).
-**None had an OA location**, so all 292 stay excluded under rule 2, and
-nothing in the table moved. Those answers are in the call log and are used
-by the counterfactual only. The block records `exact: true`, with the
-Unpaywall outcomes under `unpaywall_coverage_10_1016`.
+The v2 figures are measured, and they match the exact v1 counterfactual. The
+`doi_10_1016_rows` block in provenance gives the change directly. Of 646
+`10.1016` rows, **354 are now eligible** (all OA per OpenAlex) and **292 are
+`no_oa`** (Unpaywall found no OA location for any of them). Of the 44 that are
+`framework_core`-linked, 30 are now eligible. Every one of the 646 was
+ineligible under v1, so +354 is exactly what the removal brought into scope.
+The stratum pattern reverses: under v1 the top of the ranking lost *more* than
+the bottom.
 
 ### Two exclusion stages
 
@@ -681,7 +674,7 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 | File | What it is |
 |---|---|
 | `abstract_backfill.py` | Fills the OpenAlex abstract gap from Semantic Scholar by DOI. Adds `abstract_source`. Idempotent; the call log is also the response cache. |
-| `eligibility.py` | The 2026-10-05 access rule. Writes `corpus/eligibility.csv` (never modifies `candidates.csv`), the `eligibility` and `eligibility_counterfactual_no_rule1` provenance blocks, and the shared `load_eligibility()` staleness check. `--offline` replays the call log. |
+| `eligibility.py` | The access rule (v2.0.0: OA only). Writes `corpus/eligibility.csv` (never modifies `candidates.csv`), the `eligibility` provenance block, and the shared `load_eligibility()` staleness check. `--offline` replays the call log. |
 | `fulltext_head.py` | For **eligible** rows still without an abstract: the first 5,000 characters of the full text, from OA PDFs only (OpenAlex, then Unpaywall). Adds `fulltext_head`. The Elsevier path was removed in v2.0.0. |
 | `draw_calibration_sample.py` | The stratified 50-paper draw from eligible rows with abstract text, and the blind labelling sheet. |
 | `screen.py` | The screening harness: eligible rows only (eligibility read from `--candidates`), Batches API, full per-call provenance, pre-submission budget guard. |
@@ -693,6 +686,8 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 |---|---|
 | `screening/calibration_sample.csv` | The 50 drawn papers, with stratum (v2, eligible rows only). |
 | `screening/archive/v1/` | The v1 sample and blind sheet (pre-eligibility, 2026-09-28) and their provenance block. Kept, not overwritten. |
+| `screening/archive/v2/` | The v2 sample and blind sheet (eligibility v1, rule 1 in force) and their provenance block. |
+| `corpus/archive/2026-10-05_eligibility_v1/` | Eligibility v1's `eligibility.csv` and its provenance blocks, including the no-rule-1 counterfactual. |
 | `corpus/eligibility_calls.jsonl` | Every OpenAlex/Unpaywall response behind the eligibility decision. Append-only; doubles as the cache. |
 | `corpus/eligibility.csv` | The eligibility decision per candidate, keyed by `openalex_id`, stamped with the candidates key. The only place eligibility is stored. |
 | `corpus/eligibility_overrides.csv` | Human decisions for rows neither source can answer for, each with a required `reason`. Currently one row. |
@@ -795,13 +790,19 @@ retrieved, which is exactly what "they never bit" predicts.
 ### Full-text heads for the abstract-less rows
 
 **v2.0.0 (2026-10-05):** the Elsevier path and all `ELSEVIER_API_KEY` handling
-are gone — 10.1016 DOIs are ineligible, so there is nothing for that source to
-do. `fulltext_head.py` now targets only **eligible** rows lacking an abstract
-(42: 27 with no text, 15 already holding an OA head) and leaves ineligible rows
-untouched. The 10-05 rerun replayed all 42 from the cache; the 2 transient
-failures were retried live with `--refresh-errors` and failed again (an HTTP
-500 and a connection error, both Springer). **27 eligible rows (3.4% of
-eligible) have no text.** The table below is the 09-28 run, kept for the record.
+are gone. Eligibility requires an OA copy, so an eligible `10.1016` paper goes
+through the same OA path as any other. `fulltext_head.py` targets only
+**eligible** rows lacking an abstract, and leaves ineligible rows untouched.
+
+After rule 1 was removed, the eligible no-abstract set grew to **77**. Thirty
+of those rows had cached `no_elsevier_key` outcomes from the v1 Elsevier path.
+That path overwrote the OA attempt's own outcome, so those entries are no
+longer replayed (`LEGACY_ELSEVIER_OUTCOMES`) and were retried live on the OA
+path. One more head was recovered. Now **21 eligible rows carry an OA head,
+and 56 eligible rows (4.9% of eligible) have no text.** Three transient
+failures (2 HTTP errors, 1 connection error) failed again on a
+`--refresh-errors` retry and are still open. The table below is the 09-28 run,
+kept for the record.
 
 431 rows (22.2%) still had no abstract after the Semantic Scholar backfill.
 `fulltext_head.py` recovers the **first 5,000 characters** of the full text —
@@ -854,12 +855,11 @@ does not report.
    2026-09-28, so the draw took all of it and the RNG seed selected nothing.
    Metrics describe these 20 exactly and generalise no further. It is
    **deliberately left as drawn** after the 10-05 scope change — not redrawn,
-   not archived. Two consequences: the Elsevier key that would have grown the
-   pool is gone with the Elsevier path, so the census will not become a sample
-   that way; and **5 of the 20 are 10.1016 DOIs** (OA copies, but ineligible
-   under rule 1). `screen.py` will skip those 5, so a run on this set screens
-   15, and `benchmark.py` drops the 5 from scoring as excluded at eligibility.
-   The eligible head pool today is also 15.
+   not archived. The Elsevier key that would have grown the pool is gone with
+   the Elsevier path, so the census will not become a sample that way. Since
+   rule 1 was removed, **all 20 are eligible**, including the 5 `10.1016` OA
+   copies that v1 had excluded, so `screen.py` screens all 20. The eligible
+   head pool today is 21: the 20, plus one head recovered on 10-05.
 2. **Two of the 20 are not papers** — a journal masthead (`IEEE Transactions on
    Instrumentation and Measurement`) and a preprint-server advertisement
    (`TechRxiv: Share Your Preprint Research With the World!`), both typed
@@ -903,12 +903,14 @@ stated inputs at all.** Two consequences, handled differently:
 
 - **Calibration.** Rows without abstract text are excluded from the draw. A κ
   computed partly over title-only decisions measures two tasks at once. Since
-  v2.0.0 the pool is also restricted to eligible rows: **751** of 1,941
-  (1,148 ineligible, 42 eligible without an abstract), cut into thirds of 250
-  and 501. The v2 draw shares 3 papers with the v1 draw; 27 of the v1 50 are
-  ineligible today (12 elsevier, 15 no_oa). The v1 files are in
-  `screening/archive/v1/`. Pool exclusion by full-list third is 64.3% top vs
-  59.8% bottom (`calibration_sample.pool_exclusion_by_full_list_third`).
+  eligibility v2.0.0 (rule 1 removed) the pool is also restricted to eligible
+  rows: **1,070** of 1,941 (794 ineligible, 77 eligible without an abstract),
+  cut into thirds of 356 and 714. The current (v3) draw, same method and seed
+  20260928, shares 2 papers with v1 and 3 with v2. Today 18 of the v1 50 are
+  ineligible and none of the v2 50 are. Both earlier draws are archived in
+  `screening/archive/v1/` and `screening/archive/v2/`. Pool exclusion by
+  full-list third is 42.8% top vs 45.9% bottom
+  (`calibration_sample.pool_exclusion_by_full_list_third`).
 - **Production.** They stay in the corpus, screen on title, and are forced to
   `uncertain` — which routes them to a human rather than dropping them.
 
