@@ -11,8 +11,11 @@ Covers:
   * a 10.1016 DOI is ineligible EVEN WHEN OpenAlex and Unpaywall both say OA,
     and the prefix match is exact (10.10160 is not Elsevier)
   * rules 2 and 3 on every path, including no-DOI rows and an Unpaywall 404
-  * rows are never deleted, reordered or altered -- only the three eligibility
-    columns are added
+  * rows are never deleted, reordered or altered: candidates.csv is not
+    written at all, and eligibility.csv holds exactly one row per candidate,
+    in order, stamped with the candidates key
+  * the rule-1-removed counterfactual, against hand counts, with its
+    OpenAlex-only lower-bound rows counted
   * provenance counts by reason, by reason x rank stratum, top venues and the
     framework_core fraction, checked against hand counts of the fixture
   * all-or-nothing: an undecidable row or a cache miss writes nothing
@@ -161,6 +164,7 @@ def run(d, cand, log, *extra):
     return subprocess.run(
         [sys.executable, "eligibility.py", "--offline", "--quiet",
          "--candidates", cand, "--log", log,
+         "--out", os.path.join(d, "eligibility.csv"),
          "--provenance", os.path.join(d, "prov.json"),
          "--overrides", os.path.join(d, "overrides.csv"), *extra],
         capture_output=True, text=True, cwd=HERE)
@@ -177,18 +181,22 @@ def test_end_to_end(tmpdir: str):
     proc = run(d, cand, log)
     check(proc.returncode == 0, f"runs offline (rc={proc.returncode})\n"
                                 f"{proc.stdout}{proc.stderr}")
-    after = list(csv.DictReader(open(cand, encoding="utf-8")))
+    check(open(cand, "rb").read() == before_bytes,
+          "candidates.csv is not modified at all")
+    epath = os.path.join(d, "eligibility.csv")
+    after = list(csv.DictReader(open(epath, encoding="utf-8")))
 
     # --- rows are never deleted -------------------------------------------
     check(len(after) == len(before) == 9,
-          f"no row deleted: {len(before)} in, {len(after)} out")
+          f"no row deleted: {len(before)} candidates, {len(after)} eligibility rows")
     check([r["openalex_id"] for r in after] == [r["openalex_id"] for r in before],
-          "and none reordered")
-    check(all({k: a[k] for k in COLS} == b for a, b in zip(after, before)),
-          "every original column is unchanged on every row")
-    check(list(after[0].keys()) == COLS + el.OUT_COLUMNS,
-          f"only the three eligibility columns are added, at the end "
-          f"(got {list(after[0].keys())[len(COLS):]})")
+          "one row per candidate, in candidates.csv order")
+    check(list(after[0].keys()) == el.ELIGIBILITY_COLUMNS,
+          f"eligibility.csv columns (got {list(after[0].keys())})")
+    check({r[el.KEY_COLUMN] for r in after} == {el.candidates_key(before)},
+          "every row is stamped with the current candidates key")
+    check(el.load_eligibility(epath, before)["W1"]["eligible"] is False,
+          "and load_eligibility accepts it against the same candidates")
     inel = [r for r in after if r["eligible"] == "False"]
     check(len(inel) == 6, f"all 6 ineligible rows are still present (got {len(inel)})")
 
@@ -223,13 +231,87 @@ def test_end_to_end(tmpdir: str):
           f"(got {fc})")
     check(prov["elsevier_rows_openalex_is_oa_true"] == 2,
           "the cost of rule 1 is measured: W1 and W9 were OA and excluded anyway")
-    check(prov["rows_deleted"] == 0, "provenance states that no row was deleted")
+    check(prov["candidates_modified"] is False and prov["rows_written"] == 9,
+          "provenance states candidates.csv was not modified, 9 rows written")
+
+    # --- the counterfactual, rule 1 removed --------------------------------
+    # W1, W9: 10.1016 and OpenAlex OA -> eligible. W2: 10.1016, OpenAlex
+    # closed, no Unpaywall answer -> no_oa on OpenAlex alone (lower bound).
+    # Others as in the real run. Eligible: W1 W3 W4 W8 W9 = 5; no_oa: W2 W5
+    # W6 W7 = 4. Top third W1-W3: W2 excluded (1/3). Bottom W4-W9: W5 W6 W7
+    # (3/6). framework_core W1 W3 W5: W5 excluded -> 1/3.
+    full = json.load(open(os.path.join(d, "prov.json"), encoding="utf-8"))
+    cf = full["eligibility_counterfactual_no_rule1"]
+    check(cf["eligible"] == 5 and cf["counts_by_exclusion_reason"]
+          == {"elsevier": 0, "no_oa": 4, "none": 5},
+          f"counterfactual eligible 5, no_oa 4, elsevier 0 "
+          f"(got {cf['counts_by_exclusion_reason']})")
+    cx = cf["counts_by_exclusion_reason_x_rank_stratum"]
+    check(cx["top_third"]["excluded"] == 1 and cx["bottom_two_thirds"]["excluded"] == 3,
+          f"counterfactual excluded by stratum: top 1, bottom 3 "
+          f"(got {cx['top_third']['excluded']}, {cx['bottom_two_thirds']['excluded']})")
+    check(abs(cf["framework_core_linked"]["fraction_excluded"] - 0.3333) < 1e-4,
+          f"counterfactual framework_core fraction 1/3 "
+          f"(got {cf['framework_core_linked']['fraction_excluded']})")
+    check([(t["venue"], t["excluded"]) for t in cf["top_excluded_venues"]]
+          == [("IJAMT", 2), ("(no venue)", 1), ("JMSy", 1)],
+          f"counterfactual venues (got {cf['top_excluded_venues']})")
+    cov = cf["unpaywall_coverage_10_1016"]
+    check(cov["rows_excluded_on_openalex_alone"] == 1 and cf["exact"] is False,
+          "W2 has no Unpaywall answer: counted as excluded on OpenAlex alone and "
+          "the block is marked NOT exact -- the caveat is measured, not stated")
+    check("LOWER bound" in cov["basis"], "and its basis says lower bound")
+    check(proc.returncode == 0,
+          "a missing counterfactual-only lookup does not block --offline")
+    check(cf["delta_vs_actual"]["eligible"] == 2,
+          "delta vs actual: +2 eligible")
+    check("COUNTERFACTUAL" in cf["status"], "the block says it decides nothing")
+    real = {r["openalex_id"]: r["exclusion_reason"]
+            for r in csv.DictReader(open(epath, encoding="utf-8"))}
+    check(real == EXPECT_REASON,
+          "and the real decisions in eligibility.csv are unchanged by it "
+          "(W1, W9 still elsevier)")
+
+    # With W2's Unpaywall answer in the log the counterfactual becomes exact,
+    # and the REAL decision for W2 does not move (rule 1 still fires first).
+    log2 = os.path.join(d, "calls_cf.jsonl")
+    shutil.copy(log, log2)
+    with open(log2, "a", encoding="utf-8") as f:
+        f.write(json.dumps({"source": "unpaywall", "doi": "10.1016/j.a.2",
+                            **UP_OA}) + "\n")
+    d2 = os.path.join(d, "cf_exact")
+    os.makedirs(d2)
+    run(d2, cand, log2)
+    cf2 = json.load(open(os.path.join(d2, "prov.json"),
+                         encoding="utf-8"))["eligibility_counterfactual_no_rule1"]
+    check(cf2["exact"] is True
+          and cf2["unpaywall_coverage_10_1016"]["rows_excluded_on_openalex_alone"] == 0,
+          "with every 10.1016 closed row answered, the block is marked exact")
+    check(cf2["eligible"] == 6 and "EXACT" in cf2["unpaywall_coverage_10_1016"]["basis"],
+          f"and W2's OA location moves it to eligible in the counterfactual "
+          f"(6, got {cf2['eligible']})")
+    real2 = {r["openalex_id"]: r["exclusion_reason"] for r in
+             csv.DictReader(open(os.path.join(d2, "eligibility.csv"), encoding="utf-8"))}
+    check(real2 == EXPECT_REASON,
+          "while the real decision for W2 stays elsevier -- the lookup feeds "
+          "the counterfactual only")
 
     # Idempotent: a second offline run changes nothing.
-    snap = open(cand, "rb").read()
+    snap = open(epath, "rb").read()
     run(d, cand, log)
-    check(open(cand, "rb").read() == snap, "a rerun is byte-identical")
-    check(before_bytes != snap, "(and the first run did write)")
+    check(open(epath, "rb").read() == snap, "a rerun is byte-identical")
+    check(open(cand, "rb").read() == before_bytes, "and candidates.csv still untouched")
+
+    # A candidates.csv that still carries the old inline columns is refused.
+    legacy = os.path.join(d, "legacy.csv")
+    with open(legacy, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=COLS + ["eligible"])
+        w.writeheader()
+        for r in before:
+            w.writerow({**r, "eligible": "True"})
+    proc = run(d, legacy, log)
+    check(proc.returncode != 0 and "eligibility columns" in proc.stderr,
+          "a candidates.csv carrying eligibility columns is refused")
 
 
 def test_all_or_nothing(tmpdir: str):
@@ -246,6 +328,8 @@ def test_all_or_nothing(tmpdir: str):
     check(proc.returncode != 0, f"a cache miss under --offline aborts "
                                 f"(rc={proc.returncode})")
     check(open(cand, "rb").read() == before, "and candidates.csv is untouched")
+    check(not os.path.exists(os.path.join(d, "eligibility.csv")),
+          "and no eligibility.csv is written")
     check(not os.path.exists(os.path.join(d, "prov.json")),
           "and no provenance is written")
 
@@ -256,7 +340,8 @@ def test_all_or_nothing(tmpdir: str):
     proc = run(d, cand, log)
     check(proc.returncode == 5 and "could not be decided" in proc.stdout,
           f"a row resting on an HTTP error is undecided (rc={proc.returncode})")
-    check(open(cand, "rb").read() == before, "and still nothing is written")
+    check(not os.path.exists(os.path.join(d, "eligibility.csv")),
+          "and still nothing is written")
 
 
 def test_overrides(tmpdir: str):
@@ -293,7 +378,8 @@ def test_overrides(tmpdir: str):
     write_ov(["W8", "True", "none", "arXiv PDF on record", "Tester", "2026-10-05"])
     proc = run(d, cand, log)
     check(proc.returncode == 0, f"with an override it completes (rc={proc.returncode})")
-    by = {r["openalex_id"]: r for r in csv.DictReader(open(cand, encoding="utf-8"))}
+    epath = os.path.join(d, "eligibility.csv")
+    by = {r["openalex_id"]: r for r in csv.DictReader(open(epath, encoding="utf-8"))}
     check(by["W8"]["eligible"] == "True"
           and by["W8"]["eligibility_rule"] == "manual_override",
           "the overridden row is labelled manual_override, not a rule")
@@ -302,7 +388,7 @@ def test_overrides(tmpdir: str):
           and prov["manual_overrides"][0]["reason"] == "arXiv PDF on record",
           "provenance lists the override with its stated reason")
 
-    snap = open(cand, "rb").read()
+    snap = open(epath, "rb").read()
     write_ov(["W8", "True", "none", "arXiv PDF on record", "Tester", "2026-10-05"],
              ["W2", "True", "none", "trying to rescue an Elsevier paper",
               "Tester", "2026-10-05"])
@@ -310,7 +396,7 @@ def test_overrides(tmpdir: str):
     check(proc.returncode != 0 and "rules decide it" in proc.stderr,
           "an override on a row the rules DO decide aborts -- it cannot "
           "replace a rule")
-    check(open(cand, "rb").read() == snap, "and writes nothing")
+    check(open(epath, "rb").read() == snap, "and writes nothing")
 
 
 def main() -> int:

@@ -12,9 +12,10 @@ No aggregate in this pipeline is ever produced by a model.
 Eligible rows only (v2.0.0)
 ---------------------------
 Since the 2026-10-05 scope change, a paper is screened only if eligibility.py
-marked it `eligible=True` in candidates.csv. Eligibility is looked up there by
-paper_id (`--candidates`), never trusted from the input file, and a paper_id
-that candidates.csv does not know aborts the run before anything is priced.
+marked it `eligible=True` in corpus/eligibility.csv (`--eligibility`). It is
+joined by paper_id, never trusted from the input file; the file must have been
+computed against the current `--candidates` (else STALE, abort), and a
+paper_id it does not know aborts the run before anything is priced.
 
 An ineligible paper gets NO model call and NO forced decision -- it is not
 written to calls.jsonl at all. It is out of scope, not uncertain: forcing it to
@@ -139,7 +140,7 @@ import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-from eligibility import parse_eligible
+import eligibility as el
 
 try:
     import anthropic
@@ -769,18 +770,22 @@ def _isolation_check(row: dict, rendered: str) -> None:
 # Run
 # --------------------------------------------------------------------------
 
-def load_eligibility(path: str) -> dict[str, tuple[bool, str]]:
-    """paper_id -> (eligible, exclusion_reason), from candidates.csv only."""
-    if not os.path.exists(path):
-        sys.exit(f"candidates file not found: {path}\n"
-                 f"Eligibility is read from it; screen.py does not decide it.")
-    with open(path, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        if "eligible" not in (reader.fieldnames or []):
-            sys.exit(f"{path} has no eligible column -- run eligibility.py first")
-        return {r["openalex_id"]: (parse_eligible(r["eligible"]),
-                                   r.get("exclusion_reason", ""))
-                for r in reader}
+def load_eligibility(candidates_path: str, eligibility_path: str
+                     ) -> dict[str, tuple[bool, str]]:
+    """
+    paper_id -> (eligible, exclusion_reason), from corpus/eligibility.csv.
+
+    Checked against the CURRENT candidates.csv by eligibility.load_eligibility:
+    a missing file, or one computed for a different corpus, stops the run
+    before anything is priced. screen.py never decides eligibility itself.
+    """
+    if not os.path.exists(candidates_path):
+        sys.exit(f"candidates file not found: {candidates_path}\n"
+                 f"It is needed to check that eligibility.csv is current.")
+    with open(candidates_path, newline="", encoding="utf-8") as f:
+        crow = list(csv.DictReader(f))
+    elig = el.load_eligibility(eligibility_path, crow)
+    return {k: (v["eligible"], v["exclusion_reason"]) for k, v in elig.items()}
 
 
 def split_eligible(rows: list[dict], elig: dict[str, tuple[bool, str]]
@@ -833,8 +838,11 @@ def main() -> int:
     ap.add_argument("--criteria", required=True)
     ap.add_argument("--input", required=True)
     ap.add_argument("--candidates", default="corpus/candidates.csv",
-                    help="source of the eligible/exclusion_reason columns; "
-                         "joined on paper_id = openalex_id")
+                    help="the corpus eligibility.csv must have been computed "
+                         "against (staleness check)")
+    ap.add_argument("--eligibility", default="corpus/eligibility.csv",
+                    help="eligible/exclusion_reason per paper, joined on "
+                         "paper_id = openalex_id")
     ap.add_argument("--models", default="haiku,sonnet,opus")
     ap.add_argument("--model-id", action="append", default=[],
                     metavar="ALIAS=ID", help="override a model ID")
@@ -916,7 +924,7 @@ def main() -> int:
                           "evidence about the parser, not about the model"))
     valid_ids = set(ids) if enforce_ids else None
 
-    elig = load_eligibility(args.candidates)
+    elig = load_eligibility(args.candidates, args.eligibility)
     papers, ineligible = load_papers(args.input, args.limit, elig)
     if not papers:
         sys.exit("no eligible papers to screen")
@@ -989,12 +997,13 @@ def main() -> int:
             for m in model_ids},
         "papers": len(papers),
         "candidates_path": args.candidates,
+        "eligibility_path": args.eligibility,
         "excluded_at_eligibility": {
             "n": len(ineligible),
             "by_reason": dict(Counter(elig[r["paper_id"]][1] for r in ineligible)),
             "paper_ids": {r["paper_id"]: elig[r["paper_id"]][1]
                           for r in ineligible},
-            "basis": ("eligible=False in candidates.csv (eligibility.py). No "
+            "basis": ("eligible=False in eligibility.csv (eligibility.py). No "
                       "model call, no forced decision, no calls.jsonl row: "
                       "out of scope, not uncertain."),
         },

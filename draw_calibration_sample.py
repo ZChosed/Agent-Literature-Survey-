@@ -21,7 +21,8 @@ any later analysis can reweight.
 The pool, and the order of operations
 -------------------------------------
 v2.0.0 (2026-10-05 scope change): the pool is rows that are BOTH eligible under
-the access rule (eligibility.py, `eligible=True`) AND carry abstract text
+the access rule (`eligible=True` in corpus/eligibility.csv, joined on
+openalex_id; missing or stale stops the draw) AND carry abstract text
 (`abstract_source` openalex or semantic_scholar, non-empty `abstract`). The
 second condition is stated on the abstract itself, not as
 `abstract_source != none`: a full-text-head row is not `none` either, and it
@@ -74,7 +75,7 @@ import sys
 from collections import Counter
 from datetime import datetime, timezone
 
-from eligibility import parse_eligible
+from eligibility import attach_eligibility, parse_eligible
 
 SCRIPT_VERSION = "2.0.0"
 
@@ -106,15 +107,16 @@ DECISIONS = ("include", "exclude", "uncertain")
 csv.field_size_limit(10_000_000)
 
 
-def read_candidates(path: str) -> list[dict]:
+def read_candidates(path: str, eligibility_path: str) -> list[dict]:
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     if not rows:
         sys.exit(f"{path} has no rows")
     if "abstract_source" not in rows[0]:
         sys.exit(f"{path} has no abstract_source column -- run abstract_backfill.py first")
-    if "eligible" not in rows[0]:
-        sys.exit(f"{path} has no eligible column -- run eligibility.py first")
+    # corpus/eligibility.csv, joined on openalex_id and checked against this
+    # candidates.csv; exits loudly if missing or stale.
+    attach_eligibility(eligibility_path, rows)
     return rows
 
 
@@ -266,6 +268,7 @@ def main() -> int:
         description="Draw the screening calibration samples (abstract, and "
                     "separately full-text head).")
     ap.add_argument("--candidates", default="corpus/candidates.csv")
+    ap.add_argument("--eligibility", default="corpus/eligibility.csv")
     ap.add_argument("--out-dir", default="screening")
     ap.add_argument("--provenance", default="corpus/provenance.json")
     ap.add_argument("--rng-seed", type=int, default=20260928,
@@ -280,7 +283,7 @@ def main() -> int:
     args = ap.parse_args()
 
     verbose = not args.quiet
-    rows = read_candidates(args.candidates)
+    rows = read_candidates(args.candidates, args.eligibility)
 
     if args.fulltext:
         return draw_fulltext(rows, args)
@@ -388,7 +391,8 @@ def main() -> int:
                "then random.sample() per stratum, then shuffle() of the 50",
         "source_file": args.candidates,
         "candidates_total": len(rows),
-        "pool_definition": ("eligible == True (eligibility.py) AND "
+        "eligibility_source": args.eligibility,
+        "pool_definition": ("eligible == True (eligibility.csv) AND "
                             "abstract_source in openalex|semantic_scholar AND "
                             "abstract non-empty"),
         "eligible_total": len(in_scope),

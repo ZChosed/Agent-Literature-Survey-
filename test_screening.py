@@ -53,6 +53,7 @@ import pandas as pd
 
 import benchmark as bm
 import draw_calibration_sample as draw
+import eligibility as el
 import screen as sc
 
 FAILS: list[str] = []
@@ -91,6 +92,29 @@ Uncertain if the abstract does not say enough to apply I1, I2, E1 or E2.
 
 CRITERIA_B = CRITERIA_A.replace("multi-agent architecture",
                                 "multi-agent control architecture")
+
+
+def elig_path_for(cand: str) -> str:
+    """Where a fixture's eligibility.csv lives, next to its candidates.csv."""
+    return cand[:-4] + "_eligibility.csv"
+
+
+def _split_eligibility(path: str) -> None:
+    """
+    Fixtures are written with the three eligibility columns inline for
+    readability; this moves them out into elig_path_for(path), keyed and hashed
+    exactly as eligibility.py writes it, and rewrites candidates.csv without
+    them -- the shape the pipeline actually sees since eligibility.py v1.1.0.
+    """
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        cols = [c for c in reader.fieldnames if c not in el.OUT_COLUMNS]
+    el.write_eligibility_csv(elig_path_for(path), rows, el.candidates_key(rows))
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
 
 
 def make_candidates(path: str, n: int = 300, missing_every: int = 5,
@@ -142,6 +166,7 @@ def make_candidates(path: str, n: int = 300, missing_every: int = 5,
                 "exclusion_reason": "elsevier" if inel else "none",
                 "eligibility_rule": "doi_prefix_10.1016" if inel else "openalex_is_oa",
             })
+    _split_eligibility(path)
 
 
 def run_draw(tmpdir: str, rng_seed: int = 20260928, n: int = 25):
@@ -152,7 +177,7 @@ def run_draw(tmpdir: str, rng_seed: int = 20260928, n: int = 25):
     prov = os.path.join(tmpdir, f"prov_{rng_seed}_{n}.json")
     rc = subprocess.run(
         [sys.executable, "draw_calibration_sample.py",
-         "--candidates", cand, "--out-dir", outdir, "--provenance", prov,
+         "--candidates", cand, "--eligibility", elig_path_for(cand), "--out-dir", outdir, "--provenance", prov,
          "--rng-seed", str(rng_seed), "--n-per-stratum", str(n), "--quiet"],
         capture_output=True, text=True,
         cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -385,7 +410,7 @@ def test_sample_draw(tmpdir: str):
     # The whole point of filtering before cutting: nothing out of scope and
     # nothing unscreenable is drawn.
     cand = {r["openalex_id"]: r for r in csv.DictReader(
-        open(os.path.join(tmpdir, "candidates.csv"), encoding="utf-8"))}
+        open(elig_path_for(os.path.join(tmpdir, "candidates.csv")), encoding="utf-8"))}
     check(all(cand[r["paper_id"]]["eligible"] == "True" for r in sample),
           "no ineligible row was drawn")
     check(not any(r["doi"].startswith("10.1016") for r in sample),
@@ -411,6 +436,7 @@ def test_sample_draw(tmpdir: str):
     rc = subprocess.run(
         [sys.executable, "draw_calibration_sample.py",
          "--candidates", os.path.join(tmpdir, "candidates.csv"),
+         "--eligibility", elig_path_for(os.path.join(tmpdir, "candidates.csv")),
          "--out-dir", out_b, "--provenance", os.path.join(tmpdir, "prov_b.json"),
          "--rng-seed", "20260928", "--n-per-stratum", "25", "--quiet"],
         capture_output=True, text=True,
@@ -491,6 +517,7 @@ def make_fulltext_candidates(path: str, n: int = 150) -> None:
                 "eligible": "True", "exclusion_reason": "none",
                 "eligibility_rule": "openalex_is_oa",
             })
+    _split_eligibility(path)
 
 
 def test_fulltext_sample(tmpdir: str):
@@ -503,7 +530,7 @@ def test_fulltext_sample(tmpdir: str):
     def run(seed=20260928, n=20, out=outdir, pv=prov):
         rc = subprocess.run(
             [sys.executable, "draw_calibration_sample.py", "--fulltext",
-             "--candidates", cand, "--out-dir", out, "--provenance", pv,
+             "--candidates", cand, "--eligibility", elig_path_for(cand), "--out-dir", out, "--provenance", pv,
              "--rng-seed", str(seed), "--n-fulltext", str(n), "--quiet"],
             capture_output=True, text=True,
             cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -576,7 +603,7 @@ def test_fulltext_sample(tmpdir: str):
     make_fulltext_candidates(small, n=9)
     rc = subprocess.run(
         [sys.executable, "draw_calibration_sample.py", "--fulltext",
-         "--candidates", small, "--out-dir", os.path.join(tmpdir, "ft_small_out"),
+         "--candidates", small, "--eligibility", elig_path_for(small), "--out-dir", os.path.join(tmpdir, "ft_small_out"),
          "--provenance", os.path.join(tmpdir, "prov_small.json"), "--quiet"],
         capture_output=True, text=True,
         cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -810,18 +837,21 @@ def test_text_kind_labelling():
 
 
 def _write_screen_candidates(path: str, eligible_ids, ineligible=None) -> None:
-    """Minimal candidates.csv for screen.py's eligibility join."""
+    """Minimal candidates.csv + eligibility.csv for screen.py's join."""
     ineligible = ineligible or {}
     with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["openalex_id", "eligible",
-                                          "exclusion_reason"])
+        w = csv.DictWriter(f, fieldnames=["openalex_id", "doi", "eligible",
+                                          "exclusion_reason", "eligibility_rule"])
         w.writeheader()
         for pid in eligible_ids:
-            w.writerow({"openalex_id": pid, "eligible": "True",
-                        "exclusion_reason": "none"})
+            w.writerow({"openalex_id": pid, "doi": f"10.0000/{pid}",
+                        "eligible": "True", "exclusion_reason": "none",
+                        "eligibility_rule": "openalex_is_oa"})
         for pid, reason in ineligible.items():
-            w.writerow({"openalex_id": pid, "eligible": "False",
-                        "exclusion_reason": reason})
+            w.writerow({"openalex_id": pid, "doi": f"10.0000/{pid}",
+                        "eligible": "False", "exclusion_reason": reason,
+                        "eligibility_rule": "fixture"})
+    _split_eligibility(path)
 
 
 def test_title_only_forced_uncertain(tmpdir: str):
@@ -850,7 +880,7 @@ def test_title_only_forced_uncertain(tmpdir: str):
                PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
     proc = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-         "--candidates", cand,
+         "--candidates", cand, "--eligibility", elig_path_for(cand),
          "--models", "haiku", "--runs-dir", runs, "--run-id", "forcetest",
          "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env,
@@ -939,7 +969,7 @@ def test_ineligible_never_reach_api(tmpdir: str):
         run_id = f"elig_{mode}"
         proc = subprocess.run(
             [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-             "--candidates", cand, "--models", "haiku", "--runs-dir", runs,
+             "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "haiku", "--runs-dir", runs,
              "--run-id", run_id, "--max-usd", "5.00", "--yes"]
             + (["--sync"] if mode == "sync" else []),
             capture_output=True, text=True, env=env,
@@ -984,7 +1014,7 @@ def test_ineligible_never_reach_api(tmpdir: str):
                PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
     proc = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-         "--candidates", cand, "--models", "haiku", "--runs-dir", runs,
+         "--candidates", cand, "--eligibility", elig_path_for(cand), "--models", "haiku", "--runs-dir", runs,
          "--run-id", "elig_unknown", "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env,
         cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -992,6 +1022,95 @@ def test_ineligible_never_reach_api(tmpdir: str):
           f"a paper_id missing from candidates.csv aborts the run "
           f"(rc={proc.returncode})")
     check(not os.path.exists(record), "and nothing at all was sent")
+
+
+def test_eligibility_staleness(tmpdir: str):
+    print("\n[stale] eligibility.csv missing or stale -> sampler and screen.py "
+          "fail loudly")
+    d = os.path.join(tmpdir, "stale")
+    os.makedirs(d)
+    cand = os.path.join(d, "candidates.csv")
+    make_candidates(cand)
+    elig = elig_path_for(cand)
+    rows = list(csv.DictReader(open(cand, encoding="utf-8")))
+    cols = list(rows[0].keys())
+
+    def write_cands(rs):
+        with open(cand, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            w.writerows(rs)
+
+    def draw_rc(eligibility=elig):
+        return subprocess.run(
+            [sys.executable, "draw_calibration_sample.py", "--candidates", cand,
+             "--eligibility", eligibility, "--out-dir", os.path.join(d, "out"),
+             "--provenance", os.path.join(d, "prov.json"), "--quiet"],
+            capture_output=True, text=True,
+            cwd=os.path.dirname(os.path.abspath(__file__)))
+
+    check(draw_rc().returncode == 0, "a current eligibility.csv draws")
+
+    # A rewrite of a NON-key column -- what fulltext_head.py does after
+    # eligibility -- must not make it stale, or every normal run would fail.
+    edited = [dict(r) for r in rows]
+    edited[2]["fulltext_head"] = "Introduction. " * 30
+    edited[2]["abstract_source"] = "fulltext_head_oa"
+    write_cands(edited)
+    check(draw_rc().returncode == 0,
+          "changing a non-key column (as fulltext_head.py does) is not stale")
+
+    for label, rs in (
+            ("a row added (a rebuild that grew)", rows + [dict(rows[0], openalex_id="W999999")]),
+            ("a row dropped", rows[:-1]),
+            ("two rows swapped (rank order changed)", [rows[1], rows[0]] + rows[2:]),
+            ("a DOI changed", [dict(rows[0], doi="10.9999/other")] + rows[1:])):
+        write_cands(rs)
+        rc = draw_rc()
+        check(rc.returncode != 0 and "STALE" in rc.stderr + rc.stdout,
+              f"sampler aborts STALE on {label}")
+    write_cands(rows)
+
+    rc = draw_rc(eligibility=os.path.join(d, "nope.csv"))
+    check(rc.returncode != 0 and "missing" in rc.stderr + rc.stdout,
+          "sampler aborts when eligibility.csv is missing")
+
+    # screen.py: same check, before anything reaches the API.
+    stub = _stub_anthropic(tmpdir, token_count=1500)
+    crit = os.path.join(d, "criteria.md")
+    with open(crit, "w", encoding="utf-8") as f:
+        f.write(CRITERIA_A)
+    inp = os.path.join(d, "input.csv")
+    with open(inp, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["paper_id", "title", "abstract",
+                                          "abstract_source"])
+        w.writeheader()
+        w.writerow({"paper_id": rows[0]["openalex_id"], "title": "T",
+                    "abstract": "An abstract.", "abstract_source": "openalex"})
+
+    def screen_rc(eligibility=elig, tag="x"):
+        record = os.path.join(d, f"rec_{tag}.jsonl")
+        env = dict(os.environ, ANTHROPIC_API_KEY="sk-ant-stub", STUB_RECORD=record,
+                   PYTHONPATH=stub + os.pathsep + os.environ.get("PYTHONPATH", ""))
+        proc = subprocess.run(
+            [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
+             "--candidates", cand, "--eligibility", eligibility,
+             "--models", "haiku", "--runs-dir", os.path.join(d, "runs"),
+             "--run-id", tag, "--max-usd", "5.00", "--yes"],
+            capture_output=True, text=True, env=env,
+            cwd=os.path.dirname(os.path.abspath(__file__)))
+        return proc, record
+
+    write_cands([rows[1], rows[0]] + rows[2:])
+    proc, record = screen_rc(tag="stale")
+    check(proc.returncode != 0 and "STALE" in proc.stderr,
+          "screen.py aborts STALE when candidates.csv changed under it")
+    check(not os.path.exists(record), "and nothing reached the API")
+    write_cands(rows)
+    proc, record = screen_rc(eligibility=os.path.join(d, "nope.csv"), tag="missing")
+    check(proc.returncode != 0 and "missing" in proc.stderr,
+          "screen.py aborts when eligibility.csv is missing")
+    check(not os.path.exists(record), "and nothing reached the API")
 
 
 # ---------------------------------------------------------------------------
@@ -1254,7 +1373,7 @@ def test_budget_guard(tmpdir: str):
     def run_guard(cap, run_id):
         return subprocess.run(
             [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-             "--candidates", cand,
+             "--candidates", cand, "--eligibility", elig_path_for(cand),
              "--models", "opus", "--runs-dir", runs, "--run-id", run_id,
              "--max-usd", cap, "--yes"],
             capture_output=True, text=True, env=env,
@@ -1301,7 +1420,7 @@ def test_budget_guard(tmpdir: str):
                 + os.environ.get("PYTHONPATH", ""))
     bad = subprocess.run(
         [sys.executable, "screen.py", "--criteria", crit, "--input", inp,
-         "--candidates", cand,
+         "--candidates", cand, "--eligibility", elig_path_for(cand),
          "--models", "opus", "--runs-dir", runs, "--run-id", "guard_badmodel",
          "--max-usd", "5.00", "--yes"],
         capture_output=True, text=True, env=env2,
@@ -1769,6 +1888,7 @@ def main() -> int:
         test_text_kind_labelling()
         test_title_only_forced_uncertain(tmpdir)
         test_ineligible_never_reach_api(tmpdir)
+        test_eligibility_staleness(tmpdir)
         test_model_table()
         test_request_shape_per_model()
         test_isolation()

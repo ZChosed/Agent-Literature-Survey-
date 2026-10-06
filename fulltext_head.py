@@ -13,7 +13,8 @@ the manual screening burden.
 Scope: eligible rows only (v2.0.0)
 ----------------------------------
 Since the 2026-10-05 scope change, only rows eligibility.py marked
-`eligible=True` are worked on. An ineligible row is out of scope, so recovering
+`eligible=True` in corpus/eligibility.csv are worked on (joined on
+openalex_id; a missing or stale eligibility.csv stops the run). An ineligible row is out of scope, so recovering
 text for it would buy nothing; its existing columns are left exactly as they
 were.
 
@@ -82,7 +83,7 @@ try:
 except ImportError:
     sys.exit("requests is required:  pip install requests")
 
-from eligibility import parse_eligible
+from eligibility import attach_eligibility, parse_eligible
 
 try:
     import pymupdf as fitz
@@ -306,6 +307,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         description="Recover a truncated full-text head for abstract-less rows.")
     ap.add_argument("--candidates", default="corpus/candidates.csv")
+    ap.add_argument("--eligibility", default="corpus/eligibility.csv")
     ap.add_argument("--provenance", default="corpus/provenance.json")
     ap.add_argument("--cache-dir", default="corpus/fulltext")
     ap.add_argument("--log", default="corpus/fulltext_head_calls.jsonl")
@@ -332,9 +334,9 @@ def main() -> int:
     if "abstract_source" not in fieldnames:
         sys.exit(f"{args.candidates} has no abstract_source column -- run "
                  f"abstract_backfill.py first")
-    if "eligible" not in fieldnames:
-        sys.exit(f"{args.candidates} has no eligible column -- run "
-                 f"eligibility.py first")
+    # Joined in memory on openalex_id, checked against the current
+    # candidates.csv; never written back (the writer below ignores extras).
+    attach_eligibility(args.eligibility, rows)
 
     for r in rows:
         r.setdefault("fulltext_head", "")

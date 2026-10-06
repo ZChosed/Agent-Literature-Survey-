@@ -511,9 +511,11 @@ the Phase I student before either of you extracts anything.**
 ## Scope change, 2026-10-05: accessible papers only
 
 Decided at the 10/05 advisor meeting: **candidates are restricted to papers the
-project can read.** `eligibility.py` applies the rule to `corpus/candidates.csv`
-and adds three columns — `eligible`, `exclusion_reason`, `eligibility_rule` —
-**without deleting, reordering or altering any row.** Rules, first match wins:
+project can read.** `eligibility.py` applies the rule to every row of
+`corpus/candidates.csv` and writes the decisions to **`corpus/eligibility.csv`**
+— `openalex_id`, `eligible`, `exclusion_reason`, `eligibility_rule`,
+`candidates_key_sha256`, one row per candidate in rank order. **It does not
+modify `candidates.csv` and deletes nothing.** Rules, first match wins:
 
 1. DOI prefix `10.1016` → `elsevier` — **even when the paper is OA**
 2. no OA copy — OpenAlex `open_access.is_oa` false **and** no Unpaywall OA
@@ -525,6 +527,30 @@ and adds three columns — `eligible`, `exclusion_reason`, `eligibility_rule` �
 OpenAlex and Unpaywall response is in `corpus/eligibility_calls.jsonl`, and
 `python eligibility.py --offline` reproduces the decision from it with no
 network. If any row cannot be decided, nothing is written.
+
+### Rebuild-safe, and loud when stale
+
+Eligibility lives in its own file because `corpus_build.py` rewrites
+`candidates.csv` wholesale: decisions stored as columns there vanish on the
+next build. Every consumer — `screen.py`, `draw_calibration_sample.py`,
+`fulltext_head.py` — joins `eligibility.csv` on id through one loader,
+`eligibility.load_eligibility()`, which **exits** if the file is missing or
+stale. It never falls back and never defaults a row to eligible.
+
+"Stale" means its `candidates_key_sha256` differs from the current
+`candidates.csv`. **The key is the SHA-256 of the ordered (openalex_id, doi)
+pairs, not of the whole file**, and that is deliberate. `fulltext_head.py` has
+to run *after* eligibility, because it only targets eligible rows, and it
+rewrites `candidates.csv` to add its own column. A whole-file hash would
+therefore go stale on every normal run, while telling you nothing about
+eligibility. The key covers exactly what the decision and the rank strata
+depend on, so a rebuild that adds, drops, reorders or re-DOIs any row is
+caught. Tests cover all four cases, and also confirm that a `fulltext_head`
+rewrite does **not** trip it. The whole-file hash at decision time is still
+recorded in provenance, for information.
+
+After any rebuild: `python eligibility.py --offline` if the call log covers
+the new rows, otherwise with `--mailto`.
 
 ### The limitation statement for Report 1
 
@@ -582,13 +608,50 @@ should be told that the review under-represents exactly those venues.
 
 ### One manual override
 
-**W4283074224** (arXiv 2206.08016, "Backbones-Review") cannot be decided by the
-rules: OpenAlex deleted the record after the 09-28 build (404 by ID, nothing by
-DOI) and Unpaywall does not index arXiv DataCite DOIs. It is marked eligible in
-`corpus/eligibility_overrides.csv`, rule `manual_override`, on the strength of
-the arXiv PDF URL the 09-28 build recorded. It is a judgment, and is listed as
-one in provenance. Overrides apply **only** to rows the rules cannot decide; an
-override naming a decidable row aborts the run.
+**W4283074224**: Elharrouss et al. (2022), "Backbones-Review: Feature
+Extraction Networks for Deep Learning and Deep Reinforcement Learning
+Approaches", an arXiv preprint (2206.08016). The rules cannot decide it.
+Rule 1 does not apply. Rule 2 needs OpenAlex `is_oa`, but OpenAlex deleted the
+record after the 09-28 build (404 by ID, 0 results by DOI). Unpaywall returns
+404 for its DataCite (arXiv) DOI. It is marked eligible in
+`corpus/eligibility_overrides.csv`, rule `manual_override`, because the 09-28
+build recorded an arXiv PDF URL for it.
+
+The override file has a required `reason` column. `eligibility.py` refuses an
+override with a blank reason or `decided_by`, and copies the full reason into
+provenance (`eligibility.manual_overrides`). The reason states what the paper
+is, why the rules could not decide it, and why it is eligible. It makes no
+topical judgment: that is screening's job. Overrides apply **only** to rows
+the rules cannot decide; an override naming a decidable row aborts the run.
+
+### Counterfactual: without rule 1 (not applied)
+
+Rule 1 is under review with the advisors. `provenance.json` →
+`eligibility_counterfactual_no_rule1` is the same block computed as if 10.1016
+rows faced rule 2 like any other paper. **It changes no decision and nothing
+was redrawn.** It is computed offline from the call log on every
+`eligibility.py` run.
+
+| | actual (rule 1) | without rule 1 |
+|---|---:|---:|
+| eligible | 793 | **1,147** (+354) |
+| `framework_core`-linked excluded | 82/154 (0.5325) | **52/154 (0.3377)** |
+| excluded, top third | 61.2% | **36.6%** |
+| excluded, bottom two-thirds | 58.1% | **43.0%** |
+
+Without rule 1 the stratum pattern **reverses**: the top of the ranking loses
+less than the bottom, rather than more. The top 15 excluded venues are in the
+block; JMSy drops from 74 to 52 excluded and RCIM from 38 to 23, while
+Procedia CIRP and IFAC-PapersOnLine leave the list.
+
+**These figures are exact.** Unpaywall plays no part in the real decision for
+a 10.1016 row, because rule 1 fires first, so it was not queried for them at
+first. `eligibility.py --counterfactual-lookups` then queried it for all
+**292** Elsevier rows OpenAlex calls closed (2026-10-05, 292/292 answered).
+**None had an OA location**, so all 292 stay excluded under rule 2, and
+nothing in the table moved. Those answers are in the call log and are used
+by the counterfactual only. The block records `exact: true`, with the
+Unpaywall outcomes under `unpaywall_coverage_10_1016`.
 
 ### Two exclusion stages
 
@@ -618,7 +681,7 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 | File | What it is |
 |---|---|
 | `abstract_backfill.py` | Fills the OpenAlex abstract gap from Semantic Scholar by DOI. Adds `abstract_source`. Idempotent; the call log is also the response cache. |
-| `eligibility.py` | The 2026-10-05 access rule. Adds `eligible`, `exclusion_reason`, `eligibility_rule`; deletes nothing. Writes the `eligibility` provenance block. `--offline` replays the call log. |
+| `eligibility.py` | The 2026-10-05 access rule. Writes `corpus/eligibility.csv` (never modifies `candidates.csv`), the `eligibility` and `eligibility_counterfactual_no_rule1` provenance blocks, and the shared `load_eligibility()` staleness check. `--offline` replays the call log. |
 | `fulltext_head.py` | For **eligible** rows still without an abstract: the first 5,000 characters of the full text, from OA PDFs only (OpenAlex, then Unpaywall). Adds `fulltext_head`. The Elsevier path was removed in v2.0.0. |
 | `draw_calibration_sample.py` | The stratified 50-paper draw from eligible rows with abstract text, and the blind labelling sheet. |
 | `screen.py` | The screening harness: eligible rows only (eligibility read from `--candidates`), Batches API, full per-call provenance, pre-submission budget guard. |
@@ -631,7 +694,8 @@ on disk. No κ, rate, count or cost in this pipeline is produced by a model.
 | `screening/calibration_sample.csv` | The 50 drawn papers, with stratum (v2, eligible rows only). |
 | `screening/archive/v1/` | The v1 sample and blind sheet (pre-eligibility, 2026-09-28) and their provenance block. Kept, not overwritten. |
 | `corpus/eligibility_calls.jsonl` | Every OpenAlex/Unpaywall response behind the eligibility decision. Append-only; doubles as the cache. |
-| `corpus/eligibility_overrides.csv` | Human decisions for rows neither source can answer for. Currently one row. |
+| `corpus/eligibility.csv` | The eligibility decision per candidate, keyed by `openalex_id`, stamped with the candidates key. The only place eligibility is stored. |
+| `corpus/eligibility_overrides.csv` | Human decisions for rows neither source can answer for, each with a required `reason`. Currently one row. |
 | `screening/labels_TODO.csv` | The blind sheet. Fill it in, save as `screening/labels.csv`. |
 | `screening/calibration_sample_fulltext.csv` | The separate full-text-head set. |
 | `screening/labels_fulltext_TODO.csv` | Its blind sheet → `screening/labels_fulltext.csv`. |
@@ -659,7 +723,8 @@ python draw_calibration_sample.py --fulltext    # the 20-paper head sample
 python test_eligibility.py                      # must print ALL CHECKS PASSED
 python test_screening.py                        # must print ALL CHECKS PASSED
 
-# 1. sync smoke test FIRST, 3 papers, including a full-text-head one
+# 1. sync smoke test FIRST, 3 eligible papers, one per input shape:
+#    an OpenAlex abstract, a Semantic Scholar abstract, an OA full-text head
 python screen.py --criteria screening/criteria.md \
                  --input screening/smoke3.csv \
                  --models haiku,sonnet,opus --sync --limit 3
@@ -684,12 +749,19 @@ pooled: see "Two calibration sets" below.
 
 The backfill must run **after** `corpus_build.py`, never before: `corpus_build.py`
 rewrites `provenance.json` wholesale, so a backfill block written first is
-destroyed by the next build. The same holds for `eligibility.py`, and a rebuild
-also drops the eligibility columns, so rerun `eligibility.py` after any build.
+destroyed by the next build. The same holds for the `eligibility` blocks.
+`eligibility.csv` itself survives a rebuild. If the rebuild changed the
+corpus, every consumer refuses it as STALE until `eligibility.py` is rerun.
 
-`screen.py` reads eligibility from `--candidates` (default
-`corpus/candidates.csv`) by `paper_id`; a paper_id it does not find there
-aborts the run before anything is priced.
+`screen.py` joins `--eligibility` (default `corpus/eligibility.csv`) on
+`paper_id` and checks it against `--candidates`. A paper_id it does not find,
+or a stale file, aborts the run before anything is priced.
+
+`screening/smoke3.csv`: the 10-05 version swapped the `no_oa` row
+(W4212863220) for W2597331481, the highest-ranked eligible `semantic_scholar`
+row that is not in the calibration sample (rank 71; its title is an APMS
+proceedings volume). It now covers three input shapes, all eligible and all
+making a real model call.
 
 ### Retrieval policy: the seed columns, and nothing else (v1.6.0)
 

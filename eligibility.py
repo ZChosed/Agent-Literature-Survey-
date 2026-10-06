@@ -8,8 +8,8 @@ Scope change from the 2026-10-05 advisor meeting: the review is restricted to
 papers the project can actually read. This is a SCOPE decision, made before any
 model sees a paper, so it is made here, in Python, from measured inputs -- and
 it is recorded per row rather than applied by deleting rows. An out-of-scope
-paper stays in candidates.csv with the reason it is out, so "why isn't Smith
-2023 in the review?" always has an answer on file.
+paper keeps a row in corpus/eligibility.csv with the reason it is out, so
+"why isn't Smith 2023 in the review?" always has an answer on file.
 
 The rules, evaluated in order, first match wins
 -----------------------------------------------
@@ -79,11 +79,40 @@ override can never quietly replace a rule.
 
 Outputs
 -------
-Three columns on candidates.csv (`eligible`, `exclusion_reason`,
-`eligibility_rule`); no row is added, removed or reordered, and no other column
-is touched. An `eligibility` block in provenance.json carries every count the
-Report 1 limitation statement cites: by reason, by reason x rank stratum, the
-top 15 excluded venues, and the share of framework_core-linked candidates lost.
+corpus/eligibility.csv -- one row per candidate, in candidates.csv order,
+keyed by openalex_id: `eligible`, `exclusion_reason`, `eligibility_rule`,
+`candidates_key_sha256`. candidates.csv itself is NOT modified (v1.1.0): a
+corpus rebuild rewrites that file wholesale, and decisions stored in it would
+silently vanish with it.
+
+Staleness. Every consumer (screen.py, draw_calibration_sample.py,
+fulltext_head.py) loads eligibility through `load_eligibility()`, which fails
+loudly if the file is missing or if its `candidates_key_sha256` does not match
+the current candidates.csv. The key is the SHA-256 of the ordered
+(openalex_id, doi) pairs -- exactly the inputs the decision and the rank
+strata depend on -- NOT of the whole file. A whole-file hash would go stale
+every time fulltext_head.py writes its own column, which it must do AFTER
+eligibility (it only targets eligible rows), so it would fail on every normal
+run without detecting anything about eligibility. Any rebuild that adds, drops,
+reorders or re-DOIs a row changes the key. The whole-file hash at decision
+time is still recorded in provenance, for information.
+
+An `eligibility` block in provenance.json carries every count the Report 1
+limitation statement cites: by reason, by reason x rank stratum, the top 15
+excluded venues, and the share of framework_core-linked candidates lost.
+
+Counterfactual: rule 1 removed
+------------------------------
+`eligibility_counterfactual_no_rule1` in provenance.json is the same block
+computed as if rule 1 did not exist, so 10.1016 rows are judged by rule 2 like
+any other. It changes NO decision and is computed offline from the call log.
+Unpaywall is not needed for the real decision on a 10.1016 row (rule 1 fires
+first), so by default it is not queried for them. `--counterfactual-lookups`
+queries it for the 10.1016 rows OpenAlex calls closed. The answers go into the
+call log and are used ONLY by the counterfactual. Any such row still without
+an Unpaywall answer is excluded there on OpenAlex alone and counted. While that
+count is non-zero the counterfactual eligible count is a LOWER bound; at zero
+it is exact, and the block says which.
 
 Usage
 -----
@@ -96,6 +125,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import sys
@@ -103,7 +133,7 @@ import time
 from collections import Counter
 from datetime import datetime, timezone
 
-SCRIPT_VERSION = "1.0.0"
+SCRIPT_VERSION = "1.1.0"
 
 OPENALEX = "https://api.openalex.org"
 UNPAYWALL = "https://api.unpaywall.org/v2"
@@ -116,6 +146,8 @@ REASONS = ("elsevier", "no_oa", "none")
 STRATA = ("top_third", "bottom_two_thirds")
 
 OUT_COLUMNS = ["eligible", "exclusion_reason", "eligibility_rule"]
+KEY_COLUMN = "candidates_key_sha256"
+ELIGIBILITY_COLUMNS = ["openalex_id"] + OUT_COLUMNS + [KEY_COLUMN]
 OVERRIDE_COLUMNS = ["openalex_id", "eligible", "exclusion_reason", "reason",
                     "decided_by", "decided_on"]
 
@@ -176,6 +208,97 @@ def classify(doi: str, openalex_is_oa: bool | None,
     if unpaywall.get("n_oa_locations", 0) > 0:
         return True, "none", "unpaywall_oa_location"
     return False, "no_oa", "no_oa:unpaywall_no_location"
+
+
+def classify_no_rule1(doi: str, openalex_is_oa: bool | None,
+                      unpaywall: dict | None) -> tuple[bool, str, str]:
+    """
+    The counterfactual: rule 1 deleted, so a 10.1016 row faces rule 2 like any
+    other. Never used for a real decision.
+
+    Unpaywall was not queried for 10.1016 rows, so for one OpenAlex calls
+    closed there is no Unpaywall answer. Offline only, so that row is excluded
+    on OpenAlex alone and labelled as such -- which can only understate the
+    counterfactual eligible count.
+    """
+    doi = (doi or "").strip()
+    if not (doi and is_elsevier_doi(doi)):
+        return classify(doi, openalex_is_oa, unpaywall)
+    if openalex_is_oa is None:
+        raise Undecided("no OpenAlex is_oa")
+    if openalex_is_oa:
+        return True, "none", "cf:10.1016:openalex_is_oa"
+    if unpaywall is None or unpaywall.get("outcome") not in (OK, NOT_FOUND):
+        return False, "no_oa", "cf:10.1016:no_oa:openalex_only_unpaywall_not_queried"
+    if unpaywall["outcome"] == NOT_FOUND:
+        return False, "no_oa", "cf:10.1016:no_oa:unpaywall_doi_unknown"
+    if unpaywall.get("n_oa_locations", 0) > 0:
+        return True, "none", "cf:10.1016:unpaywall_oa_location"
+    return False, "no_oa", "cf:10.1016:no_oa:unpaywall_no_location"
+
+
+def candidates_key(rows: list[dict]) -> str:
+    """SHA-256 of the ordered (openalex_id, doi) pairs. See the docstring."""
+    h = hashlib.sha256()
+    for r in rows:
+        h.update(f"{r['openalex_id']}\t{(r.get('doi') or '').strip().lower()}\n"
+                 .encode("utf-8"))
+    return h.hexdigest()
+
+
+def write_eligibility_csv(path: str, rows: list[dict], key: str) -> None:
+    tmp = path + ".tmp"
+    with open(tmp, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=ELIGIBILITY_COLUMNS, extrasaction="ignore")
+        w.writeheader()
+        for r in rows:
+            w.writerow({**{c: r[c] for c in ["openalex_id"] + OUT_COLUMNS},
+                        KEY_COLUMN: key})
+    os.replace(tmp, path)
+
+
+def load_eligibility(path: str, candidate_rows: list[dict]) -> dict[str, dict]:
+    """
+    openalex_id -> {eligible: bool, exclusion_reason, eligibility_rule}.
+
+    The one way any script reads eligibility. Exits loudly -- never falls back,
+    never treats a row as eligible by default -- if the file is missing, has
+    the wrong columns, or was computed against a different candidates.csv.
+    """
+    if not os.path.exists(path):
+        sys.exit(f"\n  *** {path} is missing. Eligibility is not decided for "
+                 f"this corpus;\n      run eligibility.py (--offline replays "
+                 f"the call log).\n")
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        missing = [c for c in ELIGIBILITY_COLUMNS if c not in (reader.fieldnames or [])]
+        if missing:
+            sys.exit(f"{path} is missing column(s) {missing}")
+        erows = list(reader)
+    want = candidates_key(candidate_rows)
+    keys = {r[KEY_COLUMN] for r in erows}
+    if keys != {want}:
+        sys.exit(f"\n  *** STALE: {path} was computed against a different "
+                 f"candidates.csv.\n      recorded key {sorted(keys)[0][:16]}... "
+                 f"!= current {want[:16]}...\n      The corpus changed since "
+                 f"eligibility was decided. Rerun eligibility.py.\n")
+    out = {r["openalex_id"]: {"eligible": parse_eligible(r["eligible"]),
+                              "exclusion_reason": r["exclusion_reason"],
+                              "eligibility_rule": r["eligibility_rule"]}
+           for r in erows}
+    if len(out) != len(erows) or set(out) != {r["openalex_id"] for r in candidate_rows}:
+        sys.exit(f"{path} does not hold exactly one row per candidate")
+    return out
+
+
+def attach_eligibility(path: str, candidate_rows: list[dict]) -> None:
+    """Load, check, and copy the three fields onto the rows IN MEMORY only."""
+    elig = load_eligibility(path, candidate_rows)
+    for r in candidate_rows:
+        e = elig[r["openalex_id"]]
+        r["eligible"] = "True" if e["eligible"] else "False"
+        r["exclusion_reason"] = e["exclusion_reason"]
+        r["eligibility_rule"] = e["eligibility_rule"]
 
 
 def parse_eligible(value: str) -> bool:
@@ -433,7 +556,9 @@ def summarise(rows: list[dict], oa_cache: dict[str, dict]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="Mark candidates eligible/ineligible under the access rule.")
-    ap.add_argument("--candidates", default="corpus/candidates.csv")
+    ap.add_argument("--candidates", default="corpus/candidates.csv",
+                    help="read only; never modified")
+    ap.add_argument("--out", default="corpus/eligibility.csv")
     ap.add_argument("--provenance", default="corpus/provenance.json")
     ap.add_argument("--log", default="corpus/eligibility_calls.jsonl",
                     help="append-only call log; doubles as the response cache")
@@ -448,6 +573,9 @@ def main() -> int:
                     help="replay the call log only; abort on any cache miss")
     ap.add_argument("--refresh-errors", action="store_true",
                     help="retry cached transient failures")
+    ap.add_argument("--counterfactual-lookups", action="store_true",
+                    help="also query Unpaywall for 10.1016 rows OpenAlex calls "
+                         "closed; used ONLY by the no-rule-1 counterfactual")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
     verbose = not args.quiet
@@ -465,9 +593,12 @@ def main() -> int:
         if need not in fieldnames:
             sys.exit(f"{args.candidates} has no {need!r} column")
 
-    # Snapshot of everything this script must not change.
-    before = [(r["openalex_id"], tuple(r.get(c, "") for c in fieldnames
-                                       if c not in OUT_COLUMNS)) for r in rows]
+    if any(c in fieldnames for c in OUT_COLUMNS):
+        sys.exit(f"{args.candidates} carries eligibility columns; since v1.1.0 "
+                 f"they live in {args.out} only. Strip them from candidates.csv.")
+    with open(args.candidates, "rb") as f:
+        candidates_file_sha = hashlib.sha256(f.read()).hexdigest()
+    key = candidates_key(rows)
 
     oa_cache, up_cache = load_cache(args.log)
     fetcher = None if args.offline else Fetcher(args.mailto, args.rate)
@@ -514,7 +645,9 @@ def main() -> int:
         up_need = []
         for r in rows:
             doi = (r.get("doi") or "").strip().lower()
-            if not doi or is_elsevier_doi(doi):
+            if not doi:
+                continue
+            if is_elsevier_doi(doi) and not args.counterfactual_lookups:
                 continue
             oa = oa_cache.get(r["openalex_id"]) or {}
             # Queried when OpenAlex says not-OA, and also when OpenAlex has
@@ -529,7 +662,9 @@ def main() -> int:
                 up_need.append(doi)
         up_need = sorted(set(up_need))
         if args.offline:
-            misses += [f"unpaywall:{d}" for d in up_need]
+            # Counterfactual-only lookups never block the real decision.
+            misses += [f"unpaywall:{d}" for d in up_need
+                       if not is_elsevier_doi(d)]
         else:
             if verbose and up_need:
                 print(f"[elig] Unpaywall: {len(up_need)} DOIs to query, "
@@ -557,11 +692,24 @@ def main() -> int:
     overrides = load_overrides(args.overrides)
     applied_overrides = []
     undecided = []
-    for r in rows:
+    # Decisions are held in these dicts in memory and written to args.out;
+    # the candidate rows are never written back.
+    decided = [dict(r) for r in rows]
+    cf_rows = [dict(r) for r in rows]
+    for r, cf in zip(decided, cf_rows):
         doi = (r.get("doi") or "").strip().lower()
         oa = oa_cache.get(r["openalex_id"]) or {}
         oa_is_oa = oa.get("is_oa") if oa.get("outcome") == OK else None
         ov = overrides.get(r["openalex_id"])
+        try:
+            cfe, cfr, cfrule = classify_no_rule1(doi, oa_is_oa, up_cache.get(doi))
+        except Undecided:
+            if ov:   # the same human judgment, applied identically
+                cfe, cfr, cfrule = (parse_eligible(ov["eligible"]),
+                                    ov["exclusion_reason"], "manual_override")
+            else:
+                cfe, cfr, cfrule = None, None, None   # undecided; aborts below
+        cf.update(eligible=str(cfe), exclusion_reason=cfr, eligibility_rule=cfrule)
         try:
             elig, reason, rule = classify(doi, oa_is_oa, up_cache.get(doi))
         except Undecided as exc:
@@ -604,24 +752,69 @@ def main() -> int:
               "human judgment).")
         return 5
 
-    after = [(r["openalex_id"], tuple(r.get(c, "") for c in fieldnames
-                                      if c not in OUT_COLUMNS)) for r in rows]
-    if after != before:
-        raise AssertionError("eligibility.py altered a row it must not touch")
+    with open(args.candidates, "rb") as f:
+        if hashlib.sha256(f.read()).hexdigest() != candidates_file_sha:
+            raise AssertionError("candidates.csv changed during the run")
 
-    out_fields = fieldnames + [c for c in OUT_COLUMNS if c not in fieldnames]
-    tmp = args.candidates + ".tmp"
-    with open(tmp, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=out_fields, extrasaction="ignore")
-        w.writeheader()
-        w.writerows(rows)
-    os.replace(tmp, args.candidates)
+    write_eligibility_csv(args.out, decided, key)
 
-    summary = summarise(rows, oa_cache)
+    summary = summarise(decided, oa_cache)
     up_outcomes = Counter((up_cache.get(d) or {}).get("outcome")
-                          for d in {(r.get("doi") or "").strip().lower() for r in rows
+                          for d in {(r.get("doi") or "").strip().lower() for r in decided
                                     if r.get("eligibility_rule", "").startswith(
                                         ("unpaywall", "no_oa:unpaywall"))})
+
+    # --- counterfactual: rule 1 removed -----------------------------------
+    cf_summary = summarise(cf_rows, oa_cache)
+    for k in ("elsevier_rows_openalex_is_oa_true",
+              "elsevier_rows_openalex_is_oa_true_note"):
+        cf_summary.pop(k, None)
+    els_cf = [c for c in cf_rows if is_elsevier_doi(c.get("doi") or "")]
+    cf_rule = Counter(c["eligibility_rule"] for c in els_cf)
+    n_oa_only = cf_rule["cf:10.1016:no_oa:openalex_only_unpaywall_not_queried"]
+    n_els_closed = sum(1 for c in els_cf
+                       if (oa_cache.get(c["openalex_id"]) or {}).get("is_oa") is False)
+    els_up = Counter((up_cache.get((c.get("doi") or "").strip().lower()) or {})
+                     .get("outcome") for c in els_cf
+                     if (oa_cache.get(c["openalex_id"]) or {}).get("is_oa") is False)
+    exact = n_oa_only == 0
+    cf_block = {
+        "script": "eligibility.py",
+        "script_version": SCRIPT_VERSION,
+        "computed_utc": datetime.now(timezone.utc).isoformat(),
+        "status": ("COUNTERFACTUAL ONLY -- no decision uses it. Rule 1 is in "
+                   "force; whether to drop it is pending with the advisors."),
+        "assumption": ("rule 1 removed: a 10.1016 row is excluded only if "
+                       "rule 2 excludes it (not OA). Everything else, including "
+                       "the manual override, is unchanged."),
+        "computed_offline_from": args.log,
+        **cf_summary,
+        "rows_10_1016": len(els_cf),
+        "rows_10_1016_by_counterfactual_rule": dict(sorted(cf_rule.items())),
+        "exact": exact,
+        "unpaywall_coverage_10_1016": {
+            "openalex_closed_rows": n_els_closed,
+            "unpaywall_outcomes": {str(k): v for k, v in sorted(
+                els_up.items(), key=lambda kv: str(kv[0]))},
+            "rows_excluded_on_openalex_alone": n_oa_only,
+            "basis": (
+                "EXACT: every 10.1016 row OpenAlex calls closed has an "
+                "Unpaywall answer, so rule 2 was applied to them in full."
+                if exact else
+                "LOWER bound on the counterfactual eligible count: these rows "
+                "have no Unpaywall answer and are excluded on OpenAlex alone; "
+                "a lookup can only move them to eligible. Close with "
+                "eligibility.py --counterfactual-lookups."),
+            "lookups_source": ("eligibility.py --counterfactual-lookups; "
+                               "answers used by this block only"),
+        },
+        "delta_vs_actual": {
+            "eligible": cf_summary["eligible"] - summary["eligible"],
+            "framework_core_fraction_excluded": round(
+                (cf_summary["framework_core_linked"]["fraction_excluded"] or 0)
+                - (summary["framework_core_linked"]["fraction_excluded"] or 0), 4),
+        },
+    }
     block = {
         "script": "eligibility.py",
         "script_version": SCRIPT_VERSION,
@@ -657,12 +850,18 @@ def main() -> int:
             "Human judgments, not rule outputs: rows that neither OpenAlex nor "
             "Unpaywall could answer for. Applied only where the rules could "
             "not decide. Source: " + args.overrides),
-        "rows_deleted": 0,
-        "columns_written": OUT_COLUMNS,
+        "output": args.out,
+        "candidates_modified": False,
+        "candidates_key_sha256": key,
+        "candidates_key_basis": "SHA-256 of ordered (openalex_id, lowercased "
+                                "doi) pairs; the staleness check",
+        "candidates_file_sha256_at_decision": candidates_file_sha,
+        "rows_written": len(decided),
+        "columns_written": ELIGIBILITY_COLUMNS,
         **summary,
         "note": (
             "Eligibility is a scope decision, not a screening decision. "
-            "Ineligible rows stay in candidates.csv, are never sent to a "
+            "Ineligible rows keep their row in eligibility.csv, are never sent to a "
             "screening model, and are never forced to `uncertain`: they are "
             "out of scope, not undecided. Counts here are the 'excluded at "
             "eligibility' stage; 'excluded at screening' is reported "
@@ -673,6 +872,7 @@ def main() -> int:
         with open(args.provenance, encoding="utf-8") as f:
             prov = json.load(f)
     prov["eligibility"] = block
+    prov["eligibility_counterfactual_no_rule1"] = cf_block
     with open(args.provenance, "w", encoding="utf-8") as f:
         json.dump(prov, f, indent=2)
         f.write("\n")
@@ -694,8 +894,18 @@ def main() -> int:
               f"{summary['elsevier_rows_openalex_is_oa_true']}")
         print(f"[elig] rules: " + ", ".join(
             f"{k}={v}" for k, v in summary["counts_by_eligibility_rule"].items()))
-        print(f"  -> {args.candidates}  ({', '.join(OUT_COLUMNS)})")
-        print(f"  -> {args.provenance}  (eligibility block)")
+        cfc = cf_summary
+        print(f"[cf ] without rule 1 (counterfactual, not applied): eligible="
+              f"{cfc['eligible']} ({cf_block['delta_vs_actual']['eligible']:+d}), "
+              f"framework_core excluded "
+              f"{cfc['framework_core_linked']['fraction_excluded']}; "
+              + ("exact (every 10.1016 closed row has an Unpaywall answer)"
+                 if exact else
+                 f"{n_oa_only} 10.1016 rows excluded on OpenAlex alone "
+                 f"(LOWER bound)"))
+        print(f"  -> {args.out}  (candidates.csv not modified)")
+        print(f"  -> {args.provenance}  (eligibility, "
+              f"eligibility_counterfactual_no_rule1)")
         if log is not None:
             print(f"  -> {args.log}")
     return 0
