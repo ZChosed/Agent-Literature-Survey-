@@ -1,0 +1,424 @@
+{
+  "IDENT": {
+    "paper_id": "W3158720146",
+    "doi": "10.1007/s10845-021-01759-2",
+    "title": "Automation platform independent multi-agent system for robust networks of production resources in industry 4.0",
+    "year": 2021,
+    "venue": "Journal of Intelligent Manufacturing",
+    "first_author": "Matthias Seitz",
+    "seed_role_links": [
+      "framework_core",
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No formal definition; agents represent either the physical system itself or an organizational entity (FIPA-derived architecture).",
+      "evidence_quote": "each agent that appears in the network of the manufacturing facilities represents either the physical system itself or an organizational entity",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "MAS can be used to create application-independent I4.0 systems with arbitrary hardware automation platforms.",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "part_or_product",
+        "supervisory_or_system",
+        "transport_or_AGV"
+      ],
+      "evidence_quote": "Such an agent provides diagnosis services (diagnosis agent) or introduces production requests into the system (product agent) across the CPPS network.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "This information model serves as the agents’ knowledge base that can be exchanged using OPC UA.",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "the properties of the respective plants are modelled according to the Product Process Resource (PPR) description",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "auction_or_market"
+      ],
+      "evidence_quote": "In this implementation, the lowest price is the essential criterion for the selection.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "Modularization of the software in the form of agents with the capability to distribute functionalities makes it possible to scale the network of production facilities.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "The Coordination Process, the Communication interface, and the Knowledge Base.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "The demonstrators were implemented using different platforms (e.g. JADE or C#) and accessibility protocols.",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "Agents responsible for executing a manufacturing process need detailed knowledge of the configuration of the production unit they control.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Configuration of controlled production unit (PPR model); updated on setup change.",
+      "evidence_quote": "The Configuration is updated once the agent detects a change in the setup.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "event_driven_stream",
+      "evidence_quote": "Agents that do not speak JPP2 subscribe the getOfferMessage-Type directly and call the createOffer-method to post an offer.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "Agents with primarily coordinating and monitoring activities need knowledge about other agents and their condition.",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "the agents need to constantly follow the modifications to the hardware",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "This requires the existence of an appropriate knowledge base when commissioning the agent.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "OPC_UA",
+        "custom_message_passing",
+        "FIPA_ACL"
+      ],
+      "evidence_quote": "Communication is handled by a client-socket-based protocol, the JoghurtProduction-Protocol 2 (JPP2)",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "auction_or_market",
+      "evidence_quote": "The coordinator asks for and selects proposals from participants within the production network.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "mediator_or_broker",
+      "evidence_quote": "the use of a central communication platform as part of the communication infrastructure within the production network is advisable",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "yes",
+      "evidence_quote": "the implementation of redundant communication channels as well as a requestresponse schematic for message exchange increased the overall stability",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "We demonstrated and evaluated the benefit of the approach by integrating different lab size plants from two different research groups at two universities.",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown",
+        "resource_added_or_removed",
+        "demand_or_order_change"
+      ],
+      "evidence_quote": "If a filling station fails at the myYoghurt system, the agent system adjusts the routing of the workpieces",
+      "page": 13,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 6,
+        "n_part_types": null
+      },
+      "evidence_quote": "each institute has three facilities involved in the production of yoghurt bottles",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "other",
+      "evidence_quote": "Overall, the production of yoghurt bottles should be considered for the two scenarios.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "ISA_95",
+        "RAMI_4_0",
+        "IEC_61499"
+      ],
+      "evidence_quote": "all levels of automation for ISA 95 should be integrated",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "PPR model / VDI 3682 formalized process description (no formal ontology)",
+      "evidence_quote": "The formalized process description VDI 3683 is used as a means of describing the production capabilities.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_demonstrated",
+      "evidence_quote": "The integration of existing agent systems into a common automation platform was made possible by uniform OPC UA interfaces.",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "action_request_and_negotiation",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "the order is assigned to a new product agent who coordinates the production, as introduced by (Kovalenko et al., 2019)",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Focus on cross-site interoperability of heterogeneous MASs via OPC UA gateway and central coordinator/DF with price-based offer selection, rather than product-agent-driven exploration.",
+      "evidence_quote": "the concept shows how different and independent automation platforms can be seamlessly connected via OPC UA",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Agent-based CPPS requires AMS, MTS and DF; execution agents require a knowledge base.",
+      "evidence_quote": "An agent-based CPPS requires three basic organizational entities, e.g., for discovery purposes: an agent management system (AMS), a message transport system (MTS) and a directory facilitator (DF)",
+      "page": 5,
+      "confidence": "high",
+      "check": "quote_too_long"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "the order is assigned to a new product agent who coordinates the production, as introduced by (Kovalenko et al., 2019)",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "the MAS allows for online reconfigurations, such as adding or removing parts of a material flow system",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

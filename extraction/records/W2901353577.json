@@ -1,0 +1,416 @@
+{
+  "IDENT": {
+    "paper_id": "W2901353577",
+    "doi": "10.1016/j.promfg.2018.10.053",
+    "title": "Integrating Human Operators into Agent-based Manufacturing Systems: A Table-top Demonstration",
+    "year": 2018,
+    "venue": "Procedia Manufacturing",
+    "first_author": "Gary Zheng",
+    "seed_role_links": [
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "MAS: decentralized control structures of multiple autonomous, intelligent agents; agents represent physical components. HRA architecture adapted from Lepuschitz et al. [6].",
+      "evidence_quote": "MAS, decentralized control structures that consist of multiple autonomous, intelligent agents, have been proposed as a framework for real-time logical reconfiguration",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "The HRA architecture can be defined by adapting the general structure specified for manufacturing agents presented in [6].",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "resource_agent",
+      "evidence_quote": "this paper is an implementation of a MAS that incorporates the use of a new type of agent, the Human Resource Agent (HRA)",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "human_operator"
+      ],
+      "evidence_quote": "Resource agents represent the various machines in the system, while product agents represent the products to be manufactured.",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The knowledge base of an HRA contains information about the human operator’s capabilities.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "This is stored as a list of services the human can accomplish",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning"
+      ],
+      "evidence_quote": "The decision maker tries to match the service request to the parameters with the capability list from the knowledge base.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "The communication manager provides means for communication with other product and resource agents.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "Java Agent \nDevelopment Framework (JADE), an agent development environment, was used to facilitate agent communication.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "The knowledge base can be hard coded with the capability list or input by a human operator from the GUI.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Capability list of movement and maintenance services the human can perform on which resources.",
+      "evidence_quote": "The capability list contains a mapping of the resources the human operator can move products to and from",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "the communication manager receives service requests, such as movement requests from product agents and maintenance requests from resource agents",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_plus_immediate_neighbors",
+      "evidence_quote": "performing maintenance on machines in their local environment",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "manual_reconfiguration",
+      "evidence_quote": "When the human operator inputs their capabilities into the GUI, the decision maker uses this information to update the knowledge base.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "The knowledge base of an HRA contains information about the human operator’s capabilities.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing"
+      ],
+      "evidence_quote": "These responses take the form of acceptProposal() and rejectProposal().",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "Product agents communicate these services to nearby resource agents, who accept or deny the service requests.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "mediator_or_broker",
+      "evidence_quote": "Each of these agents can communicate with each other through the main controller to decide on the best course of action.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": "Additionally, machine learning can be implemented to improve an HRA’s decision maker",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "Additionally, machine learning can be implemented to improve an HRA’s decision maker",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "A small table-top testbed made by Fischertechnik is used in this paper [23].",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "the performance of a MAS with HRAs must be compared to a MAS without.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": "the performance of a MAS with HRAs must be compared to a MAS without.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "The HRA in our testbed is used to recirculate unfinished products back to the start, to perform maintenance on failed machines",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 4,
+        "n_part_types": null
+      },
+      "evidence_quote": "The physical testbed is sectioned into four cells, as shown in Fig. 2b.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "The Fischertechnik testbed consists of conveyors, IR sensors, limit switches, and machining stations.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "explicit_separation_of_agent_and_physical_asset",
+        "control_oriented_architecture"
+      ],
+      "evidence_quote": "the high-level agents make decisions that are passed to the respective low-level controllers to drive processes in the physical system.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds a Human Resource Agent with GUI-based human-machine interface; knowledge base is a capability list updated manually by the human; no formal model-based planning.",
+      "evidence_quote": "sending action requests to the human operators through a GUI",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims product and resource agents must interact with a cyber representation of the human operator.",
+      "evidence_quote": "both product and resource agents must be able to interact with a cyber representation of the human operator",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "Product agents represent physical products that require services to be done on them [1].",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "connected over an IP network with static IP addresses",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

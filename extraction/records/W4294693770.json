@@ -1,0 +1,422 @@
+{
+  "IDENT": {
+    "paper_id": "W4294693770",
+    "doi": "10.1016/j.rcim.2022.102450",
+    "title": "Customization and flexible manufacturing capacity using a graphical method applied on a configurable multi-agent system",
+    "year": 2022,
+    "venue": "Robotics and Computer-Integrated Manufacturing",
+    "first_author": "Anders Nilsson",
+    "seed_role_links": [
+      "agent_related",
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No formal definition; agents categorized as active (part-agents initiate actions based on goals) and passive (material/resource agents).",
+      "evidence_quote": "Active agents (part-agents) will initiate actions based on goals, strategies, and available resources skills to change its own or other agent states.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "goal-oriented, rule-based, reasoning, and configurable multi-agent system (C-MAS)",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator",
+        "other"
+      ],
+      "evidence_quote": "Three types of instantiable agents coexist, part- agents, material agents, and resource agents.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "When an instance is made of an agent it starts by downloading its configuration from a database.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "formal_ontology",
+      "evidence_quote": "which is a general ontology aiming to be generic and applicable for all discrete manufacturing automation applications",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning",
+        "heuristic_dispatching"
+      ],
+      "evidence_quote": "The main loop selects a goal g that is possible to start and have the highest priority, priorityg, and then finds the process plan πg that solves the goal with the lowest cost.",
+      "page": 6,
+      "confidence": "high",
+      "check": "quote_too_long"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "The agents are implemented on top of the Java Agent Development Framework (JADE) and communicate and negotiate through JADE.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "The agents are implemented on top of the Java Agent Development Framework (JADE) and communicate and negotiate through JADE.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "The configuration includes all the properties of that specific agent and makes that agent unique in the system.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Agents hold configuration data (goals, process plans, skills, variables) downloaded from a database; resource agents track e.g. available nails/tools.",
+      "evidence_quote": "When an instance is made of an agent it starts by downloading its configuration from a database.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "The pick location will be provided by a skill FindStud executed on the stud buffer-agent",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "Data can also be stored in variables locally on resource agents and distributed on agent in­ terfaces.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "manual_reconfiguration",
+      "evidence_quote": "Goals and variables are defined in a graphical configuration tool",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "OPC_UA",
+        "REST_or_HTTP"
+      ],
+      "evidence_quote": "Communication to external units will go through communication protocols such as JSON SOCKET RPC, OPC-UA, or REST depending on the connected unit.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "Abstract interfaces are mapped to resource agents during runtime when needed after a negotiation among the resource agents.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "Except that C-MAS has no supervisor the concept of SCEP is close to C-MAS.",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "manually created sequences of goals, one for each kind of part, and manually created process plans for solving the goals are proposed",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "A physical Plug & Produce robot-based workstation was built up to verify the flexibility in altering capacity",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "flexibility_or_reconfiguration_time"
+      ],
+      "evidence_quote": "The man-time is an important factor and will directly reflect the cost of doing modifications to the system",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "alternative_MAS",
+      "evidence_quote": "Three different systems were evaluated: C-MAS, PLC, and MAS all three as a supervisor to an industrial robot.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "new_part_type_introduced",
+        "resource_added_or_removed",
+        "demand_or_order_change"
+      ],
+      "evidence_quote": "admits adding and removing resources to balance the manufacturing capacity without doing any digital reconfiguration or reprogramming",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": 13,
+        "n_resources": 12,
+        "n_part_types": 1
+      },
+      "evidence_quote": "To simplify only one kind of part exists at a time and no material agents have been used",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "This test case represents an assembly process which means that the wall does not physically exist until it is assembled.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "IEC_61131"
+      ],
+      "evidence_quote": "Skills and process plans are stored in an execution string that consists of IEC61131–3 structure text program code",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "Own C-MAS class diagram ontology of agent configuration",
+      "evidence_quote": "The C-MAS class diagram describing the reference architecture and ontology of the agent configuration.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "Possibilities exist to add other communication protocols when needed.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "action_request_and_negotiation",
+        "decentralized_decision_making"
+      ],
+      "evidence_quote": "Part agents are active and have goals and a strategy to solve the goals by using process plans. Material agents and resource agents utilize skills on request from the part agent",
+      "page": 4,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "All agents instantiated from one executable configured by data; manually authored goal charts and process plans rather than model-based plan generation; IEC 61131-3 skills; material agents.",
+      "evidence_quote": "all agents in C-MAS are instantiated from one unified executable piece of code and the digital configuration dictates the functionality and behavior of the agents",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims at least one part-agent must exist; planner necessary for efficiency.",
+      "evidence_quote": "At least one part-agent must exist, in this case, the wall.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "The concept was enlarged with control strategies, the plan of intention, and optimization-based planning [35].",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "A new agent will be instantiated when a physical component or resource is introduced to the system.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

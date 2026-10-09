@@ -1,0 +1,267 @@
+{
+  "IDENT": {
+    "paper_id": "W2607234710",
+    "doi": "10.1016/j.procir.2016.11.152",
+    "title": "The Digital Twin: Realizing the Cyber-Physical Production System for Industry 4.0",
+    "year": 2017,
+    "venue": "Procedia CIRP",
+    "first_author": "Thomas H.-J. Uhlemann",
+    "seed_role_links": [
+      "dt_survey"
+    ]
+  },
+  "fields": {
+    "DT_A_DEFINITION_CONFORMANCE__dt_definition_verbatim": {
+      "value": "The Digital Twin for a production process enables a coupling of the production system with its digital equivalent as a base for an optimization",
+      "evidence_quote": "The further concept of the Digital Twin for a production process enables a coupling of the production system with its digital equivalent",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_replica_of_physical_twin": {
+      "value": "yes",
+      "evidence_quote": "coupling of the production system with its digital equivalent",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_synchronized": {
+      "value": "continuous_realtime",
+      "evidence_quote": "Digital Shadow; real-time linked with production system, generates database for the optimization",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_purpose_stated": {
+      "value": "yes_specific",
+      "evidence_quote": "opens up completely new approaches in near real-time production control applications",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__purpose_description": {
+      "value": "Near real-time production control and simulation-based optimization of SME production systems via multimodal data acquisition",
+      "evidence_quote": "Production control-improving recommendation",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_incorporates_models": {
+      "value": [
+        "discrete_event"
+      ],
+      "evidence_quote": "well proven software for production process assessment is used whose functionality can be easily extended with the aid of optimization software",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_subject_matter_expertise": {
+      "value": "implicit",
+      "evidence_quote": "a continuous assessment with specialist knowledge is necessary",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_historical": {
+      "value": "yes",
+      "evidence_quote": "Master data, e.g. layout, part list, shift schedules etc.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_realtime": {
+      "value": "yes",
+      "evidence_quote": "Digital Shadow; real-time linked with production system",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_type": {
+      "value": [
+        "optimization_recommendation"
+      ],
+      "evidence_quote": "Optimized set of parameters for production control",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_metric_described": {
+      "value": "Performance indicators such as cycle period, lot size, transport routes, machine occupancy, setup time",
+      "evidence_quote": "Table 1 demonstrates examples for performance indicators, that can be derived from the introduced data sources.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__uncertainty_quantified": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__uq_method": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__simulatable_forward_in_time": {
+      "value": "yes",
+      "evidence_quote": "Continuously updated database for simulation and optimization",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__model_extractable_by_third_party": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__construction_effort_reported": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__sme_involvement_level": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__model_updates_over_time": {
+      "value": "automatic_online_update",
+      "evidence_quote": "Continuously updated database for simulation and optimization",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__reuse_or_transfer_across_assets": {
+      "value": "claimed_only",
+      "evidence_quote": "Agility and scalability are marks of character of the presented concept.",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__ai_tools_used_in_construction": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "DT_D_AGENT_RELATIONSHIP__agents_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_agent_coupling": {
+      "value": "no_agent",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_makes_decisions": {
+      "value": "no",
+      "evidence_quote": "Production control-improving recommendation",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__spatial_representation": {
+      "value": "topological_or_layout",
+      "evidence_quote": "ground plan",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__part_vs_resource_representation": {
+      "value": "both_distinct",
+      "evidence_quote": "machine vision serves to identify products at the production machine",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "conceptual_only",
+      "evidence_quote": "This paper focuses solely on the concept.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__asset_type": {
+      "value": [
+        "whole_factory"
+      ],
+      "evidence_quote": "concept for the realization of a Digital Twin of the production system",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "generic_or_abstract",
+      "evidence_quote": "small and medium-sized enterprises",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": "The necessity for a standardization of data interfaces, therefore, is completely eliminated",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "dt",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "7ebc3e04990c245916e4db604cf76cfa8dacde62356ddc0dbbc35a4b6136196a",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

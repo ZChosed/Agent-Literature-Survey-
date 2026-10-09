@@ -1517,5 +1517,119 @@
       "note": "Rule 1 (10.1016 -> ineligible regardless of OA) was removed in v2.0.0; these rows are decided by the OA rule alone. Every one of them was ineligible under v1 (corpus/archive/2026-10-05_eligibility_v1/), so `eligible` here is exactly the number of rows the removal brought into scope."
     },
     "note": "Eligibility is a scope decision, not a screening decision. Ineligible rows keep their row in eligibility.csv, are never sent to a screening model, and are never forced to `uncertain`: they are out of scope, not undecided. Counts here are the 'excluded at eligibility' stage; 'excluded at screening' is reported separately by benchmark.py."
-  }
+  },
+  "document_fetch": {
+    "script": "fetch_documents.py",
+    "script_version": "1.2.0",
+    "run_started_utc": "2026-10-09T20:52:25.880002+00:00",
+    "targets": 113,
+    "ok": 89,
+    "failed": 24,
+    "by_role_status": {
+      "agent:failed": 4,
+      "agent:ok": 65,
+      "dt:failed": 20,
+      "dt:ok": 24
+    },
+    "ok_by_source": {
+      "openalex_best": 20,
+      "manual": 56,
+      "openalex_location": 7,
+      "zenodo": 2,
+      "fulltext_head_cache": 3,
+      "semantic_scholar": 1
+    },
+    "validation": {
+      "min_chars": 3000,
+      "title_match_min": 0.6
+    },
+    "requests": 0,
+    "publisher_html_scraped": false,
+    "shadow_libraries_used": false,
+    "model_calls": 0
+  },
+  "report_corpus": {
+    "script": "select_report_corpus.py",
+    "rule": "all agent includes (I1-I4) + top 15 D1 includes by corpus rank; retrieval status not used in selection",
+    "agent": 69,
+    "dt_selected": 15,
+    "dt_available": 44,
+    "dt_left_out": [
+      "W3153150575",
+      "W2955282155",
+      "W4415084267",
+      "W4386526154",
+      "W3214833250",
+      "W3177375170",
+      "W7136080613",
+      "W7204938281",
+      "W3209398723",
+      "W2887322826",
+      "W2983726051",
+      "W2907713773",
+      "W4406189240",
+      "W4307369801",
+      "W4285298778",
+      "W3047552612",
+      "W4388918493",
+      "W3004089638",
+      "W3029080454",
+      "W3006501489",
+      "W2987129950",
+      "W3005323329",
+      "W2991471391",
+      "W4382794129",
+      "W4293065113",
+      "W4408051531",
+      "W7161634775",
+      "W4407325419",
+      "W4411196920"
+    ],
+    "dt_rank_cutoff": 325,
+    "retrieved": {
+      "agent": 65,
+      "dt": 15
+    },
+    "manual_needed": {
+      "agent": 4,
+      "dt": 0
+    },
+    "outputs": {
+      "report_corpus": "corpus/report_corpus.csv",
+      "manual_retrieval": "corpus/manual_retrieval_report.csv"
+    }
+  },
+  "extraction_rechecks": [
+    {
+      "utc": "2026-10-09T21:12:16.566222+00:00",
+      "checker_version": "1.1.0",
+      "records_dir": "extraction/records",
+      "changed": {
+        "missing_quote->absence_unquoted": 44,
+        "missing_field->bad_value": 3
+      },
+      "before": {
+        "not_reported": 414,
+        "missing_quote": 53,
+        "ok": 2282,
+        "bad_value": 4,
+        "absence_unquoted": 962,
+        "quote_too_long": 33,
+        "quote_not_found": 7,
+        "ok_loose": 37,
+        "missing_field": 3
+      },
+      "after": {
+        "not_reported": 414,
+        "absence_unquoted": 1006,
+        "ok": 2282,
+        "bad_value": 7,
+        "quote_too_long": 33,
+        "missing_quote": 9,
+        "quote_not_found": 7,
+        "ok_loose": 37
+      },
+      "note": "stored model answers unchanged; only the deterministic evidence check was re-run"
+    }
+  ]
 }

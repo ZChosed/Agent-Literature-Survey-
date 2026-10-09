@@ -1,0 +1,411 @@
+{
+  "IDENT": {
+    "paper_id": "W4406127740",
+    "doi": "10.3389/fmech.2024.1437198",
+    "title": "An intelligent manufacturing system based on a recursive control structure",
+    "year": 2025,
+    "venue": "Frontiers in Mechanical Engineering",
+    "first_author": "Bingyan Teng",
+    "seed_role_links": [
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "An intelligent agent is a program that can perceive the surrounding environment, operate autonomously, and act on a specific environment.",
+      "evidence_quote": "An intelligent agent is a program that can perceive the surrounding environment, operate autonomously, and act on a speciﬁc environment.",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "own_novel",
+      "evidence_quote": "An intelligent agent is a program that can perceive the surrounding environment, operate autonomously, and act on a speciﬁc environment.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "agent",
+      "evidence_quote": "designs an intelligent agent structure for physical entity devices",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "batch_or_order",
+        "machine_or_resource",
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "the task agent is activated by the order agent and sends processing information to each device agent through a distributed network.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "a decision maker (immune recognition, cell differentiation learning, memory)",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "antibodies with high matching degree are extracted for storage",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "check": "bad_value"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "the study divides the intelligent agent into adaptation layer, intelligent analysis layer, and communication development layer",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_java_or_cpp",
+      "evidence_quote": "The system was developed by using C # programming language",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "learned_model_parameters",
+      "evidence_quote": "antibodies with high matching degree are extracted for storage",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Stored antibody (detector) sets trained from normal-state data, updated online",
+      "evidence_quote": "the immune perception node updated the antibodies online based on the adaptive immune processing mechanism",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "polled_sensor_reads",
+      "evidence_quote": "monitors the real-time operation status of the system (status information of each machine tool)",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "completes the acquisition and processing of its own state information, but also feeds back relevant information to the main control unit",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "yes",
+      "evidence_quote": "enabling the immune system designed and manufactured by the research to have continuous learning capabilities",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "adjust diagnostic devices in real-time according to certain rules and changes in its own space during operation",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "a decision maker (immune recognition, cell differentiation learning, memory)",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "not_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "The device agent decides whether to accept the task according to its own processing ability.",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hierarchical",
+      "evidence_quote": "feeds back relevant information to the main control unit and accepts coordinated control from the main control unit",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "The second layer is the adaptive immune regulation layer, which realizes intelligent detection and self-learning of unknown disturbances.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "parameter_tuning",
+        "supervised_learning"
+      ],
+      "evidence_quote": "utilizes the FB-NSA algorithm to regenerate diagnostic devices in local regions without retraining all diagnostic devices",
+      "page": 7,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "yes_quantified",
+      "evidence_quote": "the false positive rate was reset to zero, and the false negative rate decreased to 4.5%",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "precision, AUC, false positive/negative rates",
+      "evidence_quote": "based on precision and area under the curve (AUC) values as evaluation indications",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "the experimental veriﬁcation platform of MAMS based on immune mechanism was built",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time",
+        "cost",
+        "resource_utilization"
+      ],
+      "evidence_quote": "411, 102.67, and 1,408 for completion time, total cost, and total equipment load",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "alternative_MAS",
+      "evidence_quote": "the scheduling results of traditional contract networks for scheduling experiments",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "To verify the effectiveness of immune algorithms in machine tool fault detection in manufacturing systems",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 3
+      },
+      "evidence_quote": "provided processing tests for three types of workpieces: plate parts, ﬂange parts, and shaft parts",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "2 CNC lathes, 2 CNC milling machines, 2 engraving machines, 2 AGVs",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "research is being conducted on modifying the device processor by adding an embedded industrial computer",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Uses artificial immune (negative selection) disturbance detection in a recursive two-layer control structure; resource/order/task agents rather than model-based product agents.",
+      "evidence_quote": "a two-layer immune adaptive regulation model for fault diagnosis is proposed",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "Kovalenko et al. proposed a direct and active collaborative framework for product agents",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "Multiple intelligent agents form a loosely coupled organizational structure",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

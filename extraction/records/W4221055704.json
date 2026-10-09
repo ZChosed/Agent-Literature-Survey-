@@ -1,0 +1,416 @@
+{
+  "IDENT": {
+    "paper_id": "W4221055704",
+    "doi": "10.1016/j.jmsy.2022.03.011",
+    "title": "Development of a multidimensional conceptual model for job shop smart manufacturing scheduling from the Industry 4.0 perspective",
+    "year": 2022,
+    "venue": "Journal of Manufacturing Systems",
+    "first_author": "Julio C. Serrano-Ruiz",
+    "seed_role_links": [
+      "agent_related"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "agent",
+      "evidence_quote": "it is characterised by a hierarchical agent structure, where an autonomous master scheduling agent (AMSA) controls the performance of other agents",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "supervisory_or_system",
+        "process"
+      ],
+      "evidence_quote": "an autonomous master scheduling agent (AMSA) controls the performance of other agents",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "the whole set rests semantically on the ontology by Serrano-Ruiz et al. [55]",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "formal_ontology",
+      "evidence_quote": "the whole set rests semantically on the ontology by Serrano-Ruiz et al. [55]",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "reinforcement_learning"
+      ],
+      "evidence_quote": "an ordinary scheduler agent (OSA), based on a deep Q-network (DQN), captures as a state a set of defining features of the JSSP",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "none_conceptual_only",
+      "evidence_quote": "the implementation of the conceptual model through mathematical and computational modelling to lead to the development of the necessary software",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "learned_model_parameters",
+      "evidence_quote": "Thus, finally, the stochastic pattern is also imbued in the neural network parameterisation.",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Neural network weights trained on simulation and real production data; replay memory mentioned.",
+      "evidence_quote": "replay memory size, the characteristics of the JSSP and the evaluated magnitude of randomness present in real production data",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "global_system_model",
+      "evidence_quote": "centralised decision making, which is made by the AMSA which, like a brain, organises the operation of the different elements",
+      "page": 16,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "yes",
+      "evidence_quote": "retrain the neural network within the margin that allows its stability during a variable number of episodes",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_simulation",
+      "evidence_quote": "the training of the neural network in the virtual job shop simulation environment, developed using a DES system, is managed by a JSSP trainer",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "OPC_UA"
+      ],
+      "evidence_quote": "the consideration of the open protocol communication unified architecture (OPC UA) for layers 5–7 of the OSI model",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "centralized_assignment",
+      "evidence_quote": "centralised decision making, which is made by the AMSA",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hierarchical",
+      "evidence_quote": "it is characterised by a hierarchical agent structure",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "the modelling approach is a hybrid DRL system",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "reinforcement_learning",
+        "simulation_based_exploration"
+      ],
+      "evidence_quote": "the training of the neural network in the virtual job shop simulation environment, developed using a DES system, is managed by a JSSP trainer",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "which act by modifying the JSSP to newly prioritise jobs, or reprioritisation, without modifying the weights and biases of the neural network",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "yes",
+      "evidence_quote": "A DRL framework with simulation- based training of both production processes and disturbing events",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "standalone_discrete_event_sim",
+      "evidence_quote": "virtual job shop simulation environment, developed using a DES system",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "the structure of the specialised agents making up the DT",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "dt_embeds_agent",
+      "evidence_quote": "the structure of the specialised agents making up the DT",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "conceptual_only",
+      "evidence_quote": "the empirical validation of the model both in the laboratory and through its implementation in a real case",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown",
+        "demand_or_order_change",
+        "quality_defect",
+        "tool_wear_or_degradation",
+        "transport_delay"
+      ],
+      "evidence_quote": "order-related events, such as the arrival of new or urgent orders",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "generic_or_abstract",
+      "evidence_quote": "a conceptual model for job shop smart manufacturing scheduling",
+      "page": 1,
+      "confidence": "medium",
+      "check": "quote_not_found"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "not_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "Ontology of job-shop uncertainty sources by Serrano-Ruiz et al. [55]",
+      "evidence_quote": "the whole set rests semantically on the ontology by Serrano-Ruiz et al. [55]",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "the promotion of the whole as a highly inter­ operable space",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "reactive_replanning_on_disruption"
+      ],
+      "evidence_quote": "four different specialised agents called event-driven rescheduling agents (E-DRSAs)",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Centralized hierarchical master agent with DQN scheduler inside a DT, not decentralized product/resource agents; DRL trained on DES.",
+      "evidence_quote": "centralised decision making, which is made by the AMSA which, like a brain, organises the operation",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "four different specialised agents called event-driven rescheduling agents (E-DRSAs)",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

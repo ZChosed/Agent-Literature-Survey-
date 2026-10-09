@@ -1,0 +1,419 @@
+{
+  "IDENT": {
+    "paper_id": "W3216483046",
+    "doi": "10.1515/auto-2021-0081",
+    "title": "An approach for leveraging Digital Twins in agent-based production systems",
+    "year": 2021,
+    "venue": "at - Automatisierungstechnik",
+    "first_author": "Birgit Vogel‐Heuser",
+    "seed_role_links": [
+      "agent_related",
+      "dt_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Adopts VDI definition: agent as an encapsulated hardware or software entity with specified objectives regarding control of a technical system (VDI/VDE 2653-1)",
+      "evidence_quote": "the VDI [5] describes an agent as “an encapsulated hardware or software entity with specified objectives regarding the control of a technical system (or part thereof)”",
+      "page": 2,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "the VDI [5] describes an agent as “an encapsulated hardware or software entity",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "Within the context of this work, we focus on agents that represent resources and products.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "Within the context of this work, we focus on agents that represent resources and products.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "they include a KB, which is generated from the respective DT",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "BDI_belief_set",
+      "evidence_quote": "Each agent’s KB includes the agent’s environment model, i. e., its believes, and an objective function, i. e., its desires.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "auction_or_market",
+        "planning_or_search"
+      ],
+      "evidence_quote": "The decision-making process consists of two core parts, namely the bidding process and the path finding algorithm.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "PADE has been proven to be able to perform well, even for large and potentially industrial MASs with up to 400 agents being run in parallel [15]",
+      "page": 10,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_python",
+      "evidence_quote": "PADE was chosen for its AMS, Python usage, and its ability to send serialized objects.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "initializes its KB from a DT that includes relevant static information regarding dimensions, but also priority, destination, and processes required",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "KB initialized from AAS: capabilities, parameters, costs, status, transport graph; PA tracks location and remaining processes",
+      "evidence_quote": "The PA’s dynamic status information such as current location and remaining processes required are updated continuously.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "the PA requests an environment model from the coordinator to be able to start its pathfinding algorithm",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "partial_system_model",
+      "evidence_quote": "For ensuring efficiency, the KBs of agents are limited to the information that is actually relevant for them.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "the coordinator is prompted to update its environment model and communicate the changes to all agents.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "Table 1 gives an overview of the information required by RAs and PAs.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL",
+        "contract_net_protocol"
+      ],
+      "evidence_quote": "For the bidding process, we rely on the established auction protocols defined by the Foundation for Intelligent Physical Agents (FIPA)",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "contract_net",
+      "evidence_quote": "directly contact these RAs to inquire their availability, these are so-called calls for proposals",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "Hence, PAs may request services from this top-level RA, which provides the addresses of the appropriate subordinate RAs.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_quantified",
+      "evidence_quote": "Reaction times of the agents depending on the number of threads.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "agent reaction time between message send and response; initialization time per agent",
+      "evidence_quote": "Time between reactions = time that passes between execution of the line of code that sends a message and the execution of",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": "Also, the framework does not yet provide learning capabilities.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "Also, the framework does not yet provide learning capabilities.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "the focus was not put on perceiving abilities of agents so that they could update their environment models autonomously",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "a parser automatically extracts relevant information from the Digital Twins and initializes the individual agents",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "dt_embedded_inside_agent",
+      "evidence_quote": "These RAs then parse their DTs to initialize their KBs.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "dt_generates_agent",
+      "evidence_quote": "we suggest automatically creating the MAS’ agents from the respective DTs",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "This potential has been demonstrated using a simulation of a scaled-up version of the lab-scale demonstrator xPPU.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "the agents’ mean reaction times, cp. Figure 8, seem acceptable",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "recalculation of paths in case of broken resources",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": 27,
+        "n_resources": 19,
+        "n_part_types": null
+      },
+      "evidence_quote": "The resulting MAS consisted of 8 PAs and 19 RAs.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "The extended Pick and Place Unit (xPPU) is a demonstrator for industrial plant automation",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "asset_administration_shell"
+      ],
+      "evidence_quote": "This paper presents an approach to leveraging Digital Twins, i. e., the Asset Administration Shell",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none (AAS metamodel, ECLASS mentioned)",
+      "evidence_quote": "especially when combined with the ECLASS standard, ensures semantic interoperability between agents",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "This a priori standardization, especially when combined with the ECLASS standard, ensures semantic interoperability between agents.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption"
+      ],
+      "evidence_quote": "any PA can request the addresses of agents with the capabilities required from the DF and directly contact these RAs",
+      "page": 7,
+      "confidence": "medium",
+      "check": "quote_not_found"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Agents' KBs auto-generated from AAS digital twins; recursive holonic RA hierarchy with DF role; centralized coordinator builds and pushes environment models (transport graph) rather than agents exploring.",
+      "evidence_quote": "we rely on an environment model which is centrally created by the coordinator for each agent from the respective DT",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Up-to-date KB synchronized with DT is essential for appropriate decisions.",
+      "evidence_quote": "Lastly, it is essential that the DT accurately represents the asset, especially if it is used as an input for creating an agent’s KB.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "the agents KBs are continuously adapted, though, similar to existing approaches [9]",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "PAs on the other hand can be added on the fly",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

@@ -1,0 +1,426 @@
+{
+  "IDENT": {
+    "paper_id": "W4281728628",
+    "doi": "10.1515/auto-2022-0008",
+    "title": "A CPPS-architecture and workflow for bringing agent-based technologies as a form of artificial intelligence into practice",
+    "year": 2022,
+    "venue": "at - Automatisierungstechnik",
+    "first_author": "Luis Alberto Cruz Salazar",
+    "seed_role_links": [
+      "agent_related",
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "An IA is an intelligent entity used for distributed problem-solving in automation, typically characterized as autonomous, collaborative, and communicative (from IEEE 2660.1 [11]); also 'Each IA is a virtual decision-making entity that can sense, process, store, or act on any CPPS shop floor.'",
+      "evidence_quote": "Each IA is a virtual decision-making entity that can sense, process, store, or act on any CPPS shop floor.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "an IA is an intelligent entity used for distributed problem-solving in automation, typically characterized as autonomous, collaborative, and communicative [11]",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "industrial_agent",
+      "evidence_quote": "Multi-Agent Systems (MASs) consist out of Industrial Agents (IAs)",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "batch_or_order",
+        "supervisory_or_system",
+        "human_operator",
+        "other"
+      ],
+      "evidence_quote": "Class I refers to Physical access agent, Class II to Organizational agent, Class III to Interface agent, and Class IV to Human agent.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "Another function pattern in MARIANNE is the Knowledge Base, a type of Database",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "relational_or_document_db",
+      "evidence_quote": "the Knowledge Base, a type of Database that enables AIs of the consistent technical component descriptions as local knowledge",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "auction_or_market",
+        "rule_based_reasoning"
+      ],
+      "evidence_quote": "implements the PA's call for proposal (CFP), using Contract Net Protocol – by PADE",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "For an asset or the whole MAS, the CA provides the communication adapters and cohesions to the outside world.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_python",
+      "evidence_quote": "PADE7 has a similar structure to JADE but uses Python",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "The KB of the RA within the conveyor module includes analytical dependencies between the installed actuators and sensors.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "RA KB holds analytical sensor/actuator dependencies; PA stores WP info (material type, processing time, position) and orders/execution plans.",
+      "evidence_quote": "The PA includes – but is not limited to – information directly and permanently associated with the WP, such as the material type, the processing time",
+      "page": 14,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "polled_sensor_reads",
+      "evidence_quote": "keep its status information function synchronized with the input of",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "enables AIs of the consistent technical component descriptions as local knowledge",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "RAs can learn individual parameters at runtime to substitute missing actual values through mathematical estimations.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "all IAs within the MAS as introduced in [31] are associated with the corresponding asset, including a KB.",
+      "page": 11,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL",
+        "contract_net_protocol",
+        "OPC_UA",
+        "REST_or_HTTP",
+        "MQTT"
+      ],
+      "evidence_quote": "A communication channel via the OPC UA protocol is chosen to connect to other systems unifying the data exchanged.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "contract_net",
+      "evidence_quote": "using Contract Net Protocol – by PADE – that was implemented according to FIPA",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "If the present RA cannot provide the required service, the PA's offer is sent to the next connected RA, who proceeds in the same way.",
+      "page": 13,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_qualitative",
+      "evidence_quote": "CA usually does not have a deterministic behavior communication because message stacks inside CA possibly will overflow.",
+      "page": 16,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "RAs can learn individual parameters at runtime to substitute missing actual values through mathematical estimations.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "parameter_tuning"
+      ],
+      "evidence_quote": "RAs can learn individual parameters at runtime to substitute missing actual values through mathematical estimations.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "the physical resources of the RAs cannot be changed by the MAS itself, this can only be achieved by human actions",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "the AASX Package Explorer for the AAS creation and external management is used to create the DT.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_queries_external_dt",
+      "evidence_quote": "IAs make decisions based on their environment models (C2-C3) created from the AAS and update if the xPPU models change.",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "agent_generates_dt",
+      "evidence_quote": "AAS (generated by the Class IV)",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "This section presents an MAS implementation based on MARIANNE using the eXtended Pick&Place Unit (xPPU)",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "For a qualitative evaluation, we relied on IAs applied in the implementation described in Section 4.1.",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "In case of an erroneous position value of the limit switch sensor, the WP location will be replaced by the estimated position",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 3
+      },
+      "evidence_quote": "makes it possible to determine the condition of the three different material cylinders (WPs).",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "eXtended Pick&Place Unit (xPPU)",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "RAMI_4_0",
+        "asset_administration_shell",
+        "IEC_61131",
+        "IEC_61499"
+      ],
+      "evidence_quote": "For coding the IA interfaces (on-device, i. e., PLC) in LLC, the IEC 61131-3 standard was implemented.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "the implementation of xPPU sub-models embedded into a single AAS to increase interoperability.",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "If the service is unavailable at the present transport RA, the request is sent to all connected transport RAs until the required service is found.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Uses Process Agent per order rather than a product agent; emphasizes standards (VDI/VDE 2653-4, IEEE 2660.1, AAS/RAMI4.0), interface and human agents, AMS supervision.",
+      "evidence_quote": "Some MAS architectures replace the PA with a Product IA type, as Kovalenko et al. [15].",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "AMS functions deemed mandatory ('shall'); IA must be autonomous.",
+      "evidence_quote": "A specific requirement is that an IA must be autonomous [10, 11, 30].",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "Some MAS architectures replace the PA with a Product IA type, as Kovalenko et al. [15].",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "For each ordered WP a PA is created",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

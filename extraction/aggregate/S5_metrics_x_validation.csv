@@ -1,0 +1,12 @@
+metrics_reported,conceptual_only,emulation_or_HIL,factory_floor,lab_hardware,simulation
+cost,0,0,0,2,8
+downtime,0,0,1,0,0
+energy,0,0,1,1,4
+flexibility_or_reconfiguration_time,0,0,0,5,3
+makespan_or_cycle_time,0,2,1,8,10
+none_reported,6,0,0,10,5
+quality_scrap_or_yield,0,0,2,1,4
+reliability_or_availability,0,0,2,0,3
+resource_utilization,0,1,0,3,1
+tardiness_or_due_date,0,0,0,1,8
+throughput,0,0,0,2,7

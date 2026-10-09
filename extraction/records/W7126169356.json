@@ -1,0 +1,423 @@
+{
+  "IDENT": {
+    "paper_id": "W7126169356",
+    "doi": "10.1016/j.rcim.2026.103245",
+    "title": "Adaptive task planning and coordination in multi-agent manufacturing systems using large language models",
+    "year": 2026,
+    "venue": "Robotics and Computer-Integrated Manufacturing",
+    "first_author": "Jonghan Lim",
+    "seed_role_links": [
+      "agent_related",
+      "framework_core",
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "PA: 'A PA manages the completion of production tasks for a part in the system related to its associated physical product [44]'; RA manages a specific resource [43]. MAS characterized by autonomy, reactivity, pro-activeness, social ability [8].",
+      "evidence_quote": "A PA manages the completion of production tasks for a part in the system related to its associated physical product [44].",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "An RA manages a specific manufacturing resource (e.g., machine or robot) to execute tasks assigned by PAs [43].",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "product_agent",
+      "evidence_quote": "The system includes two types of agents, which are PAs and RAs.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator"
+      ],
+      "evidence_quote": "RAs were initialized for three 3D printers and two robotic arms.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "integrated into a comprehensive internal knowledge base, , maintained by each agent.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "vector_store_embeddings",
+      "evidence_quote": "Each agent constructs a semantic embedding vector store",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "LLM_or_foundation_model",
+        "hybrid"
+      ],
+      "evidence_quote": "an LLM-only method versus a combined LLM and structured ranking method using Eq. (7).",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_with_evidence",
+      "evidence_quote": "we examined its scalability by evaluating how planning accuracy and efficiency change as the number of parts increases.",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "context-specific message placed into the agent’s inbox, used for agent-to-agent communication during operation",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "For RAs, knowledge base  contains resource-related information such as material specifications, resource manuals, and standard operating procedures.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Predefined capabilities, parameters and documentation embedded in vector stores; plan state saved during execution.",
+      "evidence_quote": "stores predefined capabilities and parameters with manufacturing documentations for each agent",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "RAs communicate their current operational status to PAs for runtime task coordination.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "enable each agent to retrieve knowledge for its own tasks",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": "The resulting embedding store is then stored with SaveStore, indexed by the agent identifier",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "Self-communication supports internal knowledge updates",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "knowledge base  provides parameters and constraints that can be retrieved without predefined mappings",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "natural_language_LLM"
+      ],
+      "evidence_quote": "A structured message 𝑚𝑗 sent from agent 𝐴𝑖 (e.g., a PA) to agent 𝐴𝑗 (e.g., an RA) contains 𝑚𝑗= (𝑜, 𝛿, 𝜅)",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "a PA broadcast a capability query 𝑚𝑗 to multiple RAs.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "self-communication, agent-to-agent communication, and agent-to-multiple-agents communication",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "Fine-tuned LLMs were adapted using Low Rank Adaptation Method (LoRA) [67] on a set of manufacturing question–answer examples.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "supervised_learning",
+        "LLM_query_or_in_context"
+      ],
+      "evidence_quote": "Agents in the MAS combine predefined capabilities with dynamically retrieved manufacturing knowledge using a Retrieval Augmented Generation (RAG)",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "yes",
+      "evidence_quote": "During manufacturing execution, RAs dynamically retrieve relevant manufacturing documentation to discover additional capabilities",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "yes_quantified",
+      "evidence_quote": "increasing accuracy from 25% to 48% for Gemma-2-9B and from 34% to 60% for LLaMA-3.1-8B",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "Accuracy (%) of match functions, assign parameters, match constraints, extract parameter keys, assign resources; latency",
+      "evidence_quote": "Accuracy of reasoning sub-tasks across model and embedding configurations",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "yes",
+      "evidence_quote": "GPT-4o combined with text-embedding-3-large is used as the default configuration",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "natural_language_interface",
+        "task_planning",
+        "knowledge_retrieval"
+      ],
+      "evidence_quote": "Product requirement parsing; task planning; function matching; constraint reasoning; resource selection",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "Selects second-highest value via textual not numerical reasoning; retrieves textually similar but irrelevant passages; negation errors (-no-wipe); output truncation/hallucination with long prompts; high latency; formatting errors in small models; assigned robot to printing.",
+      "evidence_quote": "the LLM occasionally selects the second-highest value because it relies on textual interpretation rather than evaluating the numerical comparison",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "The study uses a physical manufacturing testbed, shown in Fig. 9(a), to demonstrate the framework’s feasibility",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time"
+      ],
+      "evidence_quote": "Comparison of plan time and accuracy between Case 1 and Case 2 across increasing number of parts.",
+      "page": 16,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "alternative_MAS",
+      "evidence_quote": "an LLM-only method versus a combined LLM and structured ranking method using Eq. (7).",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "new_part_type_introduced"
+      ],
+      "evidence_quote": "new or modified product requirements are introduced during operation",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 5,
+        "n_part_types": 9
+      },
+      "evidence_quote": "each iteration comprised nine parts and five tasks, yielding 450 tasks per case",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "evaluated using an assembly task board testbed across three case studies",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "plan_generation_from_discovered_capabilities",
+        "action_request_and_negotiation",
+        "decentralized_decision_making"
+      ],
+      "evidence_quote": "PAs dynamically plan and expand task phases, match product requirements to RA capabilities, delegate tasks, and coordinate execution with RAs.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Replaces model-based formal representation with LLM reasoning plus RAG over vector-store documentation; discovers unmodeled capabilities/parameters at runtime; adds HITL validation; DAG task plans.",
+      "evidence_quote": "This approach enables runtime generation of process plans and identification of available capabilities without relying on predefined rules.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims all three communication strategies are needed for capability exploration.",
+      "evidence_quote": "Using fewer strategies (e.g., only self and agent-to-agent) would exclude the ability to dynamically explore capabilities on the shop floor.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "A PA manages the completion of production tasks for a part in the system related to its associated physical product [44].",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "RAs were initialized for three 3D printers and two robotic arms.",
+      "page": 11,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

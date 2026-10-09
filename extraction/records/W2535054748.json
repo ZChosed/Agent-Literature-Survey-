@@ -1,0 +1,419 @@
+{
+  "IDENT": {
+    "paper_id": "W2535054748",
+    "doi": "10.1080/00207543.2016.1243268",
+    "title": "A multi-agent framework for capability-based reconfiguration of industrial assembly systems",
+    "year": 2016,
+    "venue": "International Journal of Production Research",
+    "first_author": "Nikolas Antzoulatos",
+    "seed_role_links": [
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "This paper presents a multi-agent framework that can adapt an assembly system in order to cope with such changes.",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "part_or_product",
+        "supervisory_or_system",
+        "human_operator"
+      ],
+      "evidence_quote": "The capabilities of an assembly system are managed by the following agents: Component Agents (CAs), Production Management Agents (PMAs) and Capability Management Agents (CMAs).",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The conﬁguration database stores all possible capabilities of the corresponding assembly system and its associated aggregation rules",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "relational_or_document_db",
+      "evidence_quote": "A CAhas access to an XMLﬁle called a blueprint ﬁle, which contains information about the resource",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning"
+      ],
+      "evidence_quote": "aggregates them, according to rules deﬁned in the conﬁguration database, in order to provide complex capabilities",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "the provision of an API for agent communication via the FIPA standard",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "Agents in this framework have been implemented using the Java-based JADE platform",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "its ID, its human-readable name and description, and the name of its ‘communication library’ and atomic capabilities",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Blueprint XML file with resource ID, name, description, communication library and atomic capabilities.",
+      "evidence_quote": "A CAhas access to an XMLﬁle called a blueprint ﬁle, which contains information about the resource",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "the CA sends its capabilities to its associated PMA, who then sends them to its CMA",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "ACArepresents an individual assembly resource.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "With that information, the PSA updates the Prime Semantic Model in which the current capabilities of the assembly system are stored.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "missing_quote"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL"
+      ],
+      "evidence_quote": "agents communicate with each other via the FIPA communication infrastructure",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "centralized_assignment",
+      "evidence_quote": "the PSA generates an assembly plan, and distributes it to all the involved CAs",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hierarchical",
+      "evidence_quote": "These agents are organised as a rooted tree: CAs are the leaf nodes, and one PMA is the root.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "It is assumed that the set of capabilities appearing within a body has been decided by the domain expert",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "The proposed framework is implemented and robustly working on an industrial assembly system.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "Table 2 provides a comparative evaluation between a traditional manufacturing system and one that is equipped with the proposed framework.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "no_agent_baseline",
+      "evidence_quote": "by comparing it to a system that does not incorporate the presented framework",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "resource_added_or_removed",
+        "new_part_type_introduced",
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "the agent system does monitor the assembly process until a runtime error occurs, such as a missing tool, in which case the agent system takes control",
+      "page": 11,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 10
+      },
+      "evidence_quote": "The hinge consists of 10 parts, namely, two hinge leaves, a metal pin, three balls, three springs and a retainer.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "an industrial assembly system used for assembling hinges for vehicle furniture",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "The operator is provided with a single, high-level interface to the potentially diverse PLCs installed, and the agents manage their interoperation.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "plan_generation_from_discovered_capabilities",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "if the product speciﬁcation is matched with a set of capabilities, the PSA synthesises an assembly plan.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Hierarchical capability aggregation by CMAs with rules; central PSA performs matching and planning rather than product agent; PLC executes control unchanged.",
+      "evidence_quote": "The CMA associated to the root PMA combines the capabilities at this level, and then the root PMA informs the Prime System Agent (PSA)",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "the ability to plug resources (such as PLCs) into and out of the system, and dynamically aggregate resource capabilities",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

@@ -1,0 +1,416 @@
+{
+  "IDENT": {
+    "paper_id": "W2950385347",
+    "doi": "10.1007/s10845-019-01478-9",
+    "title": "Multi-agent system architectures for collaborative prognostics",
+    "year": 2019,
+    "venue": "Journal of Intelligent Manufacturing",
+    "first_author": "Adrià Salvador Palau",
+    "seed_role_links": [
+      "agent_related",
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Agents as autonomous, problem-solving, and goal-driven computational entities with social abilities (adopted from Leitão and Karnouskos 2015)",
+      "evidence_quote": "agents as autonomous, problem-solving, and goal-driven computational entities with social abilities (Leitão and Karnouskos",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_industrial_agents_leitao",
+      "evidence_quote": "This paper conforms to the deﬁnition of agents typically used for industrial systems",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "Multi-agent systems (MAS) are systems of independent software elements that can be used to aid",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "The architectures reviewed in this paper are formed by four elements: Virtual Assets, Digital Twins, Mediator Agents, and a Social Platform.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "the Data Repository manages the data available to the Twin",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "Their data is divided in three main components: a set of sensor-produced features, a set of timed failures or warnings, and a unique identiﬁer.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok_loose"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning",
+        "supervised_ML"
+      ],
+      "evidence_quote": "Predictive maintenance assets should be preventively repaired when their time since installation or last repair surpasses the predicted time of failure multiplied by a factor",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_with_evidence",
+      "evidence_quote": "communication costs will be proportional to the square of the size of each cluster",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "Digital Twins are composed of three building blocks: an Analytics Engine, a Data Repository, and a Communications Manager.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "commercial_simulation_tool",
+      "evidence_quote": "a set of experiments were performed on Netlogo, with a Python extension.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "logged_asset_history",
+      "evidence_quote": "this ﬁt was limited to the last 400 data-points available to the agent.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Health indicator history and failure times of asset used for least-squares fit and clustering",
+      "evidence_quote": "calculated using the history of the past health indices, and the maximum time before failure recorded",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "Receive data from other Digital Twins;",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_plus_immediate_neighbors",
+      "evidence_quote": "the Digital Twins within the same cluster collaborate with one another",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "collaborative prognostics is implemented by sharing Health Indicator data among similar agents in the system.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "the Data Repository manages the data available to the Twin",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing"
+      ],
+      "evidence_quote": "Send data to other Digital Twins;",
+      "page": 14,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "none",
+      "evidence_quote": "Agents decided on which other agents to collaborate with by checking whether their corresponding assets belonged to the same asset cluster",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "four broad classes of MAS architectures: Distributed, Heterarchical, Hierarchical, and Centralized.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_quantified",
+      "evidence_quote": "NCo is the number of ﬁxed-size (a pre-set byte amount) communications between any two agents in the system.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "Number of fixed-size communications NCo weighted by normalized communication cost Cc",
+      "evidence_quote": "NCo is the number of ﬁxed-size (a pre-set byte amount) communications between any two agents in the system.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "yes",
+      "evidence_quote": "Virtual Asset’s failure corresponds to the severance of communications between a deteriorating asset and the rest of the architecture",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "the least squares ﬁt from Python’s Scikit learn (Pedregosa et al. 2011) library was used to ﬁt the ai, bi, and t f i values",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "parameter_tuning",
+        "kb_expansion_via_communication"
+      ],
+      "evidence_quote": "This collaboration can either be in the form of exchanging model parameters or condition data",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "the least squares ﬁt from Python’s Scikit learn (Pedregosa et al. 2011) library was used to ﬁt the ai, bi, and t f i values",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "yes_quantified",
+      "evidence_quote": "Table showing clustering purity results at t = 400",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "clustering purity; corrective vs predictive maintenance counts",
+      "evidence_quote": "Table showing clustering purity results at t = 400",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "term_used_loosely",
+      "evidence_quote": "Digital Twins are smart agents with prognostics, communication,anddatapreprocessingcapabilities.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_and_dt_conflated",
+      "evidence_quote": "Digital Twins are smart agents with prognostics, communication,anddatapreprocessingcapabilities.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "a set of experiments were performed on Netlogo, with a Python extension.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "cost",
+        "reliability_or_availability"
+      ],
+      "evidence_quote": "we investigate the cost and reliability implications of using different multi-agent systems architectures",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "alternative_MAS",
+      "evidence_quote": "we compare several canonical multi-agent architectures for collaborative prognostics",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "agents are allowed to randomly fail at all layers of the architecture with a probability of 1/50 each time step",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 500,
+        "n_part_types": null
+      },
+      "evidence_quote": "we restricted the number of simulated assets to 500",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "other",
+      "evidence_quote": "collaborative failure prediction and maintenance optimization in large ﬂeets of industrial assets",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "decentralized_decision_making",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "Human agents and assets are not considered to be part of the software architecture, as they are elements in the physical world.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Focus on fleet prognostics/maintenance, not part-centric production control; compares architectures by communication, computation and maintenance cost; agents clustered for data sharing; no capability discovery or negotiation.",
+      "evidence_quote": "we investigate the cost and reliability implications of using different multi-agent systems architectures for collaborative failure prediction",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Virtual Assets claimed critical despite not being true agents",
+      "evidence_quote": "However, they are critical for the functioning of the system and thus we include them in our analysis.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "The Social platform can also create or delete Mediator Agents (since the number and membership of clusters may vary over time)",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

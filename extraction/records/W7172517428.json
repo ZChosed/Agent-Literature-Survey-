@@ -1,0 +1,429 @@
+{
+  "IDENT": {
+    "paper_id": "W7172517428",
+    "doi": "10.21203/rs.3.rs-10591441/v1",
+    "title": "AI Native Manufacturing Operating System for Autonomous Smart Factories Using Digital Twins, Multi Agent Artificial Intelligence, Physics Informed Machine Learning, and Reinforcement Learning.",
+    "year": 2026,
+    "venue": "Research Square",
+    "first_author": "MD AZIZUL HAKIM ABIR",
+    "seed_role_links": [
+      "foundation_models"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No formal definition; agents are defined operationally: every controllable or contested resource is an agent.",
+      "evidence_quote": "Every controllable or contested resource is an agent.",
+      "page": 21,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": "The taxonomy follows established agent based practice [26], [27], [30] with one difference",
+      "page": 21,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "agent",
+      "evidence_quote": "Machine agents represent machining centres and hold capability certificates and local schedules.",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "transport_or_AGV",
+        "robot_or_manipulator",
+        "batch_or_order",
+        "other"
+      ],
+      "evidence_quote": "transport agents represent vehicles and robots, inspection agents represent metrology resources, storage agents represent buffer and warehouse locations",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The knowledge graph is a runtime dependency of coordination rather than an offline documentation asset.",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "knowledge_graph",
+      "evidence_quote": "the knowledge graph runs on a property graph database",
+      "page": 41,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "auction_or_market",
+        "optimization_MILP_or_CP",
+        "reinforcement_learning",
+        "hybrid"
+      ],
+      "evidence_quote": "Clearing proceeds by iterative auction: order agents announce, resource agents bid, tentative coalitions form",
+      "page": 22,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "Eligible sets are typically three to eight assemblies, which keeps the cost inside the coordination budget of Table 2",
+      "page": 32,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "All agents expose bid, commit, report, and release operations.",
+      "page": 21,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "none_conceptual_only",
+      "evidence_quote": "The system has not been implemented in full",
+      "page": 54,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "full_event_log",
+      "evidence_quote": "the requirement that each executed operation is written back as a node linked to its outcome",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Agents hold no private asset models; knowledge graph stores executed operations and outcomes; audit store append-only log; versioned twin parameters.",
+      "evidence_quote": "agents hold no private asset models and instead query the kernel under the contract of Section 7",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_digital_twin",
+      "evidence_quote": "agents hold no private asset models and instead query the kernel under the contract of Section 7",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "agents may cache derived views but may not maintain competing representations",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "yes",
+      "evidence_quote": "Instances carry provenance and validity intervals so that historical decisions can be replayed against the knowledge state then in force.",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "The kernel maintains a recursive parameter estimator per twin, updated from the synchronization residual",
+      "page": 19,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "agents may cache derived views but may not maintain competing representations",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "MQTT"
+      ],
+      "evidence_quote": "real-time messaging through an MQTT broker",
+      "page": 46,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "auction_or_market",
+      "evidence_quote": "Clearing proceeds by iterative auction",
+      "page": 22,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "mediator_or_broker",
+      "evidence_quote": "asynchronous processes communicating over a message broker with a published schema",
+      "page": 41,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_qualitative",
+      "evidence_quote": "Layer 4 runs at plant level with edge resident agent proxies that continue executing granted allocations during partition",
+      "page": 14,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "Latency budgets per layer (design targets), e.g., coordination 50 ms to 5 s",
+      "evidence_quote": "Bidding, feasibility filtering, \nallocation \n50 ms to 5 s",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "yes",
+      "evidence_quote": "During partition the edge components operate under a reduced autonomy policy",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "the policy here acts on coordination parameters, namely bid weights, risk prices, inspection intensities, and refresh budgets",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "reinforcement_learning",
+        "supervised_learning",
+        "parameter_tuning"
+      ],
+      "evidence_quote": "The engine does not dispatch operations; it adapts the parameters of the coordination mechanism and of the decision engine.",
+      "page": 27,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "the action is a bounded adjustment of coordination parameters",
+      "page": 27,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": "No experimental results are reported.",
+      "page": 48,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "Planned: physics consistency score; transfer degradation (not measured)",
+      "evidence_quote": "Performance loss on \nmodified cell configuration",
+      "page": 48,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "yes",
+      "evidence_quote": "Stage one trains against the simulation framework of Section 16.",
+      "page": 27,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "standalone_discrete_event_sim",
+      "evidence_quote": "discrete event simulation uses SimPy",
+      "page": 41,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": "although their use inside the decision path would reintroduce the auditability problem this architecture avoids",
+      "page": 55,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "language model based interfaces are an emerging option for the interaction layer",
+      "page": 55,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "A Digital Twin Kernel maintains a single authoritative asset state",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_queries_external_dt",
+      "evidence_quote": "agents hold no private asset models and instead query the kernel under the contract of Section 7",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "yes",
+      "evidence_quote": "publishes state with staleness and confidence annotations",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "conceptual_only",
+      "evidence_quote": "No validation is reported; the contribution is architectural, mathematical, and methodological",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "Numerical values are deliberately absent, since claims about magnitude would be unsupported.",
+      "page": 48,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": "No experimental results are reported.",
+      "page": 48,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown",
+        "tool_wear_or_degradation",
+        "demand_or_order_change"
+      ],
+      "evidence_quote": "Disturbance \nDetection \nResponse scope \nFallback if response fails \nTool breakage or accelerated \nwear",
+      "page": 37,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 3
+      },
+      "evidence_quote": "Three part families are considered",
+      "page": 37,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "The case study is a five axis machining cell producing titanium structural components for aerospace",
+      "page": 37,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "ISO_23247",
+        "RAMI_4_0",
+        "asset_administration_shell",
+        "MTConnect"
+      ],
+      "evidence_quote": "In ISO 23247 terms it implements the digital twin entity and part of the device communication entity",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none (custom knowledge graph schema)",
+      "evidence_quote": "Its schema contains eight node classes, being product, feature, operation, process parameter set, machine, tool, defect mode, and corrective action",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "Interface standards make this practical: asset interfaces map to information models already used for machine tool connectivity",
+      "page": 53,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "resource_capability_discovery",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "Capability resolution returns machine and tool combinations able to realize a feature within tolerance, populating the eligible bidder set.",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Resource-centric market with physics feasibility filter, coalition formation, RL tuning of bid parameters, twin kernel with synchronization contracts; order agents are buyers rather than product agents planning via formal models.",
+      "evidence_quote": "Bids failing (12) are rejected with a reason code rather than penalized",
+      "page": 22,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims a negotiation deadline guarantee is essential for a control component; single authoritative state required.",
+      "evidence_quote": "The deadline guarantee is essential for a control component.",
+      "page": 22,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "Machine failure causes the machine agent to withdraw from the market",
+      "page": 37,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

@@ -1,0 +1,419 @@
+{
+  "IDENT": {
+    "paper_id": "W2516337994",
+    "doi": "10.1007/s10845-016-1258-2",
+    "title": "BIOSOARM: a bio-inspired self-organising architecture for manufacturing cyber-physical shopfloors",
+    "year": 2016,
+    "venue": "Journal of Intelligent Manufacturing",
+    "first_author": "João Dias-Ferreira",
+    "seed_role_links": [
+      "agent_related",
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No explicit agent definition; entities described as fully decoupled autonomous entities (Resource, Part, Transport). Autonomy defined (Definition 1).",
+      "evidence_quote": "both shopﬂoor components and product parts are individualized and extended into the virtual environment as fully decoupled autonomous entities",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "other",
+      "evidence_quote": "the different entities are autonomous, self-contained and loosely linked to each other",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "transport_or_AGV"
+      ],
+      "evidence_quote": "The different constructs, particularly the Part (PT) and the two superclasses Resource (RS) and Transport System (TS) are detailed below.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "Each particular resource therefore holds a set of templates",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "a template is composed by the required PTs, a skill and the resulting PTs",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning",
+        "heuristic_dispatching"
+      ],
+      "evidence_quote": "if there are several attracting RSs, the PT is drawn towards the most attractive one",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "This gain highlights the robustness and the system’s ability to scale production.",
+      "page": 18,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "developed in JAVA using the JADE platform",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "the plugging procedure is basically reduced to the deﬁnition of the attraction radius and creation of template ﬁles",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Resources hold templates, attraction radius, buffer counts of stored/incoming parts.",
+      "evidence_quote": "the number of incoming and stored PTs of type type(PTp) (stoIncP)",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "it starts by checking with the upstream neighbour (it can be either a RS or TCS) with which RSs is it connected",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_plus_immediate_neighbors",
+      "evidence_quote": "no architectural component is fully aware of the production sequences",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "That information is then further propagated to its downstream neighbours.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "the need to self-contain all the relevant information concerning each individual within the cyber-physical component it-self",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL"
+      ],
+      "evidence_quote": "based on FIPA ACLMessage Performative REQUEST and INFORM messages",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "RSs and PTs are loosely coupled and only interact indirectly with each other",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "supported through direct interaction message patterns",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "used a customized modular automation simulation environment that simulates a conveyor-based shopﬂoor",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time"
+      ],
+      "evidence_quote": "done through the analysis of the system makespan in relation to the minimum makespan boundary",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "centralized_heuristic",
+      "evidence_quote": "For this purposed a scheduling tool named LEKIN was used.",
+      "page": 21,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "resource_added_or_removed",
+        "new_part_type_introduced",
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "a new product (FP4) is randomly introduced during runtime",
+      "page": 21,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 18
+      },
+      "evidence_quote": "18\nCar with AC",
+      "page": 16,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "an “assembly line” that simulates the production of a car",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "IEC_61499"
+      ],
+      "evidence_quote": "IEC 61499 function blocks\nfor embedded and distributed control systems design",
+      "page": 24,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "BIOSOARM is a class III control architecture. In this sense, there is no notion of master and slave among RSs, PTs or TSs.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "No workflows/plans: production flows emerge from firefly-inspired attraction via templates rather than product-driven planning and negotiation.",
+      "evidence_quote": "in BIOSOARM there is no need to deﬁne workﬂows, since the are no entities that need to be fully aware of the processing sequences",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Redundancy is necessary for self-organisation to make sense.",
+      "evidence_quote": "self-organisation only makes sense in the presence of redundancy",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "once a CS is plugged the back-propagation mechanism is triggered and all the conveyor system self-organises",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

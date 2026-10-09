@@ -1,0 +1,5 @@
+has_knowledge_base,conceptual_only,emulation_or_HIL,factory_floor,lab_hardware,simulation
+no,0,0,0,0,5
+not_reported,0,0,0,0,2
+unclear,2,1,1,7,8
+yes,4,1,2,16,16

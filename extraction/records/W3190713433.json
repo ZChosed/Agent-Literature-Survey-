@@ -1,0 +1,420 @@
+{
+  "IDENT": {
+    "paper_id": "W3190713433",
+    "doi": "10.1109/jestie.2021.3097941",
+    "title": "Design and Installation of an Agent-Controlled Cyber-Physical Production System Using the Example of a Beverage Bottling Plant",
+    "year": 2021,
+    "venue": "IEEE Journal of Emerging and Selected Topics in Industrial Electronics",
+    "first_author": "Benedikt Marschall",
+    "seed_role_links": [
+      "agent_related"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "industrial_agent",
+      "evidence_quote": "In the meantime, through the use of an industrial agent (IA) [14], more CPPSs are being realized [15].",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator",
+        "transport_or_AGV",
+        "other"
+      ],
+      "evidence_quote": "Communication between the agents of the plants resources (white) and the agents representing the orders to be produced (yellow)",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "Each RA now has an additional entry in its ResourceConﬁg, which contains the reference to a unique InterfaceAgentConﬁg.",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "automaton_or_formal_model",
+      "evidence_quote": "all MAS-MachineStates used within the generic StateMachine of the ResourceType Machine",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning"
+      ],
+      "evidence_quote": "it reacts to the message based on internal logical considerations and responds directly to the PA by sending an offer",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "The scalability criterion from the IEEE P2660.1 Working Group [27] standard must be described as weak due to the resource-speciﬁc implementation.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "the class of InterfaceAgent (IntA) has been added to the agent classes of the MAS",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "all information about the server (address, port, and authentication) with which the client is to communicate must be stored in their respective conﬁguration",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Resource configuration and interface configuration; status logged to external DB.",
+      "evidence_quote": "The current status data of the resources as well as the production progress of the individual orders can be logged by an HTTP-PUT method.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "event_driven_stream",
+      "evidence_quote": "Through subscriptions, it can inform its RA about the change of any data points, such as the ResourceState of the resource.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "Through subscriptions, it can inform its RA about the change of any data points",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "Through subscriptions, it can inform its RA about the change of any data points",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "OPC_UA",
+        "REST_or_HTTP"
+      ],
+      "evidence_quote": "Open Platform Communications Uniﬁed Architecture (OPC UA) was selected as the standard protocol for the data exchange",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "contract_net",
+      "evidence_quote": "sending an offer with message 2.1: OfferProcessing(Offer), which can be accepted or rejected by the respective PA and in the positive case leads to a reservation",
+      "page": 5,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "All actions to be performed by a resource, or its PLC, are always requested by a PA.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_quantified",
+      "evidence_quote": "Since each PA exchanges 210 messages within the entire production process, this leads to a MAS-internal required runtime of about 200 ms",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "Message count per product and message runtime/latency (ms)",
+      "evidence_quote": "This MAS-internal interaction requires an average runtime of 2.2 ± 0.9 ms in the implemented application",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "physics_simulator",
+      "evidence_quote": "the authors decided to develop a physics-based simulation model that should serve as a realistic counterpart and test environment for the MAS",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "an order was placed for each of the 150 participants and a beer bottle personalized with their name was produced by the RoboFill4.0-CPPS",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time"
+      ],
+      "evidence_quote": "production of 15 identically conﬁgured bottles took 21 min and 46 s, making it 16.5% faster",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "quality_defect"
+      ],
+      "evidence_quote": "there were also errors during processing and transport, which made repeated production necessary. Notably, the CPPS could detect these errors on its own",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": 3
+      },
+      "evidence_quote": "choosing one of three bottle sizes",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "process_or_continuous",
+      "evidence_quote": "a production system for customized beverage bottling",
+      "page": 1,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "IEEE Recommended Practice for Industrial Agents: Integration of Software Agents and Low-Level Automation Functions, IEEE Standard 2660.1",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_demonstrated",
+      "evidence_quote": "interoperable networking of proprietary resources within a cyber-physical production system (CPPS) can be achieved",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "explicit_separation_of_agent_and_physical_asset",
+        "control_oriented_architecture"
+      ],
+      "evidence_quote": "All actions to be performed by a resource, or its PLC, are always requested by a PA.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds dedicated InterfaceAgent (PLCLinkAgent/DBLinkAgent) layer with OPC UA mapping tables, IT security concept, and phased test method; no capability discovery or formal model-based planning described.",
+      "evidence_quote": "To allow easy extensibility by additional resources, the class of InterfaceAgent (IntA) has been added to the agent classes of the MAS",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Interface agents are claimed critical.",
+      "evidence_quote": "The role of the IntA and their inheriting agents is critical, and the adequate implementation of them is crucial for performing",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "G. Zheng, I. Kovalenko, K. Barton, and D. Tilbury, “Integrating human operators into agent-based manufacturing systems: A table-top demonstration,”",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "The scalability criterion from the IEEE P2660.1 Working Group [27] standard must be described as weak due to the resource-speciﬁc implementation.",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

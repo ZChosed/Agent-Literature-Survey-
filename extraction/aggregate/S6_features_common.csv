@@ -1,0 +1,10 @@
+,value,papers,share
+0,decentralized_decision_making,48,0.774
+1,part_or_product_centric_agent,32,0.516
+2,explicit_separation_of_agent_and_physical_asset,32,0.516
+3,action_request_and_negotiation,29,0.468
+4,reactive_replanning_on_disruption,27,0.435
+5,resource_capability_discovery,23,0.371
+6,model_based_formal_representation,15,0.242
+7,control_oriented_architecture,13,0.21
+8,plan_generation_from_discovered_capabilities,10,0.161

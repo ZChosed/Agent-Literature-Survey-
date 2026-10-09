@@ -1,0 +1,411 @@
+{
+  "IDENT": {
+    "paper_id": "W4367052115",
+    "doi": "10.3390/jmmp7030084",
+    "title": "Digital Twin Based SUDIHA Architecture to Smart Shopfloor Scheduling",
+    "year": 2023,
+    "venue": "Journal of Manufacturing and Materials Processing",
+    "first_author": "Hassan Khadiri",
+    "seed_role_links": [
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Adopted Wooldridge/Russell agent model: an agent perceives its environment through sensors and acts upon it through actuators.",
+      "evidence_quote": "An agent perceives its environment through sensors and acts upon that environment through actuators.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_wooldridge_jennings",
+      "evidence_quote": "we used an Agent Model developed by Wooldridge [42] and Russel [43]",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "holon",
+      "evidence_quote": "This architecture incorporates three Holons: Product Holon, Resource Holon and Order Holon",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "batch_or_order"
+      ],
+      "evidence_quote": "three Holons: Product Holon, Resource Holon and Order Holon",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The agent program involves reasoning based on a knowledge base to select better actions.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "BDI_belief_set",
+      "evidence_quote": "The structure of Order Holon includes a BDI Belief-Desire-Intention model, a decision maker and a communication manager",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "check": "bad_value"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "The scheduling architecture was only valid if the cell included only a small number of workstations and if the number of work orders launched was low.",
+      "page": 14,
+      "confidence": "low",
+      "check": "quote_too_long"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "a decision maker and a communication manager (see Figure 4)",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "commercial_simulation_tool",
+      "evidence_quote": "CIROS Supervision [46] and CIROS Simulation 2008 version [47] software were used",
+      "page": 13,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "Each Resource Holon is provided with a library of standard tasks it can run.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Product data structure tracks product state; transport data structure stores carrier status; library of standard tasks.",
+      "evidence_quote": "The Product Identiﬁcation was associated with a data structure that tracks the state of the product during production.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "event_driven_stream",
+      "evidence_quote": "These data were updated each time a Carrier arrived at a station.",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "The data structure saved the Transport Carrier’s status.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "an RFID tag attached to the product or product carrier allows the virtual product to be synchronized with the real product",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "Smart products must be able to know their process plans and the type of machine needed to perform each operation.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "OPC_UA"
+      ],
+      "evidence_quote": "HLC and LLC communicate, generally through OPC or TCP-IP drivers.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "none",
+      "evidence_quote": "The scheduling solution is the result of Holon interactions. This interaction consists of a message exchange between Holons.",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hierarchical",
+      "evidence_quote": "combines global supervision, achieved by Product Holon, with dynamic local control, achieved by Resource Holon",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "evolutionary_or_metaheuristic"
+      ],
+      "evidence_quote": "the scheduling module was invoked, which applied a Genetic Algorithm to propose a scheduling plan",
+      "page": 14,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "yes",
+      "evidence_quote": "This plan was simulated in CIROS Simulation before being sent to the Resource Holon for execution.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "extracted_from_digital_twin",
+      "evidence_quote": "A manufacturing operations plan will be simulated and, based on the simulation results, the Digital Twin model of the shopﬂoor will be updated.",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "Each Holon of DT-SUDIHA will consist of a physical part and a virtual part.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_and_dt_conflated",
+      "evidence_quote": "It is generally implemented in SCADA software; it is the Virtual counterpart of the Resource.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "The DT-SUDIHA architecture was applied to the ﬂexible machining cell at the High School of engineering ENSAM.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown",
+        "quality_defect",
+        "transport_delay"
+      ],
+      "evidence_quote": "dynamic scheduling that can handle random disruptions such as failures, raw material shortages and quality defects",
+      "page": 1,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "applied to the ﬂexible machining cell",
+      "page": 13,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "MTConnect"
+      ],
+      "evidence_quote": "MQTT (Message Queuing Telemetry Transport) and MTConnect are some of the preliminary outcomes",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "The second challenge is interoperability.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "We were inspired by the model of the Product Agent architecture proposed by Kovalenko [44]",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds supervised OPT bottleneck detection, Kanban/ConWip, priority rules and GA-based rescheduling validated by DT simulation (CIROS), rather than capability discovery and negotiation.",
+      "evidence_quote": "Each time a workpiece was processed or a disruption occurred, the scheduling module was invoked, which applied a Genetic Algorithm",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims DT must contain control programs and use real-time-data simulation.",
+      "evidence_quote": "DT must then use simulations based on real time data acquisition.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "We were inspired by the model of the Product Agent architecture proposed by Kovalenko [44]",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "missing_quote"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

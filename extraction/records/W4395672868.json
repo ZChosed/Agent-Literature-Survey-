@@ -1,0 +1,414 @@
+{
+  "IDENT": {
+    "paper_id": "W4395672868",
+    "doi": "10.3390/su16093612",
+    "title": "Autonomous Agent-Based Adaptation of Energy-Optimized Production Schedules Using Extensive-Form Games",
+    "year": 2024,
+    "venue": "Sustainability",
+    "first_author": "William Motsch",
+    "seed_role_links": [
+      "agent_related"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Reviews several cited definitions (Wooldridge, Leitão, Russell&Norvig, Dorri); no own definition adopted explicitly.",
+      "evidence_quote": "An agent can be defined as a computer system in a certain environment that can act autonomously to achieve its goal [38].",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": "In recent years, various definitions of agents and research have been made in the field of MAS.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "agent",
+      "evidence_quote": "the Janus framework is used as MAS for the following agent types: Scheduler, energy, and resource.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "supervisory_or_system",
+        "machine_or_resource",
+        "other"
+      ],
+      "evidence_quote": "the Janus framework is used as MAS for the following agent types: Scheduler, energy, and resource.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "the energy agent has access to energy profiles, which, combined with the energy adaptation models of the production modules",
+      "page": 13,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "The initial schedule and its game tree are then stored and accessible for the scheduling component.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "optimization_MILP_or_CP",
+        "planning_or_search",
+        "hybrid"
+      ],
+      "evidence_quote": "With the agent skill for initial scheduling, a MILP model for creating a",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "This enables a distributed computation with the best possible decision that can be found in a predefined time and is scalable with newly integrated machines.",
+      "page": 25,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_java_or_cpp",
+      "evidence_quote": "The MAS component was implemented with the open-source Janus framework, which implements the agentoriented programming language SARL",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "logged_asset_history",
+      "evidence_quote": "The energy agents therefore apply the energy load profiles of those production modules, which can be built with methodical data acquisition",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Energy load profiles of CPPMs from measured data; stored initial schedule and game tree.",
+      "evidence_quote": "The energy agents therefore apply the energy load profiles of those production modules, which can be built with methodical data acquisition",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "polled_sensor_reads",
+      "evidence_quote": "the current state of the schedule with the related progress is validated with a cyclic check for an eventual schedule adaptation.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "partial_system_model",
+      "evidence_quote": "it is important that both agent types can observe the current state of the game tree and can interpret belonging decisions.",
+      "page": 13,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "After the skill is performed, the schedule is updated again with the current state.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "the observability and constant update of the game tree is required for both agent types, to ensure adequate decision making for rescheduling.",
+      "page": 25,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing",
+        "AAS_submodel_exchange"
+      ],
+      "evidence_quote": "The usage of the Asset Administration Shell (AAS) as a standardized interface for agents",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "The scheduler agent thus acts like a leader player in a Stackelberg game, in which the decision is observed by follower players",
+      "page": 17,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "For each relation between a scheduler and a machine, an interaction between the scheduler agent and the related energy agent exists",
+      "page": 25,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "analytical_model",
+      "evidence_quote": "the simulation parameter settings of a CPPM are applied as shown in Table 5",
+      "page": 19,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "The prototypical implementation was realized on a real-world demonstrator of a modular production environment for discrete manufacturing of the SmartFactory-KL.",
+      "page": 22,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time",
+        "energy",
+        "cost"
+      ],
+      "evidence_quote": "must consist of the objectives for makespan and energy costs",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "check": "bad_value"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 5,
+        "n_part_types": null
+      },
+      "evidence_quote": "Table 4. Decision-based view of the adapted exemplary calculated flexible job-shop scheduling.",
+      "page": 15,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "is used in the production environment as a flexible assembly station",
+      "page": 22,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "asset_administration_shell",
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "The usage of the Asset Administration Shell (AAS) as a standardized interface for agents",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "Another possibility is the usage of the AAS to improve interoperability in the field of CPS",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "decentralized_decision_making",
+        "reactive_replanning_on_disruption",
+        "action_request_and_negotiation"
+      ],
+      "evidence_quote": "The main goal of the game tree adaptation and search mechanism is to solve problems more locally and to avoid processing a full computation of the overall schedule.",
+      "page": 17,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Uses Stackelberg extensive-form game trees between scheduler and energy agents over a MILP pre-optimized schedule; no product agents, energy-centric objectives.",
+      "evidence_quote": "The scheduler agent thus acts like a leader player in a Stackelberg game",
+      "page": 17,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Observability and constant update of game tree required for both agent types.",
+      "evidence_quote": "the observability and constant update of the game tree is required for both agent types, to ensure adequate decision making for rescheduling.",
+      "page": 25,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "missing_quote"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

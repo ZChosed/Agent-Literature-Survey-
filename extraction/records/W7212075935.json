@@ -1,0 +1,416 @@
+{
+  "IDENT": {
+    "paper_id": "W7212075935",
+    "doi": "10.1088/2631-8695/aea51e",
+    "title": "A local industrial-agent middleware for resilient manufacturing execution systems under weak external connectivity",
+    "year": 2026,
+    "venue": "Engineering Research Express",
+    "first_author": "Yong Lin",
+    "seed_role_links": [
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No formal definition; agent described as active participant that interprets requests, retrieves context, selects tools, generates actions.",
+      "evidence_quote": "The agent is no longer only a conversational interface; it becomes an active participant in the production execution loop.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "industrial_agent",
+      "evidence_quote": "This paper develops a plant-side industrial-agent middleware for MES recovery",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "The agent middleware layer is implemented using C#/.NET and Microsoft semantic kernel.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "Qdrant stores vectorized SOPs, equipment manuals, historical recovery cases, and quality rules.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "vector_store_embeddings",
+      "evidence_quote": "The embedding dimension is 768, using a locally deployed BAAI/bge-base-zh-v1.5 model.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "LLM_or_foundation_model",
+        "rule_based_reasoning",
+        "hybrid"
+      ],
+      "evidence_quote": "The model may generate a structured intent, select candidate tools, and propose a recovery plan, but the middleware validates every tool call before execution.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_java_or_cpp",
+      "evidence_quote": "The implementation uses C#/.NET and Microsoft semantic kernel with Redis, InfluxDB, MySQL, local Qdrant, and Docker/K3s.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "case_library_of_past_episodes",
+      "evidence_quote": "356 historical recovery cases",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Vector store of SOPs, manuals, quality rules and historical recovery cases; MySQL audit logs; Redis volatile state; InfluxDB telemetry.",
+      "evidence_quote": "Redis stores session state, task state, recovery markers, approval state, recent messages, tool-result caches, and RAGresult caches.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "polled_sensor_reads",
+      "evidence_quote": "queries recent machine status from InfluxDB",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "global_system_model",
+      "evidence_quote": "The second stage reconstructs the context from Redis, MySQL, InfluxDB, and Qdrant.",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "yes",
+      "evidence_quote": "After an SOP, quality rule, manual, or approved recovery case is released, the ingestion service computes a source identifier, version, checksum",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "manual_reconfiguration",
+      "evidence_quote": "The index is maintained by a version-aware incremental update path.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "These data have short lifetimes and must be retrieved with low latency.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "REST_or_HTTP"
+      ],
+      "evidence_quote": "These services are exposed to the agent through controlled tool schemas.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "mediator_or_broker",
+      "evidence_quote": "Nginx gateway, C#/.NET and Microsoft semantic kernel middleware",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_quantified",
+      "evidence_quote": "Table 7 decomposes the mean end-to-end recovery latency.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "latency per stage (ms), end-to-end mean and P95",
+      "evidence_quote": "Total latency averaged 1.53 s and had a 95th percentile of 2.379 s.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "yes",
+      "evidence_quote": "the middleware failed closed, performed no direct database write, and sent the task to resume-after-restoration or manual review.",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": "The middleware is not formulated as a reinforcement-learning policy",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "LLM_query_or_in_context"
+      ],
+      "evidence_quote": "The retrieved content is then combined with MES state and RAC-MES constraints.",
+      "page": 7,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "It must invoke registered business functions so that authorization, validation, audit logging, and transaction rules remain consistent",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "yes",
+      "evidence_quote": "Semantic Kernel is used to connect language-level reasoning with deterministic business execution.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "natural_language_interface",
+        "task_planning",
+        "knowledge_retrieval"
+      ],
+      "evidence_quote": "The model may generate a structured intent, select candidate tools, and propose a recovery plan",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "Prompt-level hallucination, stale/poisoned retrieval, tool-call failures (parameter missing, permission, state not allowed), adversarial prompts.",
+      "evidence_quote": "This separation reduces the risk of prompt-level hallucination directly affecting MES data.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "factory_floor",
+      "evidence_quote": "The field evaluation was conducted with site permission on three Dongguan 3 C power-supply production lines.",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "reliability_or_availability",
+        "quality_scrap_or_yield"
+      ],
+      "evidence_quote": "a consistency restoration rate of 0.954 (Wilson 95% interval: 0.932–0.969), a secondary damage rate of 0.082",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "centralized_heuristic",
+      "evidence_quote": "Rule-based MES recovery",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "quality_defect"
+      ],
+      "evidence_quote": "Wrong work-order dispatch",
+      "page": 13,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 47,
+        "n_part_types": null
+      },
+      "evidence_quote": "The equipment data came from 47 equipment nodes and 156 data points.",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "three computer, communication, and consumer-electronics power-supply lines",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "The agent is not allowed to directly modify database tables or generate raw structured query language (SQL).",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Single centralized LLM-based middleware agent for MES transaction recovery with deterministic permit contract and local RAG; no part/resource agents, no negotiation or capability discovery.",
+      "evidence_quote": "The methodological contribution is a deterministic execution contract that combines current MES preconditions, role-checked user attribution, versioned local retrieval",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Provenance, approval, isolated updates, rollback for local vector DB claimed necessary.",
+      "evidence_quote": "Provenance, approval, isolated updates, and rollback remain necessary.",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "The middleware treats each business capability as a controlled tool.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

@@ -1,0 +1,419 @@
+{
+  "IDENT": {
+    "paper_id": "W4400930095",
+    "doi": "10.1007/s00170-024-14112-7",
+    "title": "Safe and reconfigurable manufacturing: safety aware multi-agent control for Plug & Produce system",
+    "year": 2024,
+    "venue": "The International Journal of Advanced Manufacturing Technology",
+    "first_author": "Bassam Massouh",
+    "seed_role_links": [
+      "framework_core",
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No general definition; part agent represents a product configured with goals; resource agent represents a manufacturing asset configured with skills.",
+      "evidence_quote": "A part agent represents a product, and it is configured with goals that describe how the part is manufactured",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": "In the MAS model, there are two types of agents that are parts and resources.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "agent",
+      "evidence_quote": "In multi-agent control, each piece of equipment is controlled by an agent.",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator",
+        "human_operator"
+      ],
+      "evidence_quote": "For instance, a robot, a machine, or a human operator is a resource in the Plug & Produce system.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "agents utilize their internal models to reason about the environment, predict the consequences of their actions",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "automaton_or_formal_model",
+      "evidence_quote": "an agent interface is denoted as if and is defined as the tuple, if = ⟨Sif , Vif ⟩",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "rule_based_reasoning",
+        "planning_or_search"
+      ],
+      "evidence_quote": "Select the plan with the least cost among the alternatives.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "These agents have interfaces that are used to match and negotiate with each other.",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "A resource agent is configured with skills that represent the capabilities of the corresponding physical manufacturing asset.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Configured skills, hazards, operational spaces; interface schedules as runtime variables.",
+      "evidence_quote": "The interface schedule has states included in a set St and it registers at each state st ∈St",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "It then retrieves the current schedule sc , associated with that interface using the getSchedule() function.",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "partial_system_model",
+      "evidence_quote": "all skills that have operational space that overlaps with the operational space os of skill s are collected",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "manual_reconfiguration",
+      "evidence_quote": "C-MAS, which implies that all agents are configured rather than programmed",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "Modeling the hazards associated with a skill allows for including this safety-related information within the system's logical configuration",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "not_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "to avoid conflict over resources, one part at a time can plan.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "The EFSM models were built using the formal modelchecking software NuSMV [49], and the results were obtained from the simulation",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "including 16 reachable states, while the total global state space has 200 states",
+      "page": 10,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "resource_added_or_removed"
+      ],
+      "evidence_quote": "The scenario includes two configurations, each with a different machine.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 4,
+        "n_part_types": 1
+      },
+      "evidence_quote": "the scenario includes four resources, two machines, a robot, and an operator.",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "goal g2 to be loaded into a machine, and goal g3 to be machined",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "Hazard identification, according to the safety standard ISO 12100",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "model_based_formal_representation",
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "plan_generation_from_discovered_capabilities",
+        "decentralized_decision_making"
+      ],
+      "evidence_quote": "The part strategy includes methods of finding matching interfaces for the abstract plans",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds hazard models and operational spaces to skills, with automatic risk assessment and booking of targeted skills; formally verified with NuSMV. No rescheduling on failure.",
+      "evidence_quote": "it is important to develop a method for rescheduling part's plan when failures occur",
+      "page": 12,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Claims method is essential for practical Plug & Produce realization.",
+      "evidence_quote": "the proposed method is an enabler for safe and flexible Plug & Produce systems and it is essential for their practical implementation",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "existing agent architectures in manufacturing propose a part agent that is responsible for scheduling and resource allocation, utilizing model-based reasoning",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "centered around the automatic addition and removal of manufacturing devices with minimal intervention",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

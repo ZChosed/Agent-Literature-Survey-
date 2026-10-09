@@ -1,0 +1,11 @@
+,value,papers,share
+0,rule_based_reasoning,26,0.448
+1,auction_or_market,16,0.276
+2,planning_or_search,13,0.224
+3,hybrid,13,0.224
+4,optimization_MILP_or_CP,13,0.224
+5,reinforcement_learning,12,0.207
+6,heuristic_dispatching,10,0.172
+7,supervised_ML,5,0.086
+8,LLM_or_foundation_model,4,0.069
+9,not_reported,2,0.034

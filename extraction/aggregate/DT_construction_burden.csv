@@ -1,0 +1,5 @@
+sme_involvement_level,automatic_online_update,manual_recalibration,not_reported
+heavy_manual,0,1,2
+largely_automated,1,0,0
+moderate,1,1,1
+not_reported,5,0,1

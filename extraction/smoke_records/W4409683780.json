@@ -1,0 +1,272 @@
+{
+  "IDENT": {
+    "paper_id": "W4409683780",
+    "doi": "10.1109/tase.2025.3563320",
+    "title": "Digital Twin-Based Smart Manufacturing: Dynamic Line Reconfiguration for Disturbance Handling",
+    "year": 2025,
+    "venue": "IEEE Transactions on Automation Science and Engineering",
+    "first_author": "Bo Fu",
+    "seed_role_links": [
+      "agent_related",
+      "dt_core",
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "DT_A_DEFINITION_CONFORMANCE__dt_definition_verbatim": {
+      "value": "A digital twin is a purpose-driven dynamic digital replica of a physical asset, process, or system [28].",
+      "evidence_quote": "A digital twin is a purpose-driven dynamic digital replica of a physical asset, process, or system [28].",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_replica_of_physical_twin": {
+      "value": "yes",
+      "evidence_quote": "the system process digital twin is a digital twin of the processes in the manufacturing line system",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_synchronized": {
+      "value": "continuous_realtime",
+      "evidence_quote": "When a disturbance occurs, the real-time operation time deviates from the typical time distribution.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_purpose_stated": {
+      "value": "yes_specific",
+      "evidence_quote": "for the purpose of system prescription and line reconfiguration",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__purpose_description": {
+      "value": "Monitor station/operation times, detect time disturbances, and trigger line reconfiguration; provide data for simulation.",
+      "evidence_quote": "we develop a DT of the system process for the purpose of real-time monitoring and providing information for simulation.",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_incorporates_models": {
+      "value": [
+        "statistical",
+        "discrete_event"
+      ],
+      "evidence_quote": "agent operation times are modeled as random distributions and updated gradually when noisy samples are collected.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_subject_matter_expertise": {
+      "value": "implicit",
+      "evidence_quote": "An ontology model is typically constructed based on resource descriptions and process requirements from manufacturers.",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_historical": {
+      "value": "yes",
+      "evidence_quote": "the human DT was modeled based on the historical data of the workers’ capabilities and performance",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_realtime": {
+      "value": "yes",
+      "evidence_quote": "Operation times from the monitoring software are incorporated into the agent digital twin.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_type": {
+      "value": [
+        "state_estimate",
+        "anomaly_or_fault_classification"
+      ],
+      "evidence_quote": "the SDT flags the operation in that specific station as disturbed and indicates the delay of agent k ∈K as the cause.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_metric_described": {
+      "value": "Station times and operation time distributions; disturbance flag triggering reconfiguration",
+      "evidence_quote": "the SDT monitors the station times tk of an agent",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__uncertainty_quantified": {
+      "value": "yes_quantified",
+      "evidence_quote": "agent operation times are modeled as random distributions and updated gradually when noisy samples are collected.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__uq_method": {
+      "value": "monte_carlo",
+      "evidence_quote": "the simulation sample operation times for each agent as the parts flow through the manufacturing line.",
+      "page": 8,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__simulatable_forward_in_time": {
+      "value": "unclear",
+      "evidence_quote": "MATLAB-based models of the manufacturing line and agents for efficient updates",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__model_extractable_by_third_party": {
+      "value": "implied",
+      "evidence_quote": "This capability data and operation time are then transferred to the manufacturing line digital twin.",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__construction_effort_reported": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "missing_quote"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__sme_involvement_level": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__model_updates_over_time": {
+      "value": "automatic_online_update",
+      "evidence_quote": "The SDT updates the operation time distribution Tkj of the agent (stored in the ontology model).",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__reuse_or_transfer_across_assets": {
+      "value": "claimed_only",
+      "evidence_quote": "the methodology presented can be effectively applied across a diverse range of manufacturing lines",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__ai_tools_used_in_construction": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "missing_quote"
+    },
+    "DT_D_AGENT_RELATIONSHIP__agents_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "An agent is an active unit that processes products in the manufacturing line. In this paper, it can either be a human worker, a robot, or a machine.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_agent_coupling": {
+      "value": "unclear",
+      "evidence_quote": "The system process digital twin contains the manufacturing line digital twin and the agent digital twins in the line.",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_makes_decisions": {
+      "value": "yes",
+      "evidence_quote": "If yes, the SDT initiates a reconfiguration process.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__spatial_representation": {
+      "value": "topological_or_layout",
+      "evidence_quote": "The model simulates the part-processing workflow and operation durations while abstracting physical motions.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__part_vs_resource_representation": {
+      "value": "resource_only",
+      "evidence_quote": "The system process digital twin contains the manufacturing line digital twin and the agent digital twins in the line.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "Experimental validation on a manufacturing-like testbed will also be explored.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "throughput",
+        "makespan_or_cycle_time",
+        "resource_utilization"
+      ],
+      "evidence_quote": "The table contains the number of agents used, average bottleneck time, and simulated throughput",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__asset_type": {
+      "value": [
+        "production_line"
+      ],
+      "evidence_quote": "A case study of a battery production line has been conducted",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "Examples of the operations performed by these agents include kitting, cell stacking, component installation, welding, and inspection.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "ISO_23247"
+      ],
+      "evidence_quote": "aligns with the industry standard ISO 23247 (Digital Twin Manufacturing Framework)",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "Capability-based ontology (W3C Semantic Web, ISO/IEC 21838 aligned), XML/SPARQL",
+      "evidence_quote": "we leverage a capability-based ontology model [9], [31], [35] as a flexible and dynamic way to encode objects",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "This approach makes the manufacturing system model modular, interoperable, and user-friendly.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "dt",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "7ebc3e04990c245916e4db604cf76cfa8dacde62356ddc0dbbc35a4b6136196a",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_smoke_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null
+  }
+}

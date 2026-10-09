@@ -1,0 +1,420 @@
+{
+  "IDENT": {
+    "paper_id": "W2964964020",
+    "doi": "10.1109/lra.2019.2931825",
+    "title": "A Framework for Automatic Initialization of Multi-Agent Production Systems Using Semantic Web Technologies",
+    "year": 2019,
+    "venue": "IEEE Robotics and Automation Letters",
+    "first_author": "Felix Ocker",
+    "seed_role_links": [
+      "agent_related",
+      "dt_core",
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Agents represent individual elements and have to be autonomous, reactive, and adaptable to effectively control a dynamic system (citing Wooldridge [15]).",
+      "evidence_quote": "Agents represent individual elements and have to be autonomous, reactive, and adaptable to effectively control a dynamic system [15].",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_wooldridge_jennings",
+      "evidence_quote": "Agents represent individual elements and have to be autonomous, reactive, and adaptable to effectively control a dynamic system [15].",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "product_agent",
+      "evidence_quote": "individual customer orders can be represented by so-called product agents (PAs)",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator",
+        "other"
+      ],
+      "evidence_quote": "the machines, robots, and buffers are each controlled by an individual RA",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "We propose to automatically initialize every agent with a knowledge base (KB) created a priori using semantic web technologies (SWT).",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "automaton_or_formal_model",
+      "evidence_quote": "One way to encode a PA is to represent its possible process plans as an automaton that serves as a KB.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "optimization_MILP_or_CP",
+        "auction_or_market"
+      ],
+      "evidence_quote": "Agents decide on their next steps online by relying on their KB in combination with an objective function.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "This way, a state space explosion can be avoided.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_python",
+      "evidence_quote": "a python script transforms the csv ﬁles into an ontology compliant with OWL",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "Such process execution duration times are typically stable and do not have to be continuously updated online.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "PA KB: automaton of all possible process plans with resources, processes, durations, deadline; RA KB: capabilities, features, capacities.",
+      "evidence_quote": "every KB of a PA describes the set of possible production sequences of the respective product in the form of an automaton.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "by querying the availability of the next desired features from the RAs",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "partial_system_model",
+      "evidence_quote": "build an update version of the manufacturing environment in the vicinity of the associated physical part",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "no",
+      "evidence_quote": "we intend to close the loop between the “ofﬂine”",
+      "page": 7,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "After creating a model from these bids or using a model provided, the PA must choose its next actions",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "Intelligent agents require certain information that must be encoded.",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "custom_message_passing"
+      ],
+      "evidence_quote": "Using these requests, the RAs start to bid on how these features can be accomplished.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "auction_or_market",
+      "evidence_quote": "Using these requests, the RAs start to bid on how these features can be accomplished.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "the PA initially requests nearby resources to accomplish f1 or f2",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_qualitative",
+      "evidence_quote": "This reduces the necessary online communication because new agents do not have to create their entire environment model on the ﬂy (C1a).",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": "While the exploration component of the PA is out of the scope of this letter",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "While the exploration component of the PA is out of the scope of this letter",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "we provide the PAs with automata that include all theoretically possible paths",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "initialize PAs and RAs for the simulated semiconductor fabrication facility shown in Figure 5",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "The framework’s theoretical feasibility has been shown at the example of a semiconductor fabrication facility.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "semiconductor",
+      "evidence_quote": "simulated semiconductor fabrication facility",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "Own lean OWL application ontology (PPR-based)",
+      "evidence_quote": "The framework presented is based on a lean application ontology",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "we allow engineers to combine this framework with existing approaches",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "model_based_formal_representation",
+        "part_or_product_centric_agent",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "resource_capability_discovery"
+      ],
+      "evidence_quote": "Each of these PAs contains a formal, discrete event model to encode its process plan",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds offline SWT/OWL-based automatic initialization of PA automata and RA KBs, with SPARQL consistency checks, reducing online capability discovery; exploration left out of scope.",
+      "evidence_quote": "Our framework creates the initial KBs for PAs and RAs before the agents are actually deployed as parts of production systems",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "RAs must understand PA requests; agents require encoded information on features, resources, processes.",
+      "evidence_quote": "Notethatduringallofthiscommunication,itisimperativethat the RAs understands the PA requests.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_and_builds_on",
+      "evidence_quote": "Compared to our own previous work [40], there are two major beneﬁts of the approach presented in this letter.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "changing with the instantiation of additional PAs and RAs as well as in the case of technical failures",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

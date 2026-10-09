@@ -1,0 +1,4 @@
+model_extractable_by_third_party,no,unclear,yes
+implied,0,1,3
+not_reported,0,1,3
+yes_explicit_interface,2,1,2

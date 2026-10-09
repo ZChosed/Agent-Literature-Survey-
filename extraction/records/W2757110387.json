@@ -1,0 +1,275 @@
+{
+  "IDENT": {
+    "paper_id": "W2757110387",
+    "doi": "10.1109/access.2017.2756069",
+    "title": "Digital Twin Shop-Floor: A New Shop-Floor Paradigm Towards Smart Manufacturing",
+    "year": 2017,
+    "venue": "IEEE Access",
+    "first_author": "Fei Tao",
+    "seed_role_links": [
+      "dt_core",
+      "dt_survey"
+    ]
+  },
+  "fields": {
+    "DT_A_DEFINITION_CONFORMANCE__dt_definition_verbatim": {
+      "value": "Digital twin defined (after Grieves) as three parts: physical product in real space, virtual product in virtual space, and the data/information connection tying the two.",
+      "evidence_quote": "deﬁned as three parts, i.e. physical product in real space, virtual product in virtual space and the connection of data and information that ties the two spaces together",
+      "page": 2,
+      "confidence": "high",
+      "check": "quote_too_long"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_replica_of_physical_twin": {
+      "value": "yes",
+      "evidence_quote": "As the digital mirror, to simulate the physical counterpart with high ﬁdelity, VS is built in four levels, i.e. geometry, physics, behavior and rule.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_synchronized": {
+      "value": "continuous_realtime",
+      "evidence_quote": "During operation, models run synchronously with the physical counterparts.",
+      "page": 7,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_purpose_stated": {
+      "value": "yes_generic",
+      "evidence_quote": "providing an effective way to reach the physical-virtual convergence",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__purpose_description": {
+      "value": "Converge physical and virtual shop-floor to verify plans, regulate production, optimize and predict.",
+      "evidence_quote": "VS evolves with PS, providing control orders for PS and optimization strategies for SSS.",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_incorporates_models": {
+      "value": [
+        "geometric_CAD",
+        "first_principles_physics",
+        "data_driven_ML",
+        "discrete_event"
+      ],
+      "evidence_quote": "Finite state machine, neural network and complex network, etc. can be applied to describe the responsive processes.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_subject_matter_expertise": {
+      "value": "yes_explicit",
+      "evidence_quote": "rules of associations, constraints and deductions are modeled to describe the domain knowledge",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_historical": {
+      "value": "yes",
+      "evidence_quote": "the history data are updated and expanded with the real-time data joining",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_realtime": {
+      "value": "yes",
+      "evidence_quote": "Data of production factors should be retrieved in real time.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_type": {
+      "value": [
+        "state_estimate",
+        "future_prediction",
+        "optimization_recommendation",
+        "anomaly_or_fault_classification"
+      ],
+      "evidence_quote": "simulation, evaluation and optimization, etc. based on models are carried out in real time and generate orders to regulate the production in PS",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_metric_described": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "DT_B_OUTPUT_AND_UQ__uncertainty_quantified": {
+      "value": "mentioned_not_quantified",
+      "evidence_quote": "due to the variability, uncertainty and fuzziness of physical space, building models in virtual space to mirror entities with high ﬁdelity is a fundamental issue",
+      "page": 8,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__uq_method": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__simulatable_forward_in_time": {
+      "value": "yes",
+      "evidence_quote": "VS ﬁnds potential conﬂicts in the plan before actual production and feedbacks modiﬁcation strategies to the service.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__model_extractable_by_third_party": {
+      "value": "implied",
+      "evidence_quote": "resources such as data, models, algorithms are encapsulated into sub-services",
+      "page": 7,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__construction_effort_reported": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__sme_involvement_level": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__model_updates_over_time": {
+      "value": "automatic_online_update",
+      "evidence_quote": "Calibration strategies are generated through comparing the models with entities to support models evolution",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__reuse_or_transfer_across_assets": {
+      "value": "claimed_only",
+      "evidence_quote": "For other entities in PS, the modeling processes are similar.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__ai_tools_used_in_construction": {
+      "value": [
+        "other"
+      ],
+      "evidence_quote": "To build the rule models, data mining algorithms, such as apriori, support vector machine and K-means can be used.",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__agents_present_in_work": {
+      "value": "no",
+      "evidence_quote": "communication protocol analysis, data encapsulation and publication, multi-agent technology, etc.",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_agent_coupling": {
+      "value": "dt_embeds_decision_making",
+      "evidence_quote": "VS feedbacks control orders to make PS achieve synchronism with the predeﬁned process",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_makes_decisions": {
+      "value": "yes",
+      "evidence_quote": "generate orders to regulate the production in PS whenever necessary",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__spatial_representation": {
+      "value": "full_3d_geometry",
+      "evidence_quote": "three-dimensional geometric models are built to describe shapes, sizes, positions and assembly relations of machine components",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__part_vs_resource_representation": {
+      "value": "both_undifferentiated",
+      "evidence_quote": "PS includes a series of entities, such as human, machines and materials",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "conceptual_only",
+      "evidence_quote": "At present, the research is in an initial stage and still needs a lot of work.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__asset_type": {
+      "value": [
+        "whole_factory",
+        "cnc_machine"
+      ],
+      "evidence_quote": "the modeling process of CNC machine is taken as an example",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "generic_or_abstract",
+      "evidence_quote": "shop-ﬂoor is the basic unit of manufacturing",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "MTConnect"
+      ],
+      "evidence_quote": "such as MTConnect [18], middleware technology [19]",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "data from different sources are transformed into uniformed interface and protocol",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "dt",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "7ebc3e04990c245916e4db604cf76cfa8dacde62356ddc0dbbc35a4b6136196a",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

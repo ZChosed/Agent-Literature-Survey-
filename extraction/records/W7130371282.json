@@ -1,0 +1,417 @@
+{
+  "IDENT": {
+    "paper_id": "W7130371282",
+    "doi": "10.1016/j.procir.2025.09.044",
+    "title": "Decentralized Skill-based Control Concept for Adaptable Production Plants",
+    "year": 2026,
+    "venue": "Procedia CIRP",
+    "first_author": "Elisabeth Schmidl",
+    "seed_role_links": [
+      "standards"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "other",
+      "evidence_quote": "autonomous, cyber-physical function modules",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "robot_or_manipulator"
+      ],
+      "evidence_quote": "The material flow is handled by flexible robot modules (hereinafter referred to as material flow modules)",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The Asset Administration Shells (AAS) of the function modules contain their standardized, machine-readable data and serve as digital twins.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "The AAS are stored in AASX format.",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "heuristic_dispatching",
+        "planning_or_search"
+      ],
+      "evidence_quote": "The currently implemented WPC forwarding strategy based on a first-come-first-serve principle works",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "AAS Agent Servers handle communication with the AAS and forward the data to the correct destination.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_python",
+      "evidence_quote": "The AAS Agent Server is currently implemented with Python and the BaSyx Python SDK [24].",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "In addition to the static module data (such as CAD data), the PLC data and module skills are also provided via these AAS.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "AAS holds static module data, PLC data, skills, neighborhood info, order list",
+      "evidence_quote": "In addition to the static module data (such as CAD data), the PLC data and module skills are also provided via these AAS.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "event_driven_stream",
+      "evidence_quote": "connect to the sensor OPC UA nodes of the module in a subscribing manner.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_plus_immediate_neighbors",
+      "evidence_quote": "these must independently determine which neighboring modules are adjacent to which of their sides",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": "save values required later consistently in AAS",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "This initiates the entry of the neighborhood information in the relevant AAS via the AAS Agent Server.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "missing_quote"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "OPC_UA",
+        "AAS_submodel_exchange"
+      ],
+      "evidence_quote": "OPC UA was chosen as the communication protocol, as this is the best and easiest way to implement the decentralized strategy.",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "asking whether the relevant skill is available. If not, the neighboring modules also forward this message to their neighbors.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "the application sends a message to the neighboring modules via the AAS Agent Server",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": "The use of a machine learning-based strategy is also conceivable.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": "The forwarding strategy was determined using discrete-event simulation [25] and then implemented in the application.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "standalone_discrete_event_sim",
+      "evidence_quote": "The forwarding strategy was determined using discrete-event simulation [25]",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "term_used_loosely",
+      "evidence_quote": "contain their standardized, machine-readable data and serve as digital twins.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_queries_external_dt",
+      "evidence_quote": "Applications include an OPC UA client to send requests to the AAS Agent Server to read out the PLC/module data",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "The reconfiguration of the production structure was tested using the real plant.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "resource_utilization",
+        "flexibility_or_reconfiguration_time"
+      ],
+      "evidence_quote": "The simulation model was used to conduct various analyses of utilization and throughput times.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "resource_added_or_removed"
+      ],
+      "evidence_quote": "After moving, exchanging, adding or removing modules, the system should be able to automatically determine the new paths",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": "it consists of nine modules for the material flow, eleven modules for different processes, a manual workstation and two buffer modules.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "bad_value"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "Smarte wandlungsfähige Produktionsstrukturen in der Gerätemontage",
+      "page": 6,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "asset_administration_shell",
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "Various Companion Specifications are used to provide the information from the control program in a standardized way in the OPC UA server.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "To enable interoperable communication across manufacturers and industries and standardized data semantics",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "resource_capability_discovery",
+        "decentralized_decision_making",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "The MFM application therefore knows autonomously, without any central planning, to which neighboring module it must transfer the WPC",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Workpiece carriers are passive AAS data, not agents; routing by neighbor-forwarded skill queries; configurable PLC templates and LLDP neighbor detection for Plug & Produce.",
+      "evidence_quote": "neighborhood detection is performed using intelligent switches in order to avoid additional hardware",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "Individual modules can be flexibly exchanged, additional modules added or modules that are not required removed.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

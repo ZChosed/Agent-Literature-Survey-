@@ -1,0 +1,413 @@
+{
+  "IDENT": {
+    "paper_id": "W7163993752",
+    "doi": "10.1016/j.procir.2026.05.280",
+    "title": "Agentic Manufacturing Operations Management: Concept and First Prototype",
+    "year": 2026,
+    "venue": "Procedia CIRP",
+    "first_author": "Michael Oberle",
+    "seed_role_links": [
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "No explicit definition; MAS described as control distributed through multiple autonomous agents that make local decisions and coordinate.",
+      "evidence_quote": "control is distributed through multiple autonomous agents that make local decisions and coordinate with each other",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "LLM_agent",
+      "evidence_quote": "a prototype in which large language-enabled agents support the design of experiments process",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "process"
+      ],
+      "evidence_quote": "The eight core MOM activities, product definition, resource management, scheduling, dispatching, execution management, data collection, tracking and performance analysis are reinterpreted as autonomous agents",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "The Digital Twin Plane provides the semantic foundation for agents",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "LLM_or_foundation_model"
+      ],
+      "evidence_quote": "LM Studio is used for hosting the LLM model (Llama-3.3-70b) through an OpenAI-compatible API interface.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": "with an orchestration layer coordinating interactions and an agent registry ensuring role discoverability",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_python",
+      "evidence_quote": "The workflow of agents and between agents are defined through LangGraph.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_digital_twin",
+      "evidence_quote": "The Production Tracking Agent monitors and directs shop floor resource operations via the digital twin environment.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "viscosity and homogeneity are captured and synced with the Product Digital Twin",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "AAS_submodel_exchange",
+        "REST_or_HTTP"
+      ],
+      "evidence_quote": "Prompts for defining the ‘tool use’ leveraging the Asset Administration Shell (AAS) on the digital twin environment.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "mediator_or_broker",
+      "evidence_quote": "with an orchestration layer coordinating interactions",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "yes",
+      "evidence_quote": "LM Studio is used for hosting the LLM model (Llama-3.3-70b)",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "natural_language_interface",
+        "task_planning"
+      ],
+      "evidence_quote": "ChainLit is used for enabling user interaction through a conversational interface.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "High computational demands (42.52GB memory footprint); substantial effort for guardrails and prompt engineering to ensure reliability.",
+      "evidence_quote": "high computational demands due to the need for LLMs with large memory footprints (42.52GB)",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "The Digital Twin Plane uses the Eclipse BaSyx AAS framework for digital representations.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "agent_queries_external_dt",
+      "evidence_quote": "These serve as shared representations of manufacturing entities, allowing agents to reason about capabilities, constraints, and performance.",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "emulation_or_HIL",
+      "evidence_quote": "This data is coming in the demonstration from equipment emulators that replicate recorded data from actual runs.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time"
+      ],
+      "evidence_quote": "the complete workflow was accomplished in just 45% of the time it would take a human to manually input data",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "no_agent_baseline",
+      "evidence_quote": "45% of the time it would take a human to manually input data into the system",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": 3,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": "The Production Definition Agent specifies production routes and recipes. The Production Tracking Agent monitors",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "process_or_continuous",
+      "evidence_quote": "slurry mixing experimentation scenario for lithium-ion battery production",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "ISA_95",
+        "asset_administration_shell"
+      ],
+      "evidence_quote": "This architecture builds on the ISO/IEC 62264-3 activity model",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_demonstrated",
+      "evidence_quote": "enables semantic interoperability across heterogeneous systems without the need to implement multiple custom integration mechanisms",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "Agents interact with these systems through adapters and services, ensuring operational continuity.",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Agents represent ISA-95 MOM activities (not parts/resources), LLM-driven via LangGraph orchestration, overlay on legacy MES, AAS digital twin plane; no negotiation or capability-based planning.",
+      "evidence_quote": "positions agents as an overlay layer that adds adaptivity, autonomy, and integration without requiring system replacement",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "The workflow of agents and between agents are defined through LangGraph.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "IDENT": {
+    "paper_id": "W2914193262",
+    "doi": "10.1016/j.promfg.2018.12.033",
+    "title": "FMU-supported simulation for CPS Digital Twin",
+    "year": 2019,
+    "venue": "Procedia Manufacturing",
+    "first_author": "Elisa Negri",
+    "seed_role_links": [
+      "dt_survey"
+    ]
+  },
+  "fields": {
+    "DT_A_DEFINITION_CONFORMANCE__dt_definition_verbatim": {
+      "value": "an integrated simulation of a complex product/system that, through physical models and sensor updates, mirrors the life of its corresponding twin",
+      "evidence_quote": "an integrated simulation of a complex product/system that, through physical models and sensor updates, mirrors the life of its corresponding twin",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_replica_of_physical_twin": {
+      "value": "yes",
+      "evidence_quote": "it is possible to replicate in real time both the states of the station and its energy behaviour in the virtual copy of the",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_synchronized": {
+      "value": "continuous_realtime",
+      "evidence_quote": "the signals from the field that are part of it can be read directly in the simulated environment",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_purpose_stated": {
+      "value": "yes_specific",
+      "evidence_quote": "takes as an example of behaviour module the energy consumption computation",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__purpose_description": {
+      "value": "Modular FMU behaviour modules (example: energy consumption per machine state) attached to a DES core simulation, fed by real-time PLC data via OPC UA",
+      "evidence_quote": "The outputs of the function are the energy consumption for each of the machine states",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_incorporates_models": {
+      "value": [
+        "discrete_event",
+        "first_principles_physics"
+      ],
+      "evidence_quote": "The FMU modules are created to be recalled by Discrete Event Simulation (DES)",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_subject_matter_expertise": {
+      "value": "implicit",
+      "evidence_quote": "The first step is to model in the simulation environment the single states and their energy consumption curves in the FMU module.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_historical": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_A_DEFINITION_CONFORMANCE__conf_data_realtime": {
+      "value": "yes",
+      "evidence_quote": "a communication middleware that supports real-time exchange of information",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_type": {
+      "value": [
+        "state_estimate"
+      ],
+      "evidence_quote": "their combination reconstructs the actual state of the machine",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__output_metric_described": {
+      "value": "Energy consumption per machine state (Idle, Work, Saving, Failure) and total energy",
+      "evidence_quote": "Energy Work, Energy Saving, Energy Failure) and the total amount of energy consumption",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_B_OUTPUT_AND_UQ__uncertainty_quantified": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__uq_method": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__simulatable_forward_in_time": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "DT_B_OUTPUT_AND_UQ__model_extractable_by_third_party": {
+      "value": "yes_explicit_interface",
+      "evidence_quote": "This function can be then extracted from the simulated environment through the FMI standard and be used as a black box function",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__construction_effort_reported": {
+      "value": "yes_qualitative",
+      "evidence_quote": "allowing them to be reused with little arrangements",
+      "page": 2,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__sme_involvement_level": {
+      "value": "heavy_manual",
+      "evidence_quote": "The first step is to model in the simulation environment the single states and their energy consumption curves in the FMU module.",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__model_updates_over_time": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__reuse_or_transfer_across_assets": {
+      "value": "yes_demonstrated",
+      "evidence_quote": "the same procedure was repeated for the other stations of the production line",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_C_CONSTRUCTION_AND_UPDATE__ai_tools_used_in_construction": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "The MATLAB Simulink environment was chosen to construct the FMU modules",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__agents_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_agent_coupling": {
+      "value": "no_agent",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "DT_D_AGENT_RELATIONSHIP__dt_makes_decisions": {
+      "value": "no",
+      "evidence_quote": "real-time decision making based on the digital representation of the system may be done",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "DT_D_AGENT_RELATIONSHIP__spatial_representation": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "DT_D_AGENT_RELATIONSHIP__part_vs_resource_representation": {
+      "value": "resource_only",
+      "evidence_quote": "The core simulation model is built with the representation of the pieces of equipment of the production system.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "was tested in a laboratory environment: the Industry 4.0 Laboratory (I40LAB) at Politecnico di Milano",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "energy"
+      ],
+      "evidence_quote": "Figure 5 - Laboratory energy consumption results",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__asset_type": {
+      "value": [
+        "production_line"
+      ],
+      "evidence_quote": "The production line installed in the laboratory showed in Fig. 3 has been designed to assemble a Mobile phone.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "has been designed to assemble a Mobile phone",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "Each machine in the I40LAB is equipped with a PLC server, that uses the Open Platform Communications (OPC) Unified Architecture (UA)",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "AutomationML (IEC 62714) semantic meta data model from MAYA project, referencing ISO 14649-10",
+      "evidence_quote": "The semantic data model was developed in AML (Automation Markup Language), which is an XML-based data format, available as open standard (IEC",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "a single FMU module can be activated by different simulation tools",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "dt",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "7ebc3e04990c245916e4db604cf76cfa8dacde62356ddc0dbbc35a4b6136196a",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

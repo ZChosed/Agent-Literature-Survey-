@@ -1,0 +1,417 @@
+{
+  "IDENT": {
+    "paper_id": "W2293869307",
+    "doi": "10.1016/j.ifacol.2015.06.228",
+    "title": "Multicast dataset synchronization and agent negotiation in distributed manufacturing control systems",
+    "year": 2015,
+    "venue": "IFAC-PapersOnLine",
+    "first_author": "Octavian Morariu",
+    "seed_role_links": [
+      "survey_baseline"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "Multi agent systems represent an elegant approach for the control architecture of manufacturing systems.",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "batch_or_order",
+        "machine_or_resource",
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "there are four resource agents, a mediator agent and from one to four active WIP agents",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "it has a local copy of the common dataset",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "The common dataset contains real time information about all active products and resources at any given time.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "heuristic_dispatching",
+        "consensus"
+      ],
+      "evidence_quote": "The solution [next operation and allocated resource] with the higher score is proposed by the agent.",
+      "page": 4,
+      "confidence": "low",
+      "check": "bad_value"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "If this time is high and the system has a high number of agents, the token waiting time can grow exponentially.",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "The common dataset synchronization is transparent for the agent",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "The pilot implementation is developed using JADE multi agent platform and JGroups messaging framework",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "logged_asset_history",
+      "evidence_quote": "it contains the operation scheduling and the resource allocations done in real time up to the current time moment",
+      "page": 3,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Common dataset holds operation scheduling, resource allocations so far, execution status, resource status and current work item.",
+      "evidence_quote": "for each shop floor resource, the common dataset contains its status, the current work item in execution, the current operation",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "shared_blackboard",
+      "evidence_quote": "The common dataset assures the ability to make the decision on global system data as all other agents data is available",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "global_system_model",
+      "evidence_quote": "the common dataset provides a complete view of the entire shop floor",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "the dataset is synchronized automatically across all agents",
+      "page": 3,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "yes_explicit",
+      "evidence_quote": "common dataset synchronized across all entities, coherent access of the common dataset, transaction support, high-performance for real time information access",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL",
+        "custom_message_passing"
+      ],
+      "evidence_quote": "implemented using FIPA INFORM messages passed between the JADE agents",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "consensus",
+      "evidence_quote": "If a simple majority of the agents accept the solution based on the threshold configured, then the solution is accepted",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "The transmission is configured to use UDP multicast, each message being transmitted to all cluster members.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "yes_quantified",
+      "evidence_quote": "Fig. 9. Messages per second with various dataset sizes",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "messages per second and data rate per second vs message size (5k-20k) and cluster size (4,8,10)",
+      "evidence_quote": "Fig. 10 illustrates the data transmission rate with various message sizes for 4, 8 and 10 cluster members",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "yes",
+      "evidence_quote": "JGroups also provides the possibility to detect failed cluster members.",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "NetLogo for abstract representation of the simulation system",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "some important metrics from the operational perspective are those that reflect the network communications",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown"
+      ],
+      "evidence_quote": "it can signal resource breakdown scenario even when the resource is not reachable",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": 9,
+        "n_resources": 4,
+        "n_part_types": null
+      },
+      "evidence_quote": "the JGroups cluster will have typically nine active members at any time moments",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "at some point in the assembly process, the product can continue by mounting Part_A or Part_B",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "ISA_95"
+      ],
+      "evidence_quote": "ISA-95 architecture",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "can be used with any multi agent Manufacturing Execution Systems (MES) implementation",
+      "page": 1,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "action_request_and_negotiation",
+        "decentralized_decision_making"
+      ],
+      "evidence_quote": "When operating in decentralized mode, each WIP agent must handle two types of problems at each step: operation sequencing and resource allocation.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Uses a globally replicated common dataset with token locking and majority voting instead of model-based capability discovery; no formal model of agent knowledge.",
+      "evidence_quote": "There is one token that can be assigned to one agent at a time.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Locking mechanism required for reads and writes so data is not outdated.",
+      "evidence_quote": "the locking mechanism is required for both read and writes, as data can become outdated without it",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "the OS/WIP agents are joining the cluster when they enter the production line and exit the cluster when the execution is completed",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

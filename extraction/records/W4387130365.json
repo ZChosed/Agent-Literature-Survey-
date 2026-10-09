@@ -1,0 +1,428 @@
+{
+  "IDENT": {
+    "paper_id": "W4387130365",
+    "doi": "10.3389/frai.2023.1241522",
+    "title": "The MAS4AI framework for human-centered agile and smart manufacturing",
+    "year": 2023,
+    "venue": "Frontiers in Artificial Intelligence",
+    "first_author": "Aleksandr Sidorenko",
+    "seed_role_links": [
+      "agent_related"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Cites Russell & Norvig and Leitão (2009): 'An autonomous component that represents physical or logical objects in the system, capable to act in order to achieve its goals...'; holon treated as special type of agent.",
+      "evidence_quote": "The MAS4AI project treats a holon as a special type of agent as well.",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "Leitão (2009) focuses on autonomy and interacting capabilities of agents",
+      "page": 3,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "holon",
+      "evidence_quote": "we employ a holonic multi-agent system, based on the RAMI4.0 reference architectural model and the use of AAS",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource",
+        "robot_or_manipulator",
+        "transport_or_AGV",
+        "human_operator",
+        "supervisory_or_system"
+      ],
+      "evidence_quote": "A Resource Holon usually represents some production resource, for example, a production module, transportation vehicle or a smart worker.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The knowledge graphs, based on the model shown in Figure 2, enable the holons to reason about the smart worker and to make informed decisions.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "knowledge_graph",
+      "evidence_quote": "The knowledge graphs, based on the model shown in Figure 2, enable the holons to reason about the smart worker",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "auction_or_market",
+        "rule_based_reasoning"
+      ],
+      "evidence_quote": "the agents use a well-known contract-net-protocol for the negotiation and allocation of the resources required to complete a production task",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "To increase scalability of the framework, we run diﬀerent holons in separate runtimes inside Docker containers.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "yes",
+      "evidence_quote": "The SARL agent also has a set of behaviors, which consist of event handlers and event emitters. This enables to implement diﬀerent interaction protocols",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "custom_java_or_cpp",
+      "evidence_quote": "The MAS used in the project is based on the Janus runtime for the general-purpose agent-oriented programming language SARL",
+      "page": 9,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "conﬁgures itself with the worker’s proﬁle information from the worker’s AAS",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "AAS submodels hold worker role, qualifications, skills, capabilities, agenda; may hold performance monitoring results.",
+      "evidence_quote": "can hold the results of performance monitoring/evaluation and various tests",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_digital_twin",
+      "evidence_quote": "The MAS4AI agents use the standard AAS API to get all the required information about the assets.",
+      "page": 7,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "partial_system_model",
+      "evidence_quote": "The Resources submodel shows all the resources available to the holon",
+      "page": 7,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_sensor_data",
+      "evidence_quote": "The holon tracks the worker’s location and updates the role in the AAS.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "To interact with the other holons on behalf of the smart worker, the Human Digital Holon needs necessary information about a person.",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "contract_net_protocol",
+        "custom_message_passing",
+        "OPC_UA",
+        "REST_or_HTTP",
+        "ROS_topics_or_services",
+        "AAS_submodel_exchange"
+      ],
+      "evidence_quote": "For the communication between such holons we use Kafka13 to build a robust agent messaging system. The I4.0 language is used as the agent communication language.",
+      "page": 11,
+      "confidence": "high",
+      "check": "quote_too_long"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "contract_net",
+      "evidence_quote": "the agents use a well-known contract-net-protocol for the negotiation and allocation of the resources",
+      "page": 14,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "The second scenario shows the interplay of distributed and hierarchical approaches for designing control systems, which are separated in time.",
+      "page": 17,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "yes",
+      "evidence_quote": "Our approach is to combine the worker’s AAS as human’s passive DT with the Human Digital Holon, which actively represents a human in the system.",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "dt_embedded_inside_agent",
+      "evidence_quote": "The human AAS described in Section 3.2 serves as the single source of truth about the worker and is a part of the Human Digital Holon.",
+      "page": 9,
+      "confidence": "high",
+      "check": "quote_too_long"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "dt_generates_agent",
+      "evidence_quote": "the default Human Digital Holon is spawned with the corresponding worker’s AAS ID",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "lab_hardware",
+      "evidence_quote": "the demonstrators are still only the lab-scale proof-ofconcept prototypes and cannot provide the real production data and results.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "none_reported"
+      ],
+      "evidence_quote": "A formal evaluation of the architecture and the MAS prototypes will be a part of the future work.",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "resource_added_or_removed"
+      ],
+      "evidence_quote": "When new equipment is introduced, it brings new capabilities to the system and the new production tasks can be accomplished.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": null,
+        "n_part_types": null
+      },
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "discrete_assembly",
+      "evidence_quote": "Case study: a human-robot shared assembly task",
+      "page": 13,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "RAMI_4_0",
+        "asset_administration_shell",
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "The proposed framework is based on the RAMI4.0 reference architectural model",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "MASON, RAMI Ontology, MAS4AI smart worker ontology (RDF)",
+      "evidence_quote": "MASON (Lemaignan et al., 2006) provides a core model that conceptualizes core concepts of the PPR model",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_demonstrated",
+      "evidence_quote": "Two AAShosting platforms, BaSyx10 and Dimofac,11 have been used in the framework, and the MAS4AI agents could work with both of them",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "resource_capability_discovery",
+        "action_request_and_negotiation",
+        "decentralized_decision_making",
+        "explicit_separation_of_agent_and_physical_asset",
+        "control_oriented_architecture"
+      ],
+      "evidence_quote": "The task of the Product Holon is to ﬁnd and reserve the production resources that provide such capabilities.",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Adds Human Digital Holon integrating workers via AAS; uses Behavior Trees orchestrated by a Task Holon for execution (hierarchical) rather than purely decentralized; AAS-based self-description for discovery.",
+      "evidence_quote": "the Task Holon uses the hierarchical Behavior Trees structure to orchestrate the skills of the scheduled holons",
+      "page": 17,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Standardization of AAS submodels and distributed planning claimed necessary/crucial.",
+      "evidence_quote": "Standardization of the AAS submodels is crucial for interoperability and plugand-produce scenarios. Distributed planning and scheduling are necessary for modular reconﬁgurable architectures",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "After the holon is ready, it registers itself with the superordinate holon.",
+      "page": 13,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

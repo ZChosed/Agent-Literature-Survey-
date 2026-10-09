@@ -1,0 +1,412 @@
+{
+  "IDENT": {
+    "paper_id": "W4312744266",
+    "doi": "10.1016/j.ifacol.2022.09.681",
+    "title": "A product-driven system approach to generate fast solutions to the job shop scheduling problem.",
+    "year": 2022,
+    "venue": "IFAC-PapersOnLine",
+    "first_author": "Patricio Sáez",
+    "seed_role_links": [
+      "framework_core"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "Intelligent product adopted from Wong et al. (2014): representation of an order or physical product linked to information and rules governing its manufacture; agents as autonomous decision-making entities.",
+      "evidence_quote": "The intelligent product is the representation of an order or physical product linked to the information and the rules that govern its manufacture, storage, or transport",
+      "page": 1,
+      "confidence": "medium",
+      "check": "quote_too_long"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "adopted_other_cited",
+      "evidence_quote": "allowing it to influence operations (Wong et al., 2014)",
+      "page": 1,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "intelligent_product",
+      "evidence_quote": "This article proposed a model of artificial intelligence with agents representing intelligent products",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "part_or_product",
+        "machine_or_resource"
+      ],
+      "evidence_quote": "This approach has two types of agents: products and machines.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "unclear",
+      "evidence_quote": "It has memory capacity according to the objective function delivered",
+      "page": 4,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "the production sequence is stored in each agentproduct, positioning it in the first machine of its sequence.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "heuristic_dispatching"
+      ],
+      "evidence_quote": "The agents embed the intelligence function using a based shifting bottleneck heuristic (SBH) approach.",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_with_evidence",
+      "evidence_quote": "computational times in the proposed approach are considerably less than IP in instances with a more significant number of resources.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "commercial_simulation_tool",
+      "evidence_quote": "Version 6.1.1 of the NetLogo simulation platform is used for modeling",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "case_library_of_past_episodes",
+      "evidence_quote": "each agent-product saves the position of the machines in its production sequence and the production decisions of the sub-problems for use in future generations.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "Product agents save machine positions and sub-problem decisions for future solution generations.",
+      "evidence_quote": "each agent-product saves the position of the machines in its production sequence and the production decisions of the sub-problems for use in future generations.",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "The agent-machines are considered static entities that only provide information about the processing time of theirir tasks.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "self_only",
+      "evidence_quote": "the production sequence is stored in each agentproduct",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "yes",
+      "evidence_quote": "for use in future generations",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_simulation",
+      "evidence_quote": "all the agents-products have completed their work and generated the learning process.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "It has memory capacity according to the objective function delivered",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "not_reported"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "Then, we continue with the resolution of the subproblems (when two agents-products need the same machine at the same time instant).",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "peer_to_peer",
+      "evidence_quote": "they can communicate with the machines around them and among other agent-products",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "yes",
+      "evidence_quote": "reusing this information to carry out a learning process for future generations of solutions",
+      "page": 4,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "case_based_reasoning"
+      ],
+      "evidence_quote": "the production decisions of the sub-problems for use in future generations.",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "standalone_discrete_event_sim",
+      "evidence_quote": "implemented in version 6.2 of the Netlogo platform",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "neither",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "Version 6.1.1 of the NetLogo simulation platform is used for modeling",
+      "page": 5,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time"
+      ],
+      "evidence_quote": "considering the makespan and the computational effort as performance measures",
+      "page": 2,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "centralized_optimal",
+      "evidence_quote": "The results are compared with an optimal integer programming model (IP), SBH, and two conventional heuristics",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": "implement more realistic events in planning, such as work cells, simultaneous products, and failures.",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 15,
+        "n_part_types": 50
+      },
+      "evidence_quote": "20 jobs on 15 machines (for the instances abz7, abz8, and abz9), and 50 jobs on ten machines",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "generic_or_abstract",
+      "evidence_quote": "The instances used were presented in Adams et al. (1988)",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "part_or_product_centric_agent",
+        "decentralized_decision_making"
+      ],
+      "evidence_quote": "The intelligent products make all decisions in a distributed way aiming to minimize the makespan",
+      "page": 1,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Uses SBH heuristic embedded in product agents with learning across solution generations for static JSSP; machines are passive; no model-based control architecture, no disruptions handled.",
+      "evidence_quote": "The agent-machines are considered static entities that only provide information about the processing time of theirir tasks.",
+      "page": 5,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "not_reported"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "cites_as_related_work",
+      "evidence_quote": "In the work of I. Kovalenko et al. (2019), multi-agent control strategies are used",
+      "page": 4,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "static_structure",
+      "evidence_quote": "The agent-machines are considered static entities",
+      "page": 5,
+      "confidence": "low",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}

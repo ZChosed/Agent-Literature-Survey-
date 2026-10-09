@@ -1,0 +1,423 @@
+{
+  "IDENT": {
+    "paper_id": "W4296209323",
+    "doi": "10.1080/0951192x.2022.2121425",
+    "title": "Architecture and knowledge modelling for self-organized reconfiguration management of cyber-physical production systems",
+    "year": 2022,
+    "venue": "International Journal of Computer Integrated Manufacturing",
+    "first_author": "Timo Müller",
+    "seed_role_links": [
+      "agent_related"
+    ]
+  },
+  "fields": {
+    "A_DEFINITION__agent_definition_verbatim": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "A_DEFINITION__definition_source": {
+      "value": "no_explicit_definition",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "A_DEFINITION__agent_term_used": {
+      "value": "multi_agent_system",
+      "evidence_quote": "Thus, this layer covers the implementation of the methodology for the self-organized reconfigura­tion management, by means of a MAS.",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "A_DEFINITION__agent_entity_types": {
+      "value": [
+        "machine_or_resource",
+        "supervisory_or_system",
+        "other"
+      ],
+      "evidence_quote": "Digital representatives of each production module as well as representations of abstract assets like the system configurations interact",
+      "page": 11,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__has_knowledge_base": {
+      "value": "yes",
+      "evidence_quote": "The knowledge com­ponents are realized in a distributed manner and are held within the proxy layer as described above.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "B_ARCHITECTURE__kb_representation": {
+      "value": "ad_hoc_data_structure",
+      "evidence_quote": "The knowledge modelling is realized through a UML information model, which can be integrated into the system utilizing XML files.",
+      "page": 2,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "B_ARCHITECTURE__decision_mechanism": {
+      "value": [
+        "planning_or_search",
+        "optimization_MILP_or_CP",
+        "evolutionary_or_metaheuristic"
+      ],
+      "evidence_quote": "it is possible to utilize a multi-objective simulated annealing or a multi-objective genetic algorithm",
+      "page": 15,
+      "confidence": "medium",
+      "check": "bad_value"
+    },
+    "B_ARCHITECTURE__decision_scalability_discussed": {
+      "value": "yes_asserted_only",
+      "evidence_quote": "the approach allows the introduction of additional SBO agents and thus partial or complete paralleliza­tion.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "quote_not_found"
+    },
+    "B_ARCHITECTURE__has_communication_manager": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "B_ARCHITECTURE__implementation_platform": {
+      "value": "JADE",
+      "evidence_quote": "realized in Java, utilizing the Java Agent Development Framework (JADE).",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_historical": {
+      "value": "static_configuration_only",
+      "evidence_quote": "'CPPM Agents' are aware of their alter­native CPPM configurations",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_historical_description": {
+      "value": "CPM models with module configurations, components, installation efforts, states, non-functional parameters, from XML files",
+      "evidence_quote": "for each available XML file, containing the information of a CPM, the 'Simple API for XML (SAX)' is utilized",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_realtime": {
+      "value": "query_to_other_agents",
+      "evidence_quote": "Furthermore, it provides the current configuration to the 'Reconfiguration Demand Agent'.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_scope": {
+      "value": "global_system_model",
+      "evidence_quote": "Hence, it contains all possible production sequences that can be con­ducted by the currently applied CPPS configuration",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "C_MEMORY__memory_persists_across_episodes": {
+      "value": "unclear",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "low",
+      "check": "absence_unquoted"
+    },
+    "C_MEMORY__memory_update_mechanism": {
+      "value": "update_from_communication",
+      "evidence_quote": "is updated based on the discovery server information of the SOA",
+      "page": 14,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "C_MEMORY__memory_requirements_stated": {
+      "value": "implicit_only",
+      "evidence_quote": "the necessary knowledge must be held and provided to the system's distributed components",
+      "page": 6,
+      "confidence": "medium",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_protocol": {
+      "value": [
+        "FIPA_ACL",
+        "OPC_UA"
+      ],
+      "evidence_quote": "the implementation of the multi-agent system complies with the FIPA specifica­tions",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "D_COMMUNICATION__negotiation_mechanism": {
+      "value": "other",
+      "evidence_quote": "the system configuration with the best assigned utility is selected for deployment.",
+      "page": 12,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_topology": {
+      "value": "hybrid",
+      "evidence_quote": "The discovery server depicts a service broker",
+      "page": 17,
+      "confidence": "low",
+      "check": "ok"
+    },
+    "D_COMMUNICATION__comm_cost_analyzed": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "D_COMMUNICATION__comm_cost_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "D_COMMUNICATION__handles_comm_failure": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__learning_present": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_type": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__explores_beyond_predefined_env": {
+      "value": "no",
+      "evidence_quote": "there is no need to apply reasoning to derive new knowledge, or to enable a constant evolu­tion",
+      "page": 9,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "E_LEARNING__learning_quality_measured": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__learning_quality_metric": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "E_LEARNING__uses_simulation_for_exploration": {
+      "value": "yes",
+      "evidence_quote": "an optimization that runs the simulation multiple times with varying para­meters",
+      "page": 15,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "E_LEARNING__simulation_model_source": {
+      "value": "standalone_discrete_event_sim",
+      "evidence_quote": "for a discrete event simulation based on state machines running in parallel",
+      "page": 15,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "E_LEARNING__uses_foundation_model": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_role": {
+      "value": [
+        "none"
+      ],
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "E_LEARNING__foundation_model_limitations_reported": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "not_reported"
+    },
+    "F_DT_COUPLING__dt_present_in_work": {
+      "value": "no",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__agent_dt_coupling": {
+      "value": "no_dt",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_provides_uncertainty": {
+      "value": "not_applicable",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "F_DT_COUPLING__dt_generation_from_agent_or_vice_versa": {
+      "value": "not_reported",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "not_reported"
+    },
+    "G_VALIDATION_METRICS__validation_level": {
+      "value": "simulation",
+      "evidence_quote": "The prototypical imple­mentation covers a modular production system with a matrix layout, simulated in Unity",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "G_VALIDATION_METRICS__metrics_reported": {
+      "value": [
+        "makespan_or_cycle_time",
+        "cost",
+        "energy"
+      ],
+      "evidence_quote": "measure the reconfiguration and production efforts in terms of time, cost and energy",
+      "page": 19,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__baseline_compared_against": {
+      "value": "none",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "medium",
+      "check": "absence_unquoted"
+    },
+    "G_VALIDATION_METRICS__disruption_types_handled": {
+      "value": [
+        "machine_failure_or_breakdown",
+        "demand_or_order_change"
+      ],
+      "evidence_quote": "Both trigger types, i.e. requirements changes (through new production orders) and component failures, were tested several times.",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__system_scale": {
+      "value": {
+        "n_agents": null,
+        "n_resources": 7,
+        "n_part_types": null
+      },
+      "evidence_quote": "seven reconfigurable CPPMs with 20 configurations are available, offering 64 services.",
+      "page": 18,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "G_VALIDATION_METRICS__application_domain": {
+      "value": "machining",
+      "evidence_quote": "The system provides discrete manufacturing services such as drilling, milling or punching",
+      "page": 16,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__standards_referenced": {
+      "value": [
+        "RAMI_4_0",
+        "asset_administration_shell",
+        "OPC_UA_companion_spec"
+      ],
+      "evidence_quote": "in accordance with the literature and especially with the RAMI 4.0 specification DIN SPEC 91,345",
+      "page": 10,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__ontology_used": {
+      "value": "none (UML/XML lightweight ontology; VDI/VDE 3682 FPD)",
+      "evidence_quote": "the authors choose to follow a novel UML/XML-based approach",
+      "page": 9,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "H_STANDARDS__interoperability_claimed": {
+      "value": "yes_asserted",
+      "evidence_quote": "it is possible to achieve interoperability and to cope with possible vendor heterogeneity by the utilization of a common infor­mation model",
+      "page": 8,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "I_DELTA_VS_REFERENCE__features_common_with_reference": {
+      "value": [
+        "model_based_formal_representation",
+        "resource_capability_discovery",
+        "reactive_replanning_on_disruption",
+        "explicit_separation_of_agent_and_physical_asset"
+      ],
+      "evidence_quote": "it reacts to occurring triggers (i.e. require­ments changes or component failures)",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok_loose"
+    },
+    "I_DELTA_VS_REFERENCE__features_divergent": {
+      "value": "Agents used for reconfiguration management (MAPE-K) rather than control; control handled by separate SOA; simulation-based multi-objective optimization of time/cost/energy; intelligent products are OPC UA service consumers, not agents.",
+      "evidence_quote": "The control of the production system is handled by a dedicated SOA (the SBC) rather than using the MAS.",
+      "page": 12,
+      "confidence": "high",
+      "check": "ok"
+    },
+    "I_DELTA_VS_REFERENCE__essential_component_claims": {
+      "value": "Knowledge modelling and management concept claimed mandatory.",
+      "evidence_quote": "a knowledge mod­elling and management concept is a mandatory prerequisite.",
+      "page": 6,
+      "confidence": "high",
+      "check": "ok_loose"
+    },
+    "I_DELTA_VS_REFERENCE__cites_reference_framework": {
+      "value": "does_not_cite",
+      "evidence_quote": null,
+      "page": null,
+      "confidence": "high",
+      "check": "absence_unquoted"
+    },
+    "I_DELTA_VS_REFERENCE__static_vs_dynamic_structure": {
+      "value": "dynamic_structure",
+      "evidence_quote": "the termination of themselves if the desired product cannot be produced.",
+      "page": 11,
+      "confidence": "medium",
+      "check": "ok"
+    }
+  },
+  "J_EXTRACTION_META": {
+    "schema_version": "1.0.0",
+    "schema": "agent",
+    "extraction_model": "claude-opus-5-5",
+    "prompt_hash": "13a79691345cdd65ca4e9c94d62ba83124ce97a42b013adbe749e43190e42f86",
+    "extraction_date": "2026-10-09",
+    "source_text_method": "pymupdf_text",
+    "run_id": "extract_20261009",
+    "response_status": "valid",
+    "failure": null,
+    "human_verified": false,
+    "verifier": null,
+    "fields_corrected": [],
+    "verifier_notes": null,
+    "checker_version": "1.1.0"
+  }
+}
