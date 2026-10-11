@@ -1,0 +1,26 @@
+{
+  "schema_name": "example",
+  "schema_version": "1.0.0",
+  "purpose": "Replace with what this extraction is for; it is shown to the model.",
+  "blocks": {
+    "A_CONTRIBUTION": {
+      "label": "Contribution",
+      "fields": {
+        "contribution_type": {"type": "evidence_object", "value_type": "enum",
+                              "allowed": ["framework", "method", "case_study", "other"],
+                              "prompt": "What kind of contribution does the paper make?"},
+        "summary": {"type": "evidence_object", "value_type": "string",
+                    "prompt": "One-sentence statement of the contribution, quoted from the paper."}
+      }
+    },
+    "B_VALIDATION": {
+      "label": "Validation",
+      "fields": {
+        "validation_level": {"type": "evidence_object", "value_type": "enum",
+                             "allowed": ["conceptual_only", "simulation", "lab_hardware", "field_deployment"]},
+        "metrics_reported": {"type": "evidence_object", "value_type": "multi_enum",
+                             "allowed": ["accuracy", "cost", "time", "none_reported"]}
+      }
+    }
+  }
+}

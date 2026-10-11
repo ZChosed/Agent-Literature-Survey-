@@ -1,7 +1,0 @@
-memory_historical,event_driven_stream,not_reported,polled_sensor_reads,query_to_digital_twin,query_to_other_agents,shared_blackboard
-case_library_of_past_episodes,1,0,2,0,1,0
-full_event_log,0,0,0,1,1,0
-learned_model_parameters,1,1,6,0,3,1
-logged_asset_history,2,1,3,1,5,1
-not_reported,1,0,1,1,0,0
-static_configuration_only,5,1,3,2,19,1

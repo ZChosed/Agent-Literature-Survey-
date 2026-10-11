@@ -1,0 +1,48 @@
+# litreview project. Every value here is recorded in data/provenance.json by the
+# stage that uses it. Commit this file BEFORE the run it governs, so git history
+# shows the settings were fixed in advance.
+
+[project]
+name = "My literature review"
+contact_email = ""            # required: sent to OpenAlex/Unpaywall as a polite-pool contact
+
+[corpus]
+seeds = "seeds.csv"
+min_year = 2015
+core_roles = ["core"]         # seed roles that define the review's core (ranked first)
+target_refs = []              # seeds whose topics define the target domain; [] = core seeds
+coverage_roles = ["survey"]   # roles whose reference lists are checked for coverage
+# max_backward_per_seed = 600, max_forward_per_seed = 600, weight_by_precision = true
+
+[eligibility]
+require_open_access = true
+exclude_doi_prefixes = []     # e.g. ["10.1016"] to exclude a publisher outright
+
+[model]
+id = "claude-opus-5-5"        # validated against the API; never substituted
+# pricing = { input = 4.0, output = 20.0 }   # USD/Mtok, required for unlisted models
+
+[screening]
+criteria = "criteria.md"
+topic = ""                    # e.g. "agent-based manufacturing control"
+max_usd = 20.0                # abort before submitting if the estimate exceeds this
+kappa_floor = 0.70
+recall_floor = 0.95
+calibration_per_stratum = 25
+calibration_seed = 20260928
+
+[extraction]
+max_usd = 20.0
+quote_words = 25
+
+# One table per extraction schema. Included papers whose criterion_id is listed go
+# to that schema; max_papers keeps the top N by corpus rank (0 = all).
+[extraction.schemas.main]
+schema = "schemas/example_schema.json"
+criteria = ["I1", "I2"]
+max_papers = 0
+
+[report]
+template = "report_template.md"
+# crosstabs = [["main", "B_METHOD__validation", "B_METHOD__approach"]]
+crosstabs = []

@@ -1,0 +1,19 @@
+[project]
+name = "litreview"
+version = "2.0.0"
+description = "Seed-and-expand literature review with audited LLM screening and extraction"
+requires-python = ">=3.11"
+dependencies = ["requests", "anthropic", "pymupdf"]
+
+[project.scripts]
+litreview = "litreview.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["litreview"]
+
+[tool.setuptools.package-data]
+litreview = ["templates/*", "templates/.gitignore", "templates/schemas/*"]

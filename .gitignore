@@ -1,5 +1,7 @@
 __pycache__/
 .venv/
-corpus/fulltext/
-corpus/documents/
-manual_pdfs/*.pdf
+*.egg-info/
+# local-only data (PDFs are not ours to redistribute)
+local/
+**/documents/
+**/manual_pdfs/*.pdf

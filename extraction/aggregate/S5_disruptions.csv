@@ -1,9 +1,0 @@
-,value,papers,share
-0,machine_failure_or_breakdown,24,0.393
-1,demand_or_order_change,18,0.295
-2,none,17,0.279
-3,resource_added_or_removed,14,0.23
-4,new_part_type_introduced,7,0.115
-5,tool_wear_or_degradation,6,0.098
-6,quality_defect,6,0.098
-7,transport_delay,5,0.082
