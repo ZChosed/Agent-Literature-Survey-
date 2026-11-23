@@ -16,12 +16,17 @@ Invariants covered, stage by stage:
                decisions apply; schema mapping with a rank cap; manual PDFs matched
   extract      every evidence-check outcome
   report       only passing fields are counted; an unresolved placeholder writes nothing
+  check        a fresh template fails; a filled project passes; each input mistake
+               (unknown criterion, bad crosstab, bad expand value, unserved model,
+               missing key) fails; a typo'd key warns without failing
 
 Run:  python tests/test_litreview.py
 """
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import shutil
@@ -31,7 +36,7 @@ import types
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from litreview import build, calibrate, cli, config, eligibility, extract, fetch, llm, report, screen  # noqa: E402
+from litreview import build, calibrate, check as checkmod, cli, config, eligibility, extract, fetch, llm, report, screen  # noqa: E402
 from litreview.common import read_csv, read_json, read_jsonl, write_csv  # noqa: E402
 
 FAILS: list[str] = []
@@ -358,6 +363,78 @@ def test_fetch_extract_report(cfg, tmp):
           "an unresolved placeholder writes nothing")
 
 
+# --- check -----------------------------------------------------------------------
+
+def run_check(cfg, offline=True) -> tuple[int, str]:
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        code = checkmod.run(cfg, args(offline=offline))
+    return code, buf.getvalue()
+
+
+def test_check(tmp):
+    print("\n[check]")
+    d = os.path.join(tmp, "chk")
+    cli.main(["init", d])
+    code, out = run_check(config.load(d))
+    check(code == 1 and "contact_email is empty" in out and "placeholder title/DOI" in out
+          and "'The paper ...'" in out, "a fresh template fails on its placeholders")
+
+    toml = open(os.path.join(d, "project.toml")).read()
+    toml = toml.replace('contact_email = ""', 'contact_email = "t@example.org"').replace('topic = ""', 'topic = "x"')
+    open(os.path.join(d, "project.toml"), "w").write(toml)
+    write_csv(os.path.join(d, "seeds.csv"), [
+        {"ref": "1", "role": "core", "expand_backward": "yes", "expand_forward": "yes", "year": "2020",
+         "first_author": "A", "title": "A real seed", "doi": "10.1/s1"},
+        {"ref": "2", "role": "survey", "expand_backward": "yes", "expand_forward": "no", "year": "2021",
+         "first_author": "B", "title": "A survey", "doi": "10.1/s2"}])
+    crit = open(os.path.join(d, "criteria.md")).read().replace("The paper ...", "The paper does X.")
+    open(os.path.join(d, "criteria.md"), "w").write(crit)
+    code, out = run_check(config.load(d))
+    check(code == 0, f"a filled-in project passes offline ({out.strip().splitlines()[-1]})")
+
+    def variant(fn):
+        cfg = config.load(d)
+        fn(cfg)
+        return run_check(cfg)
+
+    code, out = variant(lambda c: c.data["extraction"]["schemas"]["main"].update(criteria=["I1", "I9"]))
+    check(code == 1 and "['I9'] are not IDs" in out, "a schema mapped to an unknown criterion fails")
+    code, out = variant(lambda c: c.data["report"].update(crosstabs=[["main", "B_VALIDATION__nope", "A_CONTRIBUTION__summary"]]))
+    check(code == 1 and "B_VALIDATION__nope" in out, "a crosstab naming a missing field fails")
+    code, _ = variant(lambda c: c.data["report"].update(
+        crosstabs=[["main", "B_VALIDATION__validation_level", "A_CONTRIBUTION__contribution_type"]]))
+    check(code == 0, "a valid crosstab passes")
+    code, out = variant(lambda c: c.data["corpus"].update(core_roles=["kore"]))
+    check(code == 1 and "core_roles ['kore']" in out, "a core role matching no seed fails")
+    code, out = variant(lambda c: c.data["screening"].update(max_ussd=5))
+    check(code == 0 and "unknown key [screening] max_ussd" in out, "a typo'd key warns without failing")
+    code, out = variant(lambda c: c.data["screening"].update(recall_floor=95))
+    check(code == 1 and "recall_floor" in out, "a floor outside (0, 1] fails")
+
+    seeds = open(os.path.join(d, "seeds.csv")).read()
+    open(os.path.join(d, "seeds.csv"), "w").write(seeds.replace(",yes,no,", ",yes,maybe,"))
+    code, out = run_check(config.load(d))
+    check(code == 1 and "'maybe'" in out, "an unrecognised expand value fails (it would read as no)")
+    open(os.path.join(d, "seeds.csv"), "w").write(seeds)
+
+    saved = os.environ.pop("ANTHROPIC_API_KEY", None)
+    try:
+        code, out = run_check(config.load(d), offline=False)
+        check(code == 1 and "ANTHROPIC_API_KEY is not set" in out, "a missing API key fails")
+        os.environ["ANTHROPIC_API_KEY"] = "test"
+        stub_anthropic(served=("claude-opus-5-5",))
+        code, out = run_check(config.load(d), offline=False)
+        check(code == 0 and "claude-opus-5-5 is served" in out, "a served model passes")
+        stub_anthropic(served=("claude-sonnet-5-5",))
+        code, out = run_check(config.load(d), offline=False)
+        check(code == 1 and "not served by this key" in out, "an unserved model fails (never substituted)")
+    finally:
+        os.environ.pop("ANTHROPIC_API_KEY", None)
+        if saved is not None:
+            os.environ["ANTHROPIC_API_KEY"] = saved
+
+
 def main() -> int:
     tmp = tempfile.mkdtemp(prefix="litreview_test_")
     try:
@@ -365,6 +442,7 @@ def main() -> int:
         test_eligibility(cfg, tmp)
         test_calibrate_and_screen(cfg, tmp)
         test_fetch_extract_report(cfg, tmp)
+        test_check(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"\n{len(FAILS)} FAILURE(S)" if FAILS else "\nALL CHECKS PASSED")

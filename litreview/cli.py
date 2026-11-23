@@ -7,7 +7,7 @@ import os
 import shutil
 import sys
 
-from . import build, calibrate, config, eligibility, extract, fetch, report, screen
+from . import build, calibrate, check, config, eligibility, extract, fetch, report, screen
 from .common import VERSION, latest_run, read_json
 
 TEMPLATES = os.path.join(os.path.dirname(__file__), "templates")
@@ -22,7 +22,8 @@ def init(args) -> int:
           f"  1. edit project.toml (name, contact_email, roles)\n"
           f"  2. list your base papers in seeds.csv\n"
           f"  3. write criteria.md and your extraction schema(s) in schemas/\n"
-          f"  4. cd {dest} && litreview build")
+          f"  4. cd {dest} && litreview check, and fix every FAIL\n"
+          f"  5. litreview build")
     return 0
 
 
@@ -62,6 +63,8 @@ def main(argv=None) -> int:
     p = sub.add_parser("init", help="scaffold a new review")
     p.add_argument("dir")
     sub.add_parser("status", help="what exists, what is next")
+    p = sub.add_parser("check", help="validate the inputs before running anything")
+    p.add_argument("--offline", action="store_true", help="skip the Anthropic API check")
     sub.add_parser("build", help="seeds -> candidates")
     p = sub.add_parser("eligibility", help="open-access rule -> data/eligibility.csv")
     p.add_argument("--offline", action="store_true", help="replay the call log only")
@@ -91,7 +94,7 @@ def main(argv=None) -> int:
     cfg = config.load(args.project)
     if args.cmd == "calibrate":
         return (calibrate.draw if args.action == "draw" else calibrate.score)(cfg, args)
-    return {"status": status, "build": build.run, "eligibility": eligibility.run,
+    return {"status": status, "check": check.run, "build": build.run, "eligibility": eligibility.run,
             "screen": screen.run, "fetch": fetch.run, "extract": extract.run,
             "report": report.run}[args.cmd](cfg, args)
 

@@ -161,7 +161,33 @@ criteria = ["I1", "I2"]       # included papers whose deciding criterion is list
 max_papers = 0                # 0 = all; N = the top N by corpus rank
 ```
 
-### 3e. Commit
+### 3e. Check your inputs
+
+```bash
+litreview check
+```
+
+This reads every input file and tests your API key. It changes nothing and
+costs nothing. Each line is `ok`, `WARN` (allowed, but probably not what you
+meant), or `FAIL` (a later step would stop, or would quietly do the wrong
+thing). Fix every `FAIL` before going on. It catches:
+
+- template text still in `seeds.csv`, `criteria.md` or the schema
+- a missing `contact_email`, or floors and caps outside their valid range
+- misspelled settings in `project.toml`, which would otherwise be ignored without a word
+- `expand_backward` / `expand_forward` values other than yes/no (anything else reads as no)
+- `core_roles` or `target_refs` that match none of your seeds
+- fewer than 2 criterion IDs parsed from `criteria.md`
+- a schema that doesn't load, or a field missing its `allowed` options
+- a schema mapped to a criterion ID that isn't in `criteria.md`
+- crosstabs naming fields that don't exist
+- inputs not yet committed to git
+- an API key that is missing, or doesn't have access to the configured model
+
+Use `litreview check --offline` to skip the API test. Run the check again
+whenever you edit an input.
+
+### 3f. Commit
 
 ```bash
 git add -A && git commit -m "Inputs fixed before any run"
@@ -375,6 +401,7 @@ on the page)."* Every number in that sentence comes from the report.
 
 | Message | What to do |
 |---|---|
+| Anything going wrong before or during a run | Run `litreview check` first; it names most input mistakes directly |
 | `ModuleNotFoundError: No module named 'requests'` | Activate the venv: `source <tool folder>/.venv/bin/activate` |
 | `no project.toml in …` | `cd` into your project folder, or pass `litreview --project <dir> …` |
 | `set [project] contact_email` | Fill it in `project.toml` |
@@ -397,6 +424,7 @@ on the page)."* Every number in that sentence comes from the report.
 |---|---|---|
 | `litreview init <dir>` | Create a new project from templates | no |
 | `litreview status` | Show finished stages and the next command | no |
+| `litreview check [--offline]` | Validate every input and the API key; changes nothing | no |
 | `litreview build` | Seeds → `data/candidates.csv` | no |
 | `litreview eligibility [--offline]` | Open-access rule → `data/eligibility.csv` | no |
 | `litreview calibrate draw` | Blind 50-paper sample → `screening/labels_TODO.csv` | no |
